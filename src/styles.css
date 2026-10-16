@@ -49,6 +49,8 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 *{box-sizing:border-box}
+/* 폰에서 누를 때 파란 네모가 번쩍이지 않게 + 두 번 탭 확대 기다림(300ms) 없이 바로 반응 */
+html{-webkit-tap-highlight-color:transparent; touch-action:manipulation}
 button,input,select,textarea{font:inherit; color:inherit}
 button{background:none; border:0; cursor:pointer}
 :focus-visible{outline:1.5px solid var(--ink-2); outline-offset:2px; border-radius:5px}
