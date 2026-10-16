@@ -399,6 +399,29 @@ export default function App() {
     );
   }
 
+  // 로그아웃 상태: 헤더만 두고, 달력·보드 없이 깨끗한 화면에 로그인 안내만
+  if (auth.status === "out") {
+    return (
+      <div className="page">
+        <TopNav
+          account={null}
+          isLocal={false}
+          menuOpen={false}
+          setMenuOpen={setMenuOpen}
+          onSignOut={() => signOut()}
+          onExport={null}
+        />
+        <main className="signed-out">
+          <p>로그인 후 이용해주세요.</p>
+          <GoogleButton onClick={() => signIn()} />
+          <a className="gate-privacy" href="/privacy">
+            개인정보 처리방침
+          </a>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="page">
       <TopNav
@@ -407,7 +430,6 @@ export default function App() {
         isLocal={auth.mode === "local"}
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
-        onSignIn={() => signIn()}
         onSignOut={() => signOut()}
         onExport={ready ? actions.exportJson : null}
       />

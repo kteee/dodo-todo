@@ -770,3 +770,29 @@ html, body, #root{height:auto}
   transition:border-color .12s ease, box-shadow .12s ease;
 }
 .card.mini.is-editing{background:var(--panel-2); box-shadow:none} /* 월간 작은 카드는 테두리가 없어서 배경으로 */
+
+/* ── Google 로그인 버튼 (Google 브랜드 가이드 색·간격) ── */
+.gsi-btn{
+  display:inline-flex; align-items:center; gap:10px; border-radius:4px; cursor:pointer; /* 가이드의 "사각형" 모양 */
+  background:#ffffff; border:1px solid #747775; color:#1f1f1f;
+  font-family:"Roboto", var(--sans); font-weight:500; letter-spacing:.25px; white-space:nowrap; /* 가이드: Roboto Medium */
+  transition:background-color .2s ease, box-shadow .2s ease;
+}
+.gsi-btn:hover{background:#f7f8f8; box-shadow:0 1px 2px rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15)}
+.gsi-md{height:40px; padding:0 28px 0 24px; font-size:14px}
+.gsi-sm{height:32px; padding:0 18px 0 14px; font-size:12.5px; gap:8px}
+.gsi-logo{width:18px; height:18px; flex:none}
+.gsi-sm .gsi-logo{width:16px; height:16px}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .gsi-btn{background:#131314; border-color:#8e918f; color:#e3e3e3}
+  :root:not([data-theme="light"]) .gsi-btn:hover{background:#1f1f20}
+}
+:root[data-theme="dark"] .gsi-btn{background:#131314; border-color:#8e918f; color:#e3e3e3}
+
+/* 로그아웃 화면: 헤더 아래 빈 화면 가운데에 안내 + 로그인 버튼만 */
+.signed-out{
+  flex:1; min-height:calc(100vh - 120px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+  text-align:center;
+}
+.signed-out p{margin:0; font-size:14px; color:var(--ink-2)}
+.signed-out .gate-privacy{margin-top:4px}
