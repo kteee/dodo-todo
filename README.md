@@ -34,13 +34,18 @@ http://localhost:5175
 > Publishable key는 브라우저에 노출돼도 되는 키야. 보안은 RLS가 담당하고, `schema.sql`이 "본인 행만" 규칙을 건다.
 > **Secret key(`sb_secret_...`)나 레거시 service_role 키는 절대 `.env`에 넣지 말 것.**
 
-## 배포 (Cloudflare Pages)
+## 배포 (Cloudflare Workers, 정적 사이트)
 
-1. GitHub에 올리기
-2. Cloudflare 대시보드 → Workers & Pages → Pages → Git 연결
-3. Build command `npm run build`, Output directory `dist`
-4. 환경변수 `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` 등록
-5. 배포 주소를 Supabase의 Site URL / Redirect URLs에 등록
+GitHub `main`에 푸시하면 Cloudflare가 자동으로 빌드·배포한다. 설정은 `wrangler.jsonc`.
+
+1. Cloudflare 대시보드 → Workers & Pages → GitHub 저장소 연결
+2. Build command `npm run build`, Deploy command `npx wrangler deploy`
+3. **빌드용** 환경변수(Settings → Build → Variables and secrets): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `NODE_VERSION=22`
+   - Vite는 빌드할 때 값을 코드에 넣으므로, 바꾼 뒤엔 다시 배포해야 반영됨
+   - 값이 빠지면 배포판은 "서비스 설정 오류" 화면을 띄움 (조용히 로컬 모드로 가지 않게)
+4. Supabase → Authentication → URL Configuration
+   - Site URL = 배포 주소, Redirect URLs = 배포 주소 + `http://localhost:5175`
+   - 이걸 안 하면 구글 로그인 후 localhost로 튕김
 
 ## 안정성 설계 메모
 
