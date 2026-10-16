@@ -796,3 +796,29 @@ html, body, #root{height:auto}
 }
 .signed-out p{margin:0; font-size:14px; color:var(--ink-2)}
 .signed-out .gate-privacy{margin-top:4px}
+
+/* ── 마이페이지 ── */
+.mypage{max-width:520px; width:100%; margin:8px auto 60px; padding:0 4px}
+.mypage-back{display:inline-block; margin-bottom:18px; font-size:12.5px; color:var(--ink-3); text-decoration:none}
+.mypage-back:hover{color:var(--ink)}
+.mypage h1{margin:0 0 18px; font-size:20px; font-weight:600; letter-spacing:-.02em}
+.mypage-profile{display:flex; align-items:center; gap:14px; padding:16px; border:1px solid var(--line); border-radius:10px; margin-bottom:16px}
+.avatar.avatar-lg{width:48px; height:48px; font-size:18px}
+.mypage-who{min-width:0}
+.mypage-name{font-size:15px; font-weight:600}
+.mypage-email{font-size:12.5px; color:var(--ink-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.mypage-via{margin-top:2px; font-size:11.5px; color:var(--ink-3)}
+.mypage-menu{list-style:none; margin:0; padding:0; border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.mypage-menu li + li{border-top:1px solid var(--line)}
+.mypage-menu a, .mypage-menu button{
+  width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:14px 16px; text-align:left; text-decoration:none; color:var(--ink); background:var(--bg);
+}
+.mypage-menu a:hover, .mypage-menu button:hover{background:var(--panel)}
+.mypage-menu span{display:flex; flex-direction:column; gap:2px; min-width:0}
+.mypage-menu b{font-size:13.5px; font-weight:500}
+.mypage-menu small{font-size:11.5px; color:var(--ink-3)}
+.mypage-menu i{font-style:normal; color:var(--ink-3)}
+.mypage-menu .danger b{color:var(--sun)}
+.mypage-menu button:disabled{opacity:.6; cursor:default}
+.mypage-error{margin:12px 2px 0; font-size:12.5px; color:var(--sun)}

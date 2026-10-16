@@ -105,3 +105,18 @@ create policy "own select" on public.memos for select to authenticated using (us
 create policy "own insert" on public.memos for insert to authenticated with check (user_id = (select auth.uid()));
 create policy "own update" on public.memos for update to authenticated
   using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+
+-- ── 회원 탈퇴: 본인 계정 즉시 삭제 (데이터는 외래키 cascade로 함께 삭제) ──
+create or replace function public.delete_my_account() returns void
+language plpgsql security definer set search_path = '' as $$
+declare
+  uid uuid := auth.uid();
+begin
+  if uid is null then
+    raise exception 'not authenticated';
+  end if;
+  delete from auth.users where id = uid;
+end $$;
+
+revoke all on function public.delete_my_account() from public, anon;
+grant execute on function public.delete_my_account() to authenticated;

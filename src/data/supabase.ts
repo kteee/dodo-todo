@@ -75,14 +75,12 @@ export function supabaseRepo(): Repo {
   const db = supabase!;
   return {
     async load(): Promise<Snapshot> {
-      const [categories, todos, memos, ever] = await Promise.all([
+      const [categories, todos, memos] = await Promise.all([
         selectAll<Category>("categories", "id,name,color,rank"),
         selectAll<TodoRow>("todos", "id,text,category_id,date,done,rank"),
         selectMemos(),
-        // 지운 카테고리까지 포함해 하나라도 있었는지
-        db.from("categories").select("id", { count: "exact", head: true }).then(check),
       ]);
-      return { categories, todos: todos.map(fromRow), memos, fresh: (ever.count ?? 0) === 0 };
+      return { categories, todos: todos.map(fromRow), memos };
     },
     async insertTodo(t) {
       check(await db.from("todos").insert({ id: t.id, ...toRow(t) }));
@@ -104,6 +102,11 @@ export function supabaseRepo(): Repo {
     },
     async deleteCategory(id) {
       check(await db.rpc("delete_category", { p_id: id }));
+    },
+    async deleteAccount() {
+      check(await db.rpc("delete_my_account"));
+      // 계정이 지워졌으니 이 브라우저의 로그인 정보만 정리 (서버 세션은 이미 없음)
+      await db.auth.signOut({ scope: "local" });
     },
     async saveMemo(scope, period, body) {
       // user_id는 DB 기본값(auth.uid())으로 채워지고, 충돌 판정에도 그 값이 쓰임

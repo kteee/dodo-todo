@@ -184,7 +184,7 @@ interface ConfirmProps {
  * 확인 팝업. 수정 패널 안에 그려서(위치는 화면 고정) 패널의 "바깥 클릭 = 닫기"에 걸리지 않게 함.
  * Esc·배경 클릭 = 취소. 실수 방지로 처음 포커스는 [취소].
  */
-function ConfirmDialog({ title, body, confirmLabel, onConfirm, onCancel }: ConfirmProps) {
+export function ConfirmDialog({ title, body, confirmLabel, onConfirm, onCancel }: ConfirmProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   useEffect(() => cancelRef.current?.focus(), []);
   return (
@@ -241,6 +241,15 @@ export function Categories(p: CategoriesProps) {
     return () => document.removeEventListener("pointerdown", onDown);
   }, [editCat, setEditCat]);
   const [newName, setNewName] = useState("");
+  const committed = useRef(false); // Enter 직후 따라오는 blur로 두 번 추가되지 않게
+  const commitNew = () => {
+    if (committed.current) return;
+    committed.current = true;
+    const v = newName.trim();
+    if (v) p.onAdd(v);
+    setNewName("");
+    setAdding(false);
+  };
 
   const known = new Set(p.cats.map((c) => c.id));
   const totals = new Map<string, number>(); // 완료 포함 — 삭제 확인 문구용
@@ -300,8 +309,7 @@ export function Categories(p: CategoriesProps) {
           className="catform"
           onSubmit={(e) => {
             e.preventDefault();
-            // Enter도 포커스를 빼서 onBlur 한 곳에서만 추가 → 같은 이름이 두 번 들어가지 않음
-            e.currentTarget.querySelector("input")?.blur();
+            commitNew(); // Enter는 창 포커스와 상관없이 바로 추가
           }}
         >
           <input
@@ -315,10 +323,7 @@ export function Categories(p: CategoriesProps) {
             onBlur={() => {
               // 바깥을 누르면: 쓴 게 있으면 추가하고 닫음, 비어 있으면 그냥 닫음 (할 일 입력과 같은 규칙)
               if (!document.hasFocus()) return; // 다른 창으로 전환한 경우엔 그대로 둠
-              const v = newName.trim();
-              if (v) p.onAdd(v);
-              setNewName("");
-              setAdding(false);
+              commitNew();
             }}
             onKeyDown={(e) => {
               if (e.key === "Escape") {
@@ -329,7 +334,13 @@ export function Categories(p: CategoriesProps) {
           />
         </form>
       ) : (
-        <button className="addcat" onClick={() => setAdding(true)}>
+        <button
+          className="addcat"
+          onClick={() => {
+            committed.current = false;
+            setAdding(true);
+          }}
+        >
           ＋ 카테고리 추가
         </button>
       )}

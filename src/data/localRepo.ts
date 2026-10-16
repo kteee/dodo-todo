@@ -43,7 +43,6 @@ export const localRepo: Repo = {
   async load(): Promise<Snapshot> {
     const s = read();
     return {
-      fresh: s.categories.length === 0,
       categories: s.categories.filter(live).map(strip<Category>),
       todos: s.todos.filter(live).map(strip<Todo>),
       memos: s.memos,
@@ -87,4 +86,7 @@ export const localRepo: Repo = {
       if (m) m.body = body;
       else s.memos.push({ scope, period, body });
     }),
+  async deleteAccount() {
+    localStorage.removeItem(KEY);
+  },
 };

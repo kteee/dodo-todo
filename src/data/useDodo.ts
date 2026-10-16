@@ -11,11 +11,6 @@ export interface Toast {
   action?: { label: string; run: () => void };
 }
 
-const DEFAULT_CATS = [
-  { name: "집안일", color: "--cat-3" }, // 살구
-  { name: "공부", color: "--cat-9" }, // 하늘
-];
-
 const uuid = () => crypto.randomUUID();
 
 /** 앞 단어 마지막 글자에 받침이 있으면 "이", 없으면 "가" (한글이 아니면 "가") */
@@ -89,17 +84,8 @@ export function useDodo(repo: Repo | null) {
             return;
           }
           stale.current = false;
-          let categories = snap.categories;
-          if (snap.fresh) {
-            // 첫 방문: 기본 카테고리 생성 (사용자가 전부 지운 경우엔 다시 만들지 않음)
-            categories = [];
-            for (const d of DEFAULT_CATS) {
-              const c: Category = { id: uuid(), ...d, rank: rankLast(categories) };
-              await repo.insertCategory(c);
-              categories.push(c);
-            }
-          }
-          setCats([...categories].sort(byRank));
+          // 카테고리는 사용자가 직접 만듦 — 새 사용자는 빈 상태로 시작 (기본 카테고리를 미리 넣지 않음)
+          setCats([...snap.categories].sort(byRank));
           setTodos(snap.todos);
           setMemos(Object.fromEntries(snap.memos.map((m) => [memoKey(m.scope, m.period), m.body])));
           setStatus("ready");
@@ -263,6 +249,10 @@ export function useDodo(repo: Repo | null) {
         if ((memosRef.current[k] ?? "") === body) return;
         setMemos({ ...memosRef.current, [k]: body });
         save(() => repo.saveMemo(scope, period, body));
+      },
+      /** 회원 탈퇴 — 되돌릴 수 없어서 낙관적 처리 없이 서버 결과를 기다림 */
+      async deleteAccount() {
+        await repo.deleteAccount();
       },
       exportJson() {
         const blob = new Blob(

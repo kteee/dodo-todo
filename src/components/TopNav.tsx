@@ -17,7 +17,6 @@ interface Props {
   menuOpen: boolean;
   setMenuOpen: (o: boolean) => void;
   onSignOut: () => void;
-  onExport: (() => void) | null;
 }
 
 function Avatar({ a }: { a: Account }) {
@@ -63,7 +62,7 @@ export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => 
   );
 }
 
-export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSignOut, onExport }: Props) {
+export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSignOut }: Props) {
   return (
     <header className="topnav">
       <a className="logo" href="/">
@@ -100,19 +99,9 @@ export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSign
                 </div>
                 {isLocal && <div className="note">Supabase를 연결하면 구글 로그인과 기기 간 동기화가 켜져요.</div>}
                 <div className="rule" />
-                {onExport && (
-                  <button
-                    className="mi"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      onExport();
-                    }}
-                  >
-                    데이터 내보내기 (JSON)
-                  </button>
-                )}
-                <a className="mi" href="/privacy">
-                  개인정보 처리방침
+                {/* 데이터 내보내기·처리방침·탈퇴는 마이페이지 안으로 */}
+                <a className="mi" href="/my">
+                  마이페이지
                 </a>
                 {!isLocal && (
                   <button

@@ -15,6 +15,7 @@ import { SideColumn } from "./components/SideColumn";
 import { Categories, MiniCal } from "./components/Sidebar";
 import { GoogleButton, TopNav, ViewSwitch, type View } from "./components/TopNav";
 import { OptionsMenu } from "./components/OptionsMenu";
+import { MyPage } from "./components/MyPage";
 import { Search } from "./components/Search";
 import { Toasts } from "./components/Toasts";
 
@@ -409,7 +410,6 @@ export default function App() {
           menuOpen={false}
           setMenuOpen={setMenuOpen}
           onSignOut={() => signOut()}
-          onExport={null}
         />
         <main className="signed-out">
           <p>로그인 후 이용해주세요.</p>
@@ -418,6 +418,24 @@ export default function App() {
             개인정보 처리방침
           </a>
         </main>
+      </div>
+    );
+  }
+
+  // 마이페이지 (/my): 헤더 + 내 정보·메뉴
+  if (location.pathname.replace(/\/$/, "") === "/my" && account) {
+    return (
+      <div className="page">
+        <TopNav account={account} isLocal={auth.mode === "local"} menuOpen={menuOpen} setMenuOpen={setMenuOpen} onSignOut={() => signOut()} />
+        <MyPage
+          account={account}
+          isLocal={auth.mode === "local"}
+          onExport={ready ? actions.exportJson : null}
+          onDeleteAccount={async () => {
+            if (!actions) throw new Error("not ready");
+            await actions.deleteAccount();
+          }}
+        />
       </div>
     );
   }
@@ -431,7 +449,6 @@ export default function App() {
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
         onSignOut={() => signOut()}
-        onExport={ready ? actions.exportJson : null}
       />
       <div className={"app" + (sideFolded ? " side-folded" : "")}>
         {sideFolded ? (
