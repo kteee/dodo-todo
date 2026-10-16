@@ -370,6 +370,9 @@ export default function App() {
         <div>
           <p>로그인 후 이용해주세요.</p>
           <GoogleButton onClick={() => signIn()} />
+          <a className="gate-privacy" href="/privacy">
+            개인정보 처리방침
+          </a>
         </div>
       </div>
     );

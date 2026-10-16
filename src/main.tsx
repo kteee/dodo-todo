@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { Privacy } from "./components/Privacy";
 import { supabase } from "./data/supabase";
 import "./styles.css";
 
@@ -9,7 +10,10 @@ const misconfigured = import.meta.env.PROD && !supabase;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {misconfigured ? (
+    {location.pathname.replace(/\/$/, "") === "/privacy" ? (
+      // 개인정보 처리방침은 로그인·설정과 상관없이 누구나 볼 수 있어야 함
+      <Privacy />
+    ) : misconfigured ? (
       <div className="page">
         <div className="gate">
           <div>

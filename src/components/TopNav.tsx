@@ -105,6 +105,9 @@ export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSign
                     데이터 내보내기 (JSON)
                   </button>
                 )}
+                <a className="mi" href="/privacy">
+                  개인정보 처리방침
+                </a>
                 {!isLocal && (
                   <button
                     className="mi out"
