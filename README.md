@@ -65,7 +65,7 @@ psql "<새 프로젝트 Session pooler URL>" -v ON_ERROR_STOP=1 -f auth.sql     
 psql "<새 프로젝트 Session pooler URL>" -v ON_ERROR_STOP=1 -f public.sql   # 테이블·함수·RLS·데이터
 ```
 
-그다음 `supabase/migrations/005_purge_deleted.sql`(파기 예약 작업)을 다시 실행하고, 구글 로그인·URL 설정과 `.env`/Cloudflare 변수를 새 프로젝트 값으로 바꾼다.
+그다음 `supabase/migrations/005_purge_deleted.sql`(파기 예약 작업)과 `schema.sql` 끝의 `revoke/grant` 줄(백업은 권한을 담지 않음)을 다시 실행하고, 구글 로그인·URL 설정과 `.env`/Cloudflare 변수를 새 프로젝트 값으로 바꾼다.
 
 ## 에러 알림 (Sentry)
 
@@ -84,6 +84,11 @@ Sentry 프로젝트 설정에서 **Security & Privacy → Prevent Storing of IP 
 | 남의 데이터 접근 | RLS + `(category_id, user_id)` 복합 FK |
 | 카테고리 삭제 중간 실패 | 할 일 이동 + 삭제를 DB 함수 하나(`delete_category`)로 원자 처리 |
 | 할 일 1000개 넘는 사용자 | Supabase 기본 1000행 제한 → 페이지 나눠 전부 읽음 |
+| 오프라인·연결 끊김 중 편집 | 저장 큐에 남겨 두고 연결이 돌아오면 자동 재전송. 화면 위 배너로 대기 건수 표시 |
+| 삭제→실행 취소, 연속 드래그 요청이 뒤바뀜 | 모든 저장을 큐에서 순서대로 하나씩 보냄 |
+| 메모 자동저장(0.5초) 전에 탭 닫음 | 닫기 경고 + beforeunload 에서 즉시 저장 + fetch keepalive |
+| 한 계정이 DB 용량을 다 채움 | 사용자당 상한(할 일 2만/카테고리 100/메모 3천) + 정렬 키 길이 제한 (`007_limits.sql`) |
+| XSS → 토큰 탈취 | `public/_headers` CSP(스크립트는 우리 것만) + HSTS |
 | 다른 기기에서 바꾼 내용 | 탭에 돌아올 때 다시 불러옴 (저장 중이면 덮어쓰지 않음) |
 | 탭 켜둔 채 자정 지남 | 1분마다 "오늘" 갱신 |
 | 저장 중 창 닫기 | `beforeunload` 경고 |

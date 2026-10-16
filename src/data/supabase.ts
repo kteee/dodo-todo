@@ -7,7 +7,13 @@ const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const anon = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY) as string | undefined;
 
 /** 환경변수가 없으면 null → 앱은 로컬 모드로 동작 */
-export const supabase = url && anon ? createClient(url, anon) : null;
+export const supabase =
+  url && anon
+    ? createClient(url, anon, {
+        // keepalive: 탭을 닫는 순간 보낸 저장(메모 자동저장 등)도 끝까지 전송됨. 요청 본문은 최대 15KB 수준이라 64KB 한도 안
+        global: { fetch: (input, init) => fetch(input, { ...init, keepalive: true }) },
+      })
+    : null;
 
 interface TodoRow {
   id: string;

@@ -11,25 +11,30 @@ interface MemoProps {
   period: string;
   value: string;
   onSave: (scope: MemoScope, period: string, body: string) => void;
+  /** 자동저장 타이머가 돌고 있는(아직 저장 요청 전인) 글이 있는지 — 창 닫기 경고용 */
+  onDirty?: (dirty: boolean) => void;
 }
 
 /**
  * 타이핑이 멈추고 0.5초 뒤 자동 저장, 포커스가 빠지거나 기간이 바뀌거나 탭을 숨기면 즉시 저장.
  * 입력 중에는 서버에서 다시 불러온 값으로 덮어쓰지 않는다(쓰던 글이 튀지 않게).
  */
-function MemoBox({ scope, period, value, onSave }: MemoProps) {
+function MemoBox({ scope, period, value, onSave, onDirty }: MemoProps) {
   const [draft, setDraft] = useState(value);
   const focused = useRef(false);
   const timer = useRef<number | null>(null);
   const pending = useRef<{ scope: MemoScope; period: string; body: string } | null>(null);
   const saveRef = useRef(onSave);
   saveRef.current = onSave;
+  const dirtyRef = useRef(onDirty);
+  dirtyRef.current = onDirty;
 
   const flush = () => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
     const p = pending.current;
     pending.current = null;
+    dirtyRef.current?.(false);
     if (p) saveRef.current(p.scope, p.period, p.body);
   };
 
@@ -50,9 +55,12 @@ function MemoBox({ scope, period, value, onSave }: MemoProps) {
       if (document.visibilityState === "hidden") flush();
     };
     document.addEventListener("visibilitychange", onHide);
+    // beforeunload 에서 먼저 저장 요청을 보내 두면(keepalive) 탭이 닫혀도 요청은 끝까지 감
+    window.addEventListener("beforeunload", flush);
     window.addEventListener("pagehide", flush);
     return () => {
       document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("beforeunload", flush);
       window.removeEventListener("pagehide", flush);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,6 +85,7 @@ function MemoBox({ scope, period, value, onSave }: MemoProps) {
           const body = e.target.value;
           setDraft(body);
           pending.current = { scope, period, body };
+          dirtyRef.current?.(true);
           if (timer.current) clearTimeout(timer.current);
           timer.current = window.setTimeout(flush, SAVE_DELAY);
         }}

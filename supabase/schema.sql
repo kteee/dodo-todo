@@ -8,7 +8,7 @@ create table if not exists public.categories (
   user_id     uuid not null default auth.uid() references auth.users(id) on delete cascade,
   name        text not null check (char_length(name) between 1 and 14),
   color       text not null check (color ~ '^--cat-([1-9]|1[0-6])$'),
-  rank        text collate "C" not null,
+  rank        text collate "C" not null check (char_length(rank) <= 256),
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),
   deleted_at  timestamptz,
@@ -22,7 +22,7 @@ create table if not exists public.todos (
   text        text not null check (char_length(text) between 1 and 500),
   date        date,              -- null = 날짜 없음("언젠가 할 일"). timestamp가 아니라 date라서 시간대 때문에 하루 밀리지 않음
   done        boolean not null default false,
-  rank        text collate "C" not null,
+  rank        text collate "C" not null check (char_length(rank) <= 256),
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),
   deleted_at  timestamptz,
@@ -120,3 +120,31 @@ end $$;
 
 revoke all on function public.delete_my_account() from public, anon;
 grant execute on function public.delete_my_account() to authenticated;
+
+-- ── 남용 방지 상한 (007) ──────────────────────────────────────
+-- 공개 키 + 구글 계정만 있으면 누구나 행을 넣을 수 있으므로 사용자당 행 수에 상한을 둔다
+-- (정상 사용 범위보다 훨씬 넉넉하게: 할 일 20,000 / 카테고리 100 / 메모 3,000. 삭제 대기 중인 행 포함)
+create or replace function public.enforce_row_limit() returns trigger
+language plpgsql set search_path = '' as $$
+declare
+  lim int := tg_argv[0]::int;
+  n   int;
+begin
+  execute format('select count(*) from %I.%I where user_id = $1', tg_table_schema, tg_table_name)
+    into n using new.user_id;
+  if n >= lim then
+    raise exception '사용자당 최대 % 개까지 저장할 수 있습니다', lim using errcode = 'check_violation';
+  end if;
+  return new;
+end $$;
+
+create trigger todos_limit      before insert on public.todos      for each row execute function public.enforce_row_limit('20000');
+create trigger categories_limit before insert on public.categories for each row execute function public.enforce_row_limit('100');
+create trigger memos_limit      before insert on public.memos      for each row execute function public.enforce_row_limit('3000');
+
+create index if not exists todos_user_idx          on public.todos (user_id);
+create index if not exists categories_user_all_idx on public.categories (user_id);
+create index if not exists memos_user_idx          on public.memos (user_id);
+create index if not exists todos_category_idx      on public.todos (category_id) where category_id is not null;
+create index if not exists todos_deleted_idx       on public.todos (deleted_at)      where deleted_at is not null;
+create index if not exists categories_deleted_idx  on public.categories (deleted_at) where deleted_at is not null;

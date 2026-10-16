@@ -14,6 +14,14 @@ export interface Toast {
 
 const uuid = () => crypto.randomUUID();
 
+/** 서버까지 못 간 오류(오프라인, DNS, 연결 끊김)인지 — 이 경우엔 작업을 버리지 않고 다시 보낸다 */
+function isNetworkError(e: unknown): boolean {
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return true;
+  const msg = e && typeof e === "object" ? String((e as { message?: unknown }).message ?? "") : String(e);
+  // supabase-js는 fetch 실패를 { message: "TypeError: Failed to fetch", code: "" } 로 감싸서 돌려줌
+  return /Failed to fetch|NetworkError|Load failed|network request failed|fetch failed/i.test(msg);
+}
+
 /** 앞 단어 마지막 글자에 받침이 있으면 "이", 없으면 "가" (한글이 아니면 "가") */
 function iGa(word: string) {
   const code = word.charCodeAt(word.length - 1) - 0xac00;
@@ -38,11 +46,16 @@ export function useDodo(repo: Repo | null) {
   const [todos, setTodosState] = useState<Todo[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [toasts, setToasts] = useState<Toast[]>([]);
+  /** 네트워크 때문에 저장이 밀려 있는 상태 (배너용). waiting = 밀린 작업 수 */
+  const [net, setNet] = useState<{ offline: boolean; waiting: number }>({ offline: false, waiting: 0 });
 
   // 액션은 렌더 사이에 연달아 불릴 수 있어서, 항상 최신 값을 ref로 읽는다
   const catsRef = useRef(cats);
   const todosRef = useRef(todos);
+  /** 아직 서버에 반영되지 않은 저장 작업 수 (큐 + 진행 중) */
   const pending = useRef(0);
+  /** 화면에만 있고 아직 저장 요청도 안 된 입력(메모 자동저장 대기 등) — 창 닫기 경고용 */
+  const dirty = useRef(new Set<string>());
   const toastSeq = useRef(0);
   // 첫 로드가 겹치면(StrictMode 이중 실행, 빠른 재시도) 기본 카테고리가 두 번 생기지 않게 하나로 합침
   const inflight = useRef<{ repo: Repo; p: Promise<void> } | null>(null);
@@ -124,10 +137,10 @@ export function useDodo(repo: Repo | null) {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, [repo, reload]);
 
-  // 저장 중에 창을 닫으려 하면 경고
+  // 저장 중이거나 아직 저장 안 된 입력이 있는데 창을 닫으려 하면 경고
   useEffect(() => {
     const onLeave = (e: BeforeUnloadEvent) => {
-      if (pending.current > 0) e.preventDefault();
+      if (pending.current > 0 || dirty.current.size > 0) e.preventDefault();
     };
     window.addEventListener("beforeunload", onLeave);
     return () => window.removeEventListener("beforeunload", onLeave);
@@ -136,25 +149,83 @@ export function useDodo(repo: Repo | null) {
   const reloadRef = useRef(reload);
   reloadRef.current = reload;
 
+  /**
+   * 저장 큐. 모든 저장은 들어온 순서대로 하나씩 보낸다.
+   * - 순서 보장: "삭제 → 실행 취소"나 연속 드래그가 서버에 뒤바뀐 순서로 닿지 않는다
+   * - 네트워크 오류(오프라인 등)면 작업을 버리지 않고 큐에 둔 채 연결이 돌아오면 다시 보낸다
+   * - 서버가 거부한 오류(제약 위반 등)면 그 작업만 버리고 알린 뒤, 큐가 비면 서버 상태로 다시 맞춘다
+   */
+  const queue = useRef<{ run: () => Promise<void>; tries: number }[]>([]);
+  const running = useRef(false);
+  const retryTimer = useRef<number | null>(null);
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
+
+  const pump = useCallback(() => {
+    if (running.current) return;
+    const job = queue.current[0];
+    if (!job) {
+      if (stale.current) reloadRef.current(true);
+      return;
+    }
+    running.current = true;
+    job
+      .run()
+      .then(() => {
+        queue.current.shift();
+        pending.current--;
+        if (job.tries > 0) setNet({ offline: false, waiting: 0 });
+      })
+      .catch((e) => {
+        if (isNetworkError(e)) {
+          // 작업을 큐에 그대로 두고 잠시 뒤 다시 시도 (online 이벤트가 오면 더 빨리)
+          job.tries++;
+          setNet({ offline: true, waiting: queue.current.length });
+          if (retryTimer.current) clearTimeout(retryTimer.current);
+          retryTimer.current = window.setTimeout(() => {
+            retryTimer.current = null;
+            pump();
+          }, Math.min(30000, 3000 * 2 ** Math.min(job.tries - 1, 4)));
+          running.current = false;
+          return;
+        }
+        queue.current.shift();
+        pending.current--;
+        report(e, "save");
+        // 원인 파악용으로 DB 오류 코드·메시지를 짧게 덧붙임 (예: 23503 foreign key …)
+        const detail = describeError(e);
+        toastRef.current("저장하지 못했어요. 마지막으로 저장된 상태로 되돌릴게요." + (detail ? ` (${detail.slice(0, 120)})` : ""), "err");
+        stale.current = true;
+      })
+      .then(() => {
+        if (!running.current) return; // 재시도 대기 중
+        running.current = false;
+        pump();
+      });
+  }, []);
+
   const save = useCallback(
     (remote: () => Promise<void>) => {
       pending.current++;
       saveSeq.current++;
-      remote()
-        .catch((e) => {
-          report(e, "save");
-          // 원인 파악용으로 DB 오류 코드·메시지를 짧게 덧붙임 (예: 23503 foreign key …)
-          const detail = describeError(e);
-          toast("저장하지 못했어요. 마지막으로 저장된 상태로 되돌릴게요." + (detail ? ` (${detail.slice(0, 120)})` : ""), "err");
-          stale.current = true;
-        })
-        .finally(() => {
-          pending.current--;
-          if (pending.current === 0 && stale.current) reload(true);
-        });
+      queue.current.push({ run: remote, tries: 0 });
+      pump();
     },
-    [reload, toast],
+    [pump],
   );
+
+  // 연결이 돌아오면 밀린 저장을 바로 다시 보냄
+  useEffect(() => {
+    const onOnline = () => {
+      if (retryTimer.current) {
+        clearTimeout(retryTimer.current);
+        retryTimer.current = null;
+      }
+      pump();
+    };
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [pump]);
 
   const sortedIn = (b: Bucket, exceptId?: string) =>
     todosRef.current.filter((t) => bucketOf(t) === b && t.id !== exceptId).sort(byRank);
@@ -251,6 +322,11 @@ export function useDodo(repo: Repo | null) {
         setMemos({ ...memosRef.current, [k]: body });
         save(() => repo.saveMemo(scope, period, body));
       },
+      /** 아직 저장 요청을 안 보낸 입력이 있는지 알림 (메모 자동저장 대기 중 등) — 창 닫기 경고에 쓰임 */
+      markDirty(key: string, on: boolean) {
+        if (on) dirty.current.add(key);
+        else dirty.current.delete(key);
+      },
       /** 회원 탈퇴 — 되돌릴 수 없어서 낙관적 처리 없이 서버 결과를 기다림 */
       async deleteAccount() {
         await repo.deleteAccount();
@@ -270,7 +346,7 @@ export function useDodo(repo: Repo | null) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repo, save, toast]);
 
-  return { cats, todos, memos, status, toasts, dismiss, actions, retry: () => reload(false) };
+  return { cats, todos, memos, status, toasts, net, dismiss, actions, retry: () => reload(false) };
 }
 
 export type Actions = NonNullable<ReturnType<typeof useDodo>["actions"]>;

@@ -272,6 +272,7 @@ export default function App() {
     period: memoPeriod,
     value: store.memos[memoKey(memoScope, memoPeriod)] ?? "",
     onSave: (sc: MemoScope, pe: string, body: string) => actions?.saveMemo(sc, pe, body),
+    onDirty: (d: boolean) => actions?.markDirty("memo", d),
   };
   // 두 줄 보기: 메모는 7일 뒤 남는 8번째 칸, 언젠가 할 일은 맨 오른쪽 세로 칸(두 줄 높이)으로 따로
   // 메모를 끄면 8번째 칸이 비어 선이 끊기므로, 빈 칸을 하나 채워 테두리를 이어줌
@@ -570,6 +571,11 @@ export default function App() {
           {main}
         </main>
       </div>
+      {store.net.offline && (
+        <div className="netbar" role="status">
+          연결이 끊겼어요. 저장 대기 중 {store.net.waiting}건 — 연결되면 자동으로 저장돼요.
+        </div>
+      )}
       <Toasts toasts={store.toasts} dismiss={store.dismiss} />
     </div>
   );
