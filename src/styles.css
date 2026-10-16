@@ -666,7 +666,7 @@ html, body, #root{height:auto}
 
 /* 검색으로 찾아간 카드 반짝 */
 @keyframes card-flash{
-  0%, 45%{box-shadow:0 0 0 2px var(--ink-2); background:color-mix(in oklab, var(--c) 28%, var(--bg))}
+  0%, 45%{box-shadow:0 0 0 1px #b8b8b8; background:color-mix(in oklab, var(--c) 28%, var(--bg))}
   100%{box-shadow:0 0 0 0 transparent}
 }
 .card.flash{animation:card-flash 1.7s ease}
