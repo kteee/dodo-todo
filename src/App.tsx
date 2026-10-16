@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Bucket, Todo } from "./lib/types";
 import { NONE, NO_CAT, bucketOf, memoKey, type MemoScope } from "./lib/types";
 import { DOW, addDays, addMonths, firstOfMonth, key, mondayOf, parse } from "./lib/date";
@@ -18,6 +18,7 @@ import { OptionsMenu } from "./components/OptionsMenu";
 import { MyPage } from "./components/MyPage";
 import { Search } from "./components/Search";
 import { Toasts } from "./components/Toasts";
+import { isPhone, usePhone } from "./hooks/usePhone";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const INBOX_PREF = "dodo:showInbox";
@@ -26,10 +27,12 @@ const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄
 function readView(): View {
   try {
     const v = localStorage.getItem(DEFAULT_VIEW_PREF);
-    return v === "day" || v === "month" ? v : "week";
+    if (v === "day" || v === "week" || v === "month") return v;
   } catch {
-    return "week";
+    /* 저장소를 못 읽으면 기본값 */
   }
+  // 정한 적 없으면: 폰은 하루 보기(한 화면에 하루가 딱 맞음), 큰 화면은 주간
+  return isPhone() ? "day" : "week";
 }
 const WIDE_PREF = "dodo:wideWeek"; // 주간 "가로 보기"(한 줄). 기본은 두 줄
 const HIDE_DONE_PREF = "dodo:hideDone";
@@ -83,6 +86,9 @@ export default function App() {
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
   const [wide, setWide] = useState(() => readPref(WIDE_PREF, false));
   const twoRows = !wide;
+  // 폰: 달력·카테고리는 왼쪽 서랍으로, 주간은 7일을 세로로 쌓고, 좌우로 쓸어 넘겨 날짜 이동
+  const phone = usePhone();
+  const [drawer, setDrawer] = useState(false);
   const [folded, setFolded] = useState(() => readPref(FOLD_PREF, false));
   const toggleFold = (v: boolean) => {
     setFolded(v);
@@ -193,6 +199,7 @@ export default function App() {
       setMenuOpen(false);
       setOpenBucket(null);
       setEditCat(null);
+      setDrawer(false);
       setEditingId(null); // 할 일 수정 취소 (저장 안 함)
     };
     const onClick = (e: MouseEvent) => {
@@ -251,6 +258,23 @@ export default function App() {
     setTimeout(() => setFlashId((f) => (f === t.id ? null : f)), 1800);
   };
 
+  /** 폰에서 보드를 좌우로 쓸어 넘기면 이전·다음 날/주/달. 입력칸 안이나 카드 드래그 중엔 무시 */
+  const swipe = useRef<{ x: number; y: number; t: number } | null>(null);
+  const onSwipeStart = (e: React.TouchEvent) => {
+    if (!phone || (e.target as Element).closest("input, textarea, select")) return;
+    const t = e.touches[0];
+    swipe.current = { x: t.clientX, y: t.clientY, t: Date.now() };
+  };
+  const onSwipeEnd = (e: React.TouchEvent) => {
+    const st = swipe.current;
+    swipe.current = null;
+    if (!st || document.body.classList.contains("dragging")) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - st.x;
+    const dy = t.clientY - st.y;
+    if (Date.now() - st.t < 600 && Math.abs(dx) > 70 && Math.abs(dy) < 50) step(dx < 0 ? 1 : -1);
+  };
+
   const goToday = () => {
     setSelected(todayKey);
     setWeekStart(mondayOf(today));
@@ -266,7 +290,7 @@ export default function App() {
   const [memoScope, memoPeriod]: [MemoScope, string] =
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
   const hasSide = showMemo || showInbox;
-  const weekTwoRows = view === "week" && twoRows;
+  const weekTwoRows = view === "week" && twoRows && !phone;
   const memoProps = {
     scope: memoScope,
     period: memoPeriod,
@@ -355,7 +379,26 @@ export default function App() {
     );
     board = (
       <>
-        <MonthGrid calMonth={calMonth} todayKey={todayKey} ctx={ctx} />
+        {phone ? (
+          <MiniCal
+            big
+            calMonth={calMonth}
+            onMonth={(n) => setCalMonth(addMonths(calMonth, n))}
+            weekStart={weekStart}
+            showWeek={false}
+            selected={selected}
+            todayKey={todayKey}
+            inBucket={inBucket}
+            catOf={catOf}
+            onPick={(k) => {
+              pickDay(k);
+              setView("day");
+              setOpenBucket(null);
+            }}
+          />
+        ) : (
+          <MonthGrid calMonth={calMonth} todayKey={todayKey} ctx={ctx} />
+        )}
         {side}
       </>
     );
@@ -441,6 +484,37 @@ export default function App() {
     );
   }
 
+  const sideInner = (
+    <>
+      <MiniCal
+        calMonth={calMonth}
+        onMonth={(n) => setCalMonth(addMonths(calMonth, n))}
+        weekStart={weekStart}
+        showWeek={view === "week"}
+        selected={selected}
+        todayKey={todayKey}
+        inBucket={inBucket}
+        catOf={catOf}
+        onPick={(k) => {
+          pickDay(k);
+          setDrawer(false);
+        }}
+      />
+      {ready && (
+        <Categories
+          cats={cats}
+          todos={todos}
+          editCat={editCat}
+          setEditCat={setEditCat}
+          dropCat={drag?.catTarget ?? null}
+          onAdd={actions.addCategory}
+          onUpdate={actions.updateCategory}
+          onDelete={actions.deleteCategory}
+        />
+      )}
+    </>
+  );
+
   return (
     <div className="page">
       <TopNav
@@ -451,8 +525,16 @@ export default function App() {
         setMenuOpen={setMenuOpen}
         onSignOut={() => signOut()}
       />
-      <div className={"app" + (sideFolded ? " side-folded" : "")}>
-        {sideFolded ? (
+      <div className={"app" + (sideFolded ? " side-folded" : "") + (phone ? " phone" : "")}>
+        {phone ? (
+          drawer && (
+            <div className="drawer-back" onClick={() => setDrawer(false)}>
+              <aside className="side drawer" onClick={(e) => e.stopPropagation()} aria-label="달력과 카테고리">
+                {sideInner}
+              </aside>
+            </div>
+          )
+        ) : sideFolded ? (
           // 접힌 상태: 얇은 띠에 펼치기 버튼만
           <aside className="side folded">
             <button className="side-toggle" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
@@ -461,29 +543,7 @@ export default function App() {
           </aside>
         ) : (
         <aside className="side">
-          <MiniCal
-            calMonth={calMonth}
-            onMonth={(n) => setCalMonth(addMonths(calMonth, n))}
-            weekStart={weekStart}
-            showWeek={view === "week"}
-            selected={selected}
-            todayKey={todayKey}
-            inBucket={inBucket}
-            catOf={catOf}
-            onPick={pickDay}
-          />
-          {ready && (
-            <Categories
-              cats={cats}
-              todos={todos}
-              editCat={editCat}
-              setEditCat={setEditCat}
-              dropCat={drag?.catTarget ?? null}
-              onAdd={actions.addCategory}
-              onUpdate={actions.updateCategory}
-              onDelete={actions.deleteCategory}
-            />
-          )}
+          {sideInner}
           {canFold && (
             <button className="side-fold" onClick={() => toggleFold(true)}>
               « 접기
@@ -491,8 +551,16 @@ export default function App() {
           )}
         </aside>
         )}
-        <main className="main">
+        <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
           <div className="topbar">
+            {phone && (
+              <button className="side-btn" aria-label="달력과 카테고리 열기" aria-expanded={drawer} onClick={() => setDrawer(true)}>
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="2" y="3" width="12" height="11" rx="2" />
+                  <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" />
+                </svg>
+              </button>
+            )}
             <h2 className={"range r-" + view}>{label}</h2>
             <div className="nav">
               <button aria-label="이전" onClick={() => step(-1)}>
@@ -527,7 +595,7 @@ export default function App() {
                 <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
               </label>
               {/* 주간 보기 전용: 기본은 두 줄(월~목 / 금~일+메모), 켜면 7일을 한 줄로 가로로 펼침 */}
-              {view === "week" && (
+              {view === "week" && !phone && (
                 <label className="togg">
                   <input
                     type="checkbox"

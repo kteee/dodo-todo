@@ -15,14 +15,16 @@ interface MiniCalProps {
   inBucket: (k: string) => Todo[];
   catOf: (id: string | null) => Category | null;
   onPick: (k: string) => void;
+  /** 폰 월간 보기: 칸을 크게 (달력 자체가 본문) */
+  big?: boolean;
 }
 
-export function MiniCal({ calMonth, onMonth, weekStart, showWeek, selected, todayKey, inBucket, catOf, onPick }: MiniCalProps) {
+export function MiniCal({ calMonth, onMonth, weekStart, showWeek, selected, todayKey, inBucket, catOf, onPick, big }: MiniCalProps) {
   const start = mondayOf(calMonth);
   const wkStart = key(weekStart);
   const wkEnd = key(addDays(weekStart, 6));
   return (
-    <section className="cal">
+    <section className={"cal" + (big ? " big" : "")}>
       <div className="calhead">
         <span className="m">
           <span className="y">{calMonth.getFullYear()}</span>

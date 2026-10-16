@@ -119,6 +119,18 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
       const sy = e.clientY;
       let started = false;
       let hold: number | null = null;
+      // 폰(세로로 쌓인 칸)에서 다른 날로 옮기려면 화면 끝으로 끌었을 때 페이지가 따라 내려가야 함
+      let lastX = sx;
+      let lastY = sy;
+      let scroller: number | null = null;
+      const autoScroll = () => {
+        const edge = 70;
+        const h = window.innerHeight;
+        const dy = lastY < edge ? -Math.ceil((edge - lastY) / 6) : lastY > h - edge ? Math.ceil((lastY - (h - edge)) / 6) : 0;
+        if (!dy) return;
+        window.scrollBy(0, dy);
+        over(lastX, lastY); // 화면이 움직였으니 손가락 밑 칸을 다시 계산
+      };
 
       if (touch) {
         card.classList.add("lifting");
@@ -139,6 +151,9 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
           started = begin(card!, id, sx, sy);
           if (!started) return;
         }
+        lastX = ev.clientX;
+        lastY = ev.clientY;
+        if (touch && scroller === null) scroller = window.setInterval(autoScroll, 16);
         over(ev.clientX, ev.clientY);
         if (ghost) ghost.style.transform = `translate(${ev.clientX - grabX}px,${ev.clientY - grabY}px)`;
         ev.preventDefault();
@@ -146,6 +161,8 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
       function up() {
         if (hold) clearTimeout(hold);
         hold = null;
+        if (scroller !== null) clearInterval(scroller);
+        scroller = null;
         card!.classList.remove("lifting");
         document.removeEventListener("pointermove", move);
         document.removeEventListener("pointerup", up);

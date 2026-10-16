@@ -73,6 +73,15 @@ psql "<새 프로젝트 Session pooler URL>" -v ON_ERROR_STOP=1 -f public.sql   
 할 일·메모 내용과 사용자 정보는 보내지 않도록 클릭 기록·요청 쿼리·DB 오류 상세를 걸러낸다.
 Sentry 프로젝트 설정에서 **Security & Privacy → Prevent Storing of IP Addresses**도 켜 둘 것.
 
+## 폰 화면
+
+가로 640px 이하면 폰 레이아웃 (`src/hooks/usePhone.ts`, `styles.css` 맨 아래 블록).
+
+- 처음 열면 **일간** 보기 (시작 화면을 정해 두면 그걸 따름). 보드를 **좌우로 쓸어 넘기면** 이전·다음 날/주/달
+- 주간은 7일을 세로로 쌓고, 월간은 숫자 달력(점 = 할 일) → 날짜를 누르면 그날로
+- 달력·카테고리는 날짜 줄 왼쪽 📅 버튼의 서랍. 카드를 꾹 눌러 끌면(0.3초) 화면 끝에서 자동 스크롤
+- 홈 화면에 추가 가능 (`public/manifest.webmanifest`, 아이콘은 `favicon.svg`와 같은 모양). 서비스 워커는 두지 않음 — 오프라인 캐시가 구버전을 붙잡는 사고를 피하려고
+
 ## 안정성 설계 메모
 
 | 위험 | 대응 |

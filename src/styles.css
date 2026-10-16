@@ -824,3 +824,94 @@ html, body, #root{height:auto}
 .mypage-menu .danger b{color:var(--sun)}
 .mypage-menu button:disabled{opacity:.6; cursor:default}
 .mypage-error{margin:12px 2px 0; font-size:12.5px; color:var(--sun)}
+
+
+/* ── 폰 (640px 이하) ─────────────────────────────────────
+   원칙: 한 화면에 하루. 주간은 7일을 세로로 쌓은 종이 다이어리처럼, 월간은 숫자 달력.
+   달력·카테고리는 왼쪽 서랍, 좌우로 쓸어 넘기면 날짜 이동. 터치 크기(44px 근처)로 키움. */
+.side-btn{display:none}
+@media (max-width:640px){
+  .page{padding-block:10px 28px; padding-left:max(14px, env(safe-area-inset-left,0px)); padding-right:max(14px, env(safe-area-inset-right,0px))}
+  /* 헤더: 로고 + 계정 한 줄, 검색은 아래 줄 */
+  .topnav{display:flex; flex-wrap:wrap; align-items:center; row-gap:10px; padding-bottom:10px; margin-bottom:12px}
+  .topnav-main{display:contents} /* 로고·계정은 한 줄, 검색은 그 아래 한 줄 */
+  .acct{margin-left:auto}
+  .acctbtn .who, .acctbtn .caret{display:none}
+  .acctbtn{padding:2px}
+  .search{order:3; width:100%; margin-left:0}
+  /* 왼쪽 칸은 서랍으로만 */
+  .app.phone{display:block}
+  .app.phone > .side:not(.drawer){display:none}
+  .side-btn{
+    display:inline-grid; place-items:center; width:34px; height:34px; border-radius:8px;
+    border:1px solid var(--line); color:var(--ink-2); flex:none;
+  }
+  .side-btn svg{width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round}
+  .side-btn:active{background:var(--panel-2)}
+  /* 날짜 줄: [달력][제목 ‹ 오늘 ›] / [일간 주간 월간][설정] */
+  .topbar{gap:8px; padding-bottom:10px}
+  .range, .range.r-day, .range.r-month{min-width:0; flex:1; font-size:15.5px; overflow:hidden; text-overflow:ellipsis}
+  .range .yr{display:none}
+  .nav{margin-left:0; flex:none}
+  .nav button{height:34px; min-width:34px}
+  .topbar-right{width:100%; margin-left:0; gap:8px}
+  .topbar-right .views{flex:1; order:0}
+  .views button{padding:7px 10px; font-size:12.5px}
+  .optbtn{height:34px}
+  /* 보드: 어떤 보기든 세로로 쌓기 */
+  .board, .board.v-day, .board.v-week, .board.v-month,
+  .board.v-week.no-inbox, .board.v-day.no-inbox, .board.v-month.no-inbox,
+  .board.v-week.two-rows, .board.v-week.two-rows.no-inbox, .board.v-week.two-rows.inbox-col{
+    display:flex; flex-direction:column; gap:14px; height:auto; min-height:0; overflow:visible; background:none;
+  }
+  .board > .col, .board > .sidecol, .board > .month{box-shadow:0 0 0 1px var(--line); border-radius:8px; overflow:hidden}
+  .board > .col{min-height:0; flex:none}
+  .board > .sidecol{display:flex; flex-direction:column; min-height:0}
+  .sidecol.split > .memo{flex:none; height:auto}
+  .sidecol > .col{flex:none; min-height:0}
+  .memo{min-height:0}
+  .memo textarea{min-height:120px; font-size:14px}
+  .colhead{padding:11px 12px 10px; position:sticky; top:0; background:inherit; z-index:1}
+  .col.is-today .colhead{background:var(--panel)}
+  .colhead .dow{font-size:12.5px}
+  .colhead .dnum{font-size:16px}
+  .colbody{padding:10px 8px 12px; overflow:visible}
+  .col .add{opacity:1}
+  /* 카드: 손가락 크기 */
+  .card{padding:10px 9px; gap:9px; border-radius:8px}
+  .txt{font-size:14.5px; line-height:1.5; padding-right:22px}
+  .card .txt-edit{font-size:14.5px; padding-right:22px}
+  .check{width:19px; height:19px; margin-top:1px; border-radius:5px}
+  .check svg{width:12px; height:12px}
+  .chip{font-size:11px; padding:4px 7px}
+  .del{opacity:.5; font-size:17px; padding:6px 8px; right:4px}
+  .add{padding:10px 9px; font-size:14px; margin-top:6px}
+  .empty{font-size:13px}
+  /* iOS는 16px 미만 입력칸을 누르면 화면을 확대함 → 입력칸만 16px */
+  .composer input[type=text]{font-size:16px; padding:9px 10px}
+  .composer select.catsel{font-size:12px; padding:5px 20px 5px 8px}
+  /* 폰 월간: 숫자 달력을 본문 크기로 */
+  .cal.big{padding:12px 10px 6px}
+  .cal.big .calhead{margin-bottom:12px}
+  .cal.big .calhead .m{font-size:16px}
+  .cal.big .ico{width:34px; height:34px; font-size:16px}
+  .cal.big .calgrid{gap:4px}
+  .cal.big .wd{font-size:12px; padding-bottom:6px}
+  .cal.big .d{font-size:14.5px; border-radius:9px}
+  .cal.big .d .dots{bottom:5px; gap:3px}
+  .cal.big .d .dots i{width:4px; height:4px}
+  /* 왼쪽 서랍 */
+  .drawer-back{position:fixed; inset:0; z-index:70; background:rgba(0,0,0,.32); animation:fade-in .18s ease}
+  .side.drawer{
+    display:flex; position:absolute; top:0; bottom:0; left:0; width:min(300px, 86vw); max-height:none; overflow-y:auto;
+    padding:max(18px, env(safe-area-inset-top,0px)) 16px 24px max(16px, env(safe-area-inset-left,0px)); gap:24px;
+    background:var(--bg); box-shadow:var(--shadow); animation:drawer-in .22s cubic-bezier(.2,.8,.3,1);
+  }
+  .side.drawer .d{font-size:13px}
+  .side.drawer .cats > li > *{min-height:36px}
+  .netbar{font-size:12px; padding:8px 12px}
+}
+@keyframes fade-in{from{opacity:0} to{opacity:1}}
+@keyframes drawer-in{from{transform:translateX(-24px); opacity:0} to{transform:none; opacity:1}}
+/* 터치 기기(마우스 올리기 없음): 삭제 버튼을 항상 살짝 보이게 */
+@media (hover:none){ .del{opacity:.5} }
