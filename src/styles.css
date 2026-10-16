@@ -150,9 +150,9 @@ button{background:none; border:0; cursor:pointer}
 .d.inweek{background:var(--panel-2); color:var(--ink)}
 .wd.sat,.d.sat{color:var(--sat)}
 .wd.sun,.d.sun{color:var(--sun)}
-.d.sel{box-shadow:0 0 0 1.5px var(--ink-2)}
+.d.sel{box-shadow:0 0 0 1px var(--ink-2)}
 .d.today{background:var(--ink); color:var(--ink-rev); font-weight:500}
-.d.today.sel{box-shadow:0 0 0 1.5px var(--ink-3)}
+.d.today.sel{box-shadow:0 0 0 1px var(--ink-3)}
 .d .dots{position:absolute; bottom:2px; left:0; right:0; display:flex; justify-content:center; gap:2px}
 .d .dots i{width:3px; height:3px; border-radius:50%; background:var(--c)}
 .d.today .dots i{background:rgba(255,255,255,.8)}
@@ -753,3 +753,20 @@ html, body, #root{height:auto}
 .gate-privacy:hover{color:var(--ink-2); text-decoration:underline}
 .acctmenu a.mi{display:block; text-align:left; padding:7px 9px; border-radius:6px; font-size:12.5px; color:var(--ink-2); text-decoration:none}
 .acctmenu a.mi:hover{background:var(--panel-2); color:var(--ink)}
+
+/* ── 공휴일: 일요일처럼 빨간 숫자 + 이름 작게 ── */
+.colhead .hol-name{
+  min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  font-size:10.5px; color:var(--sun); opacity:.85;
+}
+.mhol{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:10px; color:var(--sun); opacity:.85}
+.mcell.out .mhol{opacity:.4}
+
+/* 수정 중인 할 일: 모양·크기는 그대로, 테두리만 입력칸 포커스와 같은 색 + 옅은 번짐으로 "지금 고치는 중" 표시 */
+.card.is-editing{
+  /* 옅은 회색 — 평소 테두리(#d9d9d9)보다 한 단계 진하게 + 아주 옅은 번짐 */
+  border-color:#b8b8b8;
+  box-shadow:0 0 0 3px color-mix(in oklab, #b8b8b8 12%, transparent);
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+.card.mini.is-editing{background:var(--panel-2); box-shadow:none} /* 월간 작은 카드는 테두리가 없어서 배경으로 */

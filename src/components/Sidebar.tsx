@@ -3,6 +3,7 @@ import type { Category, Todo } from "../lib/types";
 import { NO_CAT, PALETTE } from "../lib/types";
 import { DOW, addDays, key, mondayOf } from "../lib/date";
 import { NOCAT_COLOR, cvar } from "./Board";
+import { holidayName } from "../lib/holidays";
 
 interface MiniCalProps {
   calMonth: Date;
@@ -44,9 +45,10 @@ export function MiniCal({ calMonth, onMonth, weekStart, showWeek, selected, toda
         {Array.from({ length: 42 }, (_, i) => {
           const d = addDays(start, i);
           const k = key(d);
+          const hol = holidayName(k);
           const cls =
             "d" +
-            (i % 7 === 5 ? " sat" : i % 7 === 6 ? " sun" : "") +
+            (hol || i % 7 === 6 ? " sun" : i % 7 === 5 ? " sat" : "") +
             (d.getMonth() !== calMonth.getMonth() ? " out" : "") +
             (showWeek && k >= wkStart && k <= wkEnd ? " inweek" : "") +
             (k === todayKey ? " today" : "") +
@@ -59,7 +61,7 @@ export function MiniCal({ calMonth, onMonth, weekStart, showWeek, selected, toda
             if (!t.done && !seen.includes(color)) seen.push(color);
           }
           return (
-            <button key={k} className={cls} onClick={() => onPick(k)}>
+            <button key={k} className={cls} title={hol ?? undefined} onClick={() => onPick(k)}>
               {d.getDate()}
               {seen.length > 0 && (
                 <span className="dots">

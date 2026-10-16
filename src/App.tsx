@@ -3,6 +3,7 @@ import type { Bucket, Todo } from "./lib/types";
 import { NONE, NO_CAT, bucketOf, memoKey, type MemoScope } from "./lib/types";
 import { DOW, addDays, addMonths, firstOfMonth, key, mondayOf, parse } from "./lib/date";
 import { byRank } from "./lib/rank";
+import { holidayName } from "./lib/holidays";
 import { localRepo } from "./data/localRepo";
 import { supabaseRepo } from "./data/supabase";
 import { signIn, signOut, useAuth } from "./data/auth";
@@ -303,13 +304,16 @@ export default function App() {
         {Array.from({ length: 7 }, (_, i) => {
           const d = addDays(weekStart, i);
           const k = key(d);
+          const hol = holidayName(k);
           return (
             <Column
               key={k}
               bucket={k}
               label={DOW[i]}
               dnum={d.getDate()}
-              cls={(k === todayKey ? " is-today" : "") + (i === 5 ? " sat" : i === 6 ? " sun" : "")}
+              holiday={hol}
+              // 공휴일은 일요일처럼 빨간 글씨
+              cls={(k === todayKey ? " is-today" : "") + (hol || i === 6 ? " sun" : i === 5 ? " sat" : "")}
               ctx={ctx}
             />
           );
@@ -333,7 +337,8 @@ export default function App() {
           bucket={selected}
           label={DOW[si] + "요일"}
           dnum={sd.getDate()}
-          cls={(selected === todayKey ? " is-today" : "") + (si === 5 ? " sat" : si === 6 ? " sun" : "")}
+          holiday={holidayName(selected)}
+          cls={(selected === todayKey ? " is-today" : "") + (holidayName(selected) || si === 6 ? " sun" : si === 5 ? " sat" : "")}
           ctx={ctx}
         />
         {side}

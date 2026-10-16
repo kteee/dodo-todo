@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type 
 import type { Bucket, Category, Todo } from "../lib/types";
 import { NO_CAT } from "../lib/types";
 import { DOW, addDays, key, mondayOf } from "../lib/date";
+import { holidayName } from "../lib/holidays";
 import type { DragState } from "../hooks/useDrag";
 
 export const cvar = (color: string) => ({ "--c": `var(${color})` }) as CSSProperties;
@@ -345,10 +346,12 @@ interface ColProps {
   empty?: string;
   /** 제목 옆 ? 아이콘에 마우스를 올리면 보이는 설명 */
   hint?: string;
+  /** 공휴일 이름 (요일 옆에 작게) */
+  holiday?: string | null;
   ctx: BoardCtx;
 }
 
-export function Column({ bucket, label, dnum, cls = "", empty, hint, ctx }: ColProps) {
+export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, ctx }: ColProps) {
   const all = ctx.inBucket(bucket);
   const done = all.filter((t) => t.done).length; // 완료/전체
   const items = ctx.shown(bucket);
@@ -358,6 +361,11 @@ export function Column({ bucket, label, dnum, cls = "", empty, hint, ctx }: ColP
       <div className="colhead">
         {dnum !== undefined && <span className="dnum">{dnum}</span>}
         <span className="dow">{label}</span>
+        {holiday && shortHoliday(holiday) && (
+          <span className="hol-name" title={holiday}>
+            {shortHoliday(holiday)}
+          </span>
+        )}
         {hint && (
           <span className="hint-ico" tabIndex={0} role="img" aria-label={hint} data-tip={hint}>
             ?
@@ -374,12 +382,16 @@ export function Column({ bucket, label, dnum, cls = "", empty, hint, ctx }: ColP
   );
 }
 
+/** 칸이 좁으니 "광복절 대체공휴일" → "대체공휴일". 설날·추석 연휴의 앞뒤 날은 빨간 날로만 두고 글자는 당일에만 */
+export const shortHoliday = (name: string) =>
+  name.endsWith("대체공휴일") ? "대체공휴일" : name.endsWith(" 전날") || name.endsWith(" 다음날") ? "" : name;
+
 export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   return (
     <Column
       bucket="none"
       label="언젠가 할 일"
-      hint="아직 날짜를 정하지 않은 할 일이에요. 날짜 칸으로 끌어다 놓으면 그날 할 일이 돼요."
+      hint="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요."
       cls=" unscheduled"
       ctx={ctx}
     />
@@ -399,7 +411,8 @@ export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKe
       <div className="mgrid">
         {cells.map((d, i) => {
           const k = key(d);
-          const wk = i % 7 === 5 ? " sat" : i % 7 === 6 ? " sun" : "";
+          const hol = holidayName(k);
+          const wk = hol || i % 7 === 6 ? " sun" : i % 7 === 5 ? " sat" : "";
           const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === k;
           const cls =
             "mcell" + wk + (d.getMonth() !== calMonth.getMonth() ? " out" : "") + (k === todayKey ? " is-today" : "") + (dropHere ? " drop" : "");
@@ -407,6 +420,11 @@ export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKe
             <div key={k} className={cls} data-drop={"date:" + k}>
               <div className="mhead">
                 <span className="mnum">{d.getDate()}</span>
+                {hol && shortHoliday(hol) && (
+                  <span className="mhol" title={hol}>
+                    {shortHoliday(hol)}
+                  </span>
+                )}
                 <button className="plus" aria-label="할 일 추가" onClick={() => ctx.setOpenBucket(k)}>
                   ＋
                 </button>
