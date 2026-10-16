@@ -3,6 +3,7 @@ import type { Bucket, Category, MemoScope, Todo } from "../lib/types";
 import { bucketOf, dateOf, memoKey, nextColor } from "../lib/types";
 import { byRank, rankAfter, rankLast } from "../lib/rank";
 import type { Repo } from "./repo";
+import { describeError, report } from "../lib/monitoring";
 
 export interface Toast {
   id: number;
@@ -90,7 +91,7 @@ export function useDodo(repo: Repo | null) {
           setMemos(Object.fromEntries(snap.memos.map((m) => [memoKey(m.scope, m.period), m.body])));
           setStatus("ready");
         } catch (e) {
-          console.error(e);
+          report(e, "load");
           if (silent) toast("최신 데이터를 못 불러왔어요. 연결을 확인해 주세요.", "err");
           else setStatus("error");
         }
@@ -141,9 +142,9 @@ export function useDodo(repo: Repo | null) {
       saveSeq.current++;
       remote()
         .catch((e) => {
-          console.error(e);
+          report(e, "save");
           // 원인 파악용으로 DB 오류 코드·메시지를 짧게 덧붙임 (예: 23503 foreign key …)
-          const detail = e && typeof e === "object" ? [(e as { code?: string }).code, (e as { message?: string }).message].filter(Boolean).join(" ") : "";
+          const detail = describeError(e);
           toast("저장하지 못했어요. 마지막으로 저장된 상태로 되돌릴게요." + (detail ? ` (${detail.slice(0, 120)})` : ""), "err");
           stale.current = true;
         })

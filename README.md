@@ -47,6 +47,32 @@ GitHub `main`에 푸시하면 Cloudflare가 자동으로 빌드·배포한다. �
    - Site URL = 배포 주소, Redirect URLs = 배포 주소 + `http://localhost:5175`
    - 이걸 안 하면 구글 로그인 후 localhost로 튕김
 
+## 백업과 복구
+
+Supabase 무료 플랜엔 자동 백업이 없어서, GitHub Actions가 매일 백업한다 (`.github/workflows/backup.yml`).
+
+- 매일 03:30(한국) DB를 떠서 **AES-256으로 암호화** → 그 실행의 Artifact로 **30일 보관**
+- 실패하면 GitHub가 메일로 알림. Actions 탭 → "DB 백업" → **Run workflow**로 직접 실행 가능
+- 저장소 Secrets (Settings → Secrets and variables → Actions):
+  - `SUPABASE_DB_URL`: Supabase → **Connect** → **Session pooler** 연결 문자열 (`[YOUR-PASSWORD]` 자리에 DB 비밀번호)
+  - `BACKUP_PASSPHRASE`: 백업 암호. **잃어버리면 복구 불가** → 비밀번호 관리자에 따로 보관
+
+### 복구 (새 Supabase 프로젝트로)
+
+```bash
+gpg --decrypt dodo-db-YYYYMMDD-HHMM.tar.gz.gpg | tar -xzf -
+psql "<새 프로젝트 Session pooler URL>" -v ON_ERROR_STOP=1 -f auth.sql     # 계정 먼저 (할 일이 계정을 참조)
+psql "<새 프로젝트 Session pooler URL>" -v ON_ERROR_STOP=1 -f public.sql   # 테이블·함수·RLS·데이터
+```
+
+그다음 `supabase/migrations/005_purge_deleted.sql`(파기 예약 작업)을 다시 실행하고, 구글 로그인·URL 설정과 `.env`/Cloudflare 변수를 새 프로젝트 값으로 바꾼다.
+
+## 에러 알림 (Sentry)
+
+배포판 + `VITE_SENTRY_DSN`(Cloudflare 빌드 변수)이 있을 때만 켜진다 (`src/lib/monitoring.ts`).
+할 일·메모 내용과 사용자 정보는 보내지 않도록 클릭 기록·요청 쿼리·DB 오류 상세를 걸러낸다.
+Sentry 프로젝트 설정에서 **Security & Privacy → Prevent Storing of IP Addresses**도 켜 둘 것.
+
 ## 안정성 설계 메모
 
 | 위험 | 대응 |

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Account } from "../data/auth";
+import { report } from "../lib/monitoring";
 import { ConfirmDialog } from "./Sidebar";
 
 interface Props {
@@ -24,7 +25,7 @@ export function MyPage({ account, isLocal, onExport, onDeleteAccount }: Props) {
       await onDeleteAccount();
       location.href = "/"; // 계정이 사라졌으니 처음 화면(로그인 안내)으로
     } catch (e) {
-      console.error(e);
+      report(e, "deleteAccount");
       setBusy(false);
       setError("탈퇴를 처리하지 못했습니다. 잠시 후 다시 시도하거나 개인정보 처리방침의 연락처로 문의해 주세요.");
     }

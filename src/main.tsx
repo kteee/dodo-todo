@@ -3,13 +3,30 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import { Privacy } from "./components/Privacy";
 import { supabase } from "./data/supabase";
+import { ErrorBoundary } from "./lib/monitoring";
 import "./styles.css";
 
 // 배포판에서 Supabase 환경변수가 빠지면 조용히 "로컬 모드"(브라우저에만 저장)로 돌아가는 사고를 막음
 const misconfigured = import.meta.env.PROD && !supabase;
 
+// 화면 코드에서 예외가 나도 하얀 화면 대신 안내를 보여줌 (Sentry가 켜져 있으면 자동 보고)
+const crashed = (
+  <div className="page">
+    <div className="gate">
+      <div>
+        <h3>문제가 생겼어요</h3>
+        <p>저장된 기록은 안전해요. 새로고침해 주세요.</p>
+        <button className="signin" onClick={() => location.reload()}>
+          새로고침
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    <ErrorBoundary fallback={crashed}>
     {location.pathname.replace(/\/$/, "") === "/privacy" ? (
       // 개인정보 처리방침은 로그인·설정과 상관없이 누구나 볼 수 있어야 함
       <Privacy />
@@ -25,5 +42,6 @@ createRoot(document.getElementById("root")!).render(
     ) : (
       <App />
     )}
+    </ErrorBoundary>
   </StrictMode>,
 );
