@@ -840,7 +840,17 @@ html, body, #root{height:auto}
   .acct{margin-left:auto}
   .acctbtn .who, .acctbtn .caret{display:none}
   .acctbtn{padding:2px}
-  .search{order:3; width:100%; margin-left:0}
+  /* 검색: 프로필 왼쪽 돋보기 → 누르면 아래 줄에 검색창 */
+  .search-btn{
+    display:inline-grid; place-items:center; width:34px; height:34px; border-radius:50%; margin-left:auto; color:var(--ink-2);
+  }
+  .search-btn svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round}
+  .search-btn[aria-expanded="true"], .search-btn:active{background:var(--panel-2); color:var(--ink)}
+  .search-btn + .acct{margin-left:4px}
+  .search-row{order:3; width:100%; display:flex; align-items:center; gap:6px; animation:fade-in .15s ease}
+  .search-row .search{flex:1; width:auto; margin-left:0; order:0}
+  .search-row .search input{font-size:16px; padding-top:8px; padding-bottom:8px} /* iOS 확대 방지 */
+  .search-close{flex:none; padding:8px 6px; font-size:13px; color:var(--ink-2)}
   /* 왼쪽 칸은 서랍으로만 */
   .app.phone{display:block}
   .app.phone > .side:not(.drawer){display:none}

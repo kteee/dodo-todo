@@ -1,4 +1,5 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { usePhone } from "../hooks/usePhone";
 import type { Account } from "../data/auth";
 
 export type View = "day" | "week" | "month";
@@ -63,6 +64,50 @@ export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => 
 }
 
 export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSignOut }: Props) {
+  // 폰: 검색창 대신 돋보기 버튼(프로필 왼쪽). 누르면 아래 줄에 검색창이 열리고 바로 입력 가능
+  const phone = usePhone();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const row = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!searchOpen) return;
+    const input = row.current?.querySelector("input");
+    input?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSearchOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [searchOpen]);
+  const searchSlot = !phone ? (
+    search
+  ) : (
+    <>
+      {searchOpen && search && (
+        <div
+          ref={row}
+          className="search-row"
+          onBlur={(e) => {
+            // 검색어 없이 다른 데를 누르면 조용히 닫힘
+            const input = row.current?.querySelector("input");
+            if (!row.current?.contains(e.relatedTarget as Node) && !input?.value) setSearchOpen(false);
+          }}
+        >
+          {search}
+          <button className="search-close" onClick={() => setSearchOpen(false)}>
+            취소
+          </button>
+        </div>
+      )}
+      {search && (
+        <button className="search-btn" aria-label="할 일 검색" aria-expanded={searchOpen} onClick={() => setSearchOpen((o) => !o)}>
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="7" cy="7" r="4.5" />
+            <path d="M10.5 10.5L14 14" />
+          </svg>
+        </button>
+      )}
+    </>
+  );
   return (
     <header className="topnav">
       <a className="logo" href="/">
@@ -76,7 +121,7 @@ export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSign
       </a>
       {/* 로고 오른쪽 영역은 아래 할 일 보드와 같은 열에서 시작 — 검색창 왼쪽 끝이 보드 왼쪽 끝과 맞음 */}
       <div className="topnav-main">
-      {search}
+      {searchSlot}
       <div className="acct">
         {/* 로그아웃 상태에선 헤더에 로그인 버튼을 두지 않음 — 화면 가운데 버튼 하나로 */}
         {!account ? null : (
