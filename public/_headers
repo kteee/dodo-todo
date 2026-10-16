@@ -1,0 +1,12 @@
+# Cloudflare Pages 응답 헤더 — 배포할 때 dist/ 로 그대로 복사됨
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# 빌드 결과물(파일 이름에 해시가 붙음)은 오래 캐시, index.html은 항상 새로
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/index.html
+  Cache-Control: no-cache
