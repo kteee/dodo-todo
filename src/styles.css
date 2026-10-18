@@ -263,6 +263,9 @@ button{background:none; border:0; cursor:pointer}
 .grouphead .gn{margin-left:auto; font-size:10px; color:var(--ink-3); font-variant-numeric:tabular-nums}
 .list.grouped .chip{display:none}
 .list.grouped .card{grid-template-areas:"check text"}
+/* 카테고리별 보기에서도 수정 중엔 카테고리 칩(선택칸)을 보여줘서 바꿀 수 있게 */
+.list.grouped .card.is-editing{grid-template-areas:"chip chip" "check text"}
+.list.grouped .card.is-editing .chip{display:inline-block}
 
 /* ── month grid ──────────────────────────────────────── */
 .month{display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--bg)}
