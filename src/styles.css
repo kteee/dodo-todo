@@ -133,6 +133,30 @@ button{background:none; border:0; cursor:pointer}
   box-shadow:0 1px 2px rgba(20,20,20,.08);
 }
 
+/* ── 두두 서비스 모음 (헤더, 프로필 왼쪽) ── */
+.apps{position:relative; margin-left:auto}
+.apps + .acct{margin-left:2px}
+.apps-btn{width:32px; height:32px; border-radius:50%; display:grid; place-items:center; color:var(--ink-2)}
+.apps-btn svg{width:17px; height:17px; fill:currentColor}
+.apps-btn:hover, .apps-btn[aria-expanded="true"]{background:var(--panel-2); color:var(--ink)}
+.apps-pop{
+  position:absolute; right:0; top:calc(100% + 8px); z-index:30; width:250px;
+  background:var(--bg); border:1px solid var(--line-2); border-radius:10px; box-shadow:var(--shadow);
+  padding:6px; display:flex; flex-direction:column; gap:1px;
+}
+.apps-title{margin:0; padding:6px 9px 7px; font-size:11px; font-weight:500; letter-spacing:.02em; color:var(--ink-3)}
+.apps-item{display:flex; align-items:center; gap:10px; padding:8px 9px; border-radius:7px; text-decoration:none; color:inherit}
+.apps-item:hover{background:var(--panel-2)}
+.apps-item.now{background:var(--panel)}
+.apps-item.soon{opacity:.55; cursor:default}
+.apps-item.soon:hover{background:none}
+.apps-mark{width:9px; height:9px; border-radius:3px; background:var(--ink); flex:none}
+.apps-item.soon .apps-mark{background:var(--line-2)}
+.apps-txt{display:flex; flex-direction:column; min-width:0; gap:1px}
+.apps-txt b{font-size:13px; font-weight:500; color:var(--ink)}
+.apps-txt small{font-size:11px; color:var(--ink-3)}
+.apps-item em{margin-left:auto; font-style:normal; font-size:10.5px; color:var(--ink-3); white-space:nowrap}
+
 /* ── mini calendar ───────────────────────────────────── */
 .calhead{display:flex; align-items:center; gap:4px; margin-bottom:10px}
 .calhead .m{font-size:13.5px; font-weight:500; letter-spacing:-.01em}
@@ -858,7 +882,8 @@ html, body, #root{height:auto}
   }
   .search-btn svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round}
   .search-btn[aria-expanded="true"], .search-btn:active{background:var(--panel-2); color:var(--ink)}
-  .search-btn + .acct{margin-left:4px}
+  .search-btn ~ .apps{margin-left:4px}
+  .apps + .acct{margin-left:4px}
   .search-row{order:3; width:100%; display:flex; align-items:center; gap:6px; animation:fade-in .15s ease}
   .search-row .search{flex:1; width:auto; margin-left:0; order:0}
   .search-row .search input{font-size:16px; padding-top:8px; padding-bottom:8px} /* iOS 확대 방지 */
