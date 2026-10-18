@@ -944,6 +944,12 @@ html, body, #root{height:auto}
   .board.v-day{gap:26px; margin-top:6px}
   .board.v-day .memo textarea{min-height:96px}
   .board.v-day .colhead{padding:0 0 10px; min-height:0; position:static}
+  /* 날짜 줄(18 일요일) 아래 구분선은 헤더 구분선처럼 화면 끝에서 끝까지 */
+  .board.v-day > .col .colhead{position:relative; border-bottom:0}
+  .board.v-day > .col .colhead::after{
+    content:""; position:absolute; bottom:0; left:50%; width:100vw; height:1px;
+    transform:translateX(-50%); background:var(--line); pointer-events:none;
+  }
   .board.v-day .col.is-today .colhead{background:none}
   .board.v-day .colbody{padding:12px 0 0}
   .board.v-day .sidecol.split > .memo{border-bottom:0; margin-bottom:22px}
