@@ -12,7 +12,7 @@ interface Props {
 const MAX = 30;
 
 function dateLabel(date: string | null) {
-  if (!date) return "언젠가 할 일";
+  if (!date) return "날짜 미정";
   const d = parse(date);
   return `${d.getFullYear()}. ${d.getMonth() + 1}. ${d.getDate()} (${DOW[(d.getDay() + 6) % 7]})`;
 }

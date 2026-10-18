@@ -390,7 +390,7 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   return (
     <Column
       bucket="none"
-      label="언젠가 할 일"
+      label="날짜 미정"
       hint="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요."
       cls=" unscheduled"
       ctx={ctx}

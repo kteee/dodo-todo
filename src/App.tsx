@@ -631,7 +631,7 @@ export default function App() {
                     writePref(INBOX_PREF, e.target.checked);
                   }}
                 />{" "}
-                언젠가 할 일 보기
+                날짜 미정 보기
               </label>
             </OptionsMenu>
             </div>
