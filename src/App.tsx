@@ -151,8 +151,10 @@ export default function App() {
     const at = d.beforeId ? items.findIndex((t) => t.id === d.beforeId) : -1;
     const prev = at >= 0 ? (items[at - 1] ?? null) : (items[items.length - 1] ?? null);
     let catId: string | null | undefined; // undefined = 카테고리는 그대로
-    if (groupBy && !mini) {
-      // 카테고리별 보기에선 놓인 그룹의 카테고리로 바뀜 ("카테고리 없음" 그룹이면 null)
+    const moving = todos.find((t) => t.id === d.id);
+    if (groupBy && !mini && moving && bucketOf(moving) === d.zone) {
+      // 카테고리별 보기에서 같은 칸 안에서 다른 그룹으로 옮기면 그 그룹의 카테고리로 바뀜 ("카테고리 없음" 그룹이면 null).
+      // 다른 날짜로 옮기는 건 날짜만 바꾸는 것 — 그 날에 내 카테고리 그룹이 없다고 해서 남의 카테고리로 바뀌면 안 됨
       const anchor = at >= 0 ? items[at] : prev;
       if (anchor) catId = catOf(anchor.categoryId)?.id ?? null;
     }
