@@ -509,6 +509,7 @@ export default function App() {
           dropCat={drag?.catTarget ?? null}
           onAdd={actions.addCategory}
           onUpdate={actions.updateCategory}
+          onMove={actions.moveCategory}
           onDelete={actions.deleteCategory}
         />
       )}

@@ -175,6 +175,15 @@ button{background:none; border:0; cursor:pointer}
 .cat .x{font-size:13px; line-height:1; color:var(--ink-3); opacity:0; padding:0 3px; border-radius:4px}
 .cat:hover .x{opacity:1}
 .cat .x:hover{color:var(--ink); background:var(--line)}
+/* 카테고리 끌어서 순서 바꾸기: 원래 자리는 비우고, 놓일 자리만큼 위 여백(--cat-ph)을 띄움 */
+.cats > li{transition:margin-top .12s ease}
+.cats > li.ghosted{display:none}
+.cats .cat.lifting{box-shadow:0 0 0 1.5px var(--ink-2)}
+.cat-ghost{
+  position:fixed; top:0; left:0; z-index:50; margin:0; pointer-events:none; list-style:none;
+  background:var(--bg); border-radius:6px; box-shadow:var(--shadow);
+}
+.cat-ghost .cated{display:none}
 /* 카테고리 수정 패널 */
 .cated{
   margin:3px 0 6px; padding:9px; border:1px solid var(--line-2); border-radius:8px;

@@ -304,6 +304,18 @@ export function useDodo(repo: Repo | null) {
         setCats(catsRef.current.map((x) => (x.id === id ? { ...x, ...patch } : x)));
         save(() => repo.updateCategory(id, patch));
       },
+      /** 카테고리 순서: prevId 바로 뒤로 (null이면 맨 앞). 옮긴 것 한 행만 저장 */
+      moveCategory(id: string, prevId: string | null) {
+        const list = [...catsRef.current].sort(byRank);
+        const c = list.find((x) => x.id === id);
+        if (!c) return;
+        const rest = list.filter((x) => x.id !== id);
+        const i = rest.findIndex((x) => x.id === prevId);
+        if ((rest[i]?.id ?? null) === (list[list.indexOf(c) - 1]?.id ?? null)) return; // 제자리
+        const rank = rankAfter(rest, prevId);
+        setCats([...rest.map((x) => x), { ...c, rank }].sort(byRank));
+        save(() => repo.updateCategory(id, { rank }));
+      },
       deleteCategory(id: string) {
         const list = catsRef.current;
         const c = list.find((x) => x.id === id);

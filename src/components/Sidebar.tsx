@@ -225,12 +225,141 @@ interface CategoriesProps {
   dropCat: string | null;
   onAdd: (name: string) => void;
   onUpdate: (id: string, patch: Partial<Pick<Category, "name" | "color">>) => void;
+  /** 드래그로 순서 바꾸기: prevId 바로 뒤로 (null = 맨 앞) */
+  onMove: (id: string, prevId: string | null) => void;
   onDelete: (id: string) => void;
+}
+
+/** 카테고리를 끌어서 순서 바꾸기 — 마우스는 5px 움직이면, 터치는 0.3초 꾹 누르면 시작 (할 일 카드와 같은 규칙) */
+function useCatReorder(listRef: React.RefObject<HTMLUListElement>, onMove: (id: string, prevId: string | null) => void) {
+  const [drag, setDrag] = useState<{ id: string; at: number } | null>(null); // at = 자리표시가 들어갈 위치(옮기는 항목 제외한 index)
+  const cb = useRef(onMove);
+  cb.current = onMove;
+
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const list: HTMLUListElement = el;
+    let ghost: HTMLElement | null = null;
+    let cur: { id: string; at: number } | null = null;
+    let grabY = 0;
+
+    const rows = () => Array.from(list.querySelectorAll<HTMLElement>("li[data-cat]")).filter((li) => li.dataset.cat !== cur?.id);
+    const place = (y: number) => {
+      const rs = rows();
+      let at = rs.length;
+      for (let i = 0; i < rs.length; i++) {
+        const r = rs[i].getBoundingClientRect();
+        if (y < r.top + r.height / 2) {
+          at = i;
+          break;
+        }
+      }
+      if (cur && cur.at !== at) {
+        cur = { ...cur, at };
+        setDrag(cur);
+      }
+    };
+
+    function onDown(e: globalThis.PointerEvent) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      const target = e.target as Element;
+      const li = target.closest<HTMLElement>("li[data-cat]");
+      // 수정 패널·입력칸 안에서는 끌지 않음
+      if (!li || !list.contains(li) || target.closest(".cated, input, select, textarea")) return;
+      const id = li.dataset.cat!;
+      const touch = e.pointerType !== "mouse";
+      const sx = e.clientX;
+      const sy = e.clientY;
+      let started = false;
+      let hold: number | null = null;
+
+      const begin = () => {
+        const r = li.getBoundingClientRect();
+        grabY = sy - r.top;
+        ghost = li.cloneNode(true) as HTMLElement;
+        ghost.classList.add("cat-ghost");
+        ghost.style.width = r.width + "px";
+        ghost.style.transform = `translate(${r.left}px,${r.top}px)`;
+        document.body.appendChild(ghost);
+        document.body.classList.add("dragging");
+        const idx = Array.from(list.querySelectorAll("li[data-cat]")).findIndex((x) => x === li);
+        cur = { id, at: idx };
+        setDrag(cur);
+        started = true;
+      };
+      if (touch) {
+        li.classList.add("lifting");
+        hold = window.setTimeout(() => {
+          hold = null;
+          begin();
+        }, 320);
+      }
+      const move = (ev: globalThis.PointerEvent) => {
+        if (!started) {
+          if (Math.abs(ev.clientX - sx) + Math.abs(ev.clientY - sy) < 5) return;
+          if (touch) {
+            if (hold) clearTimeout(hold);
+            hold = null;
+            li.classList.remove("lifting");
+            return; // 터치는 꾹 누르기 전에 움직이면 스크롤
+          }
+          begin();
+        }
+        if (ghost) ghost.style.transform = `translate(${ghost.getBoundingClientRect().left}px,${ev.clientY - grabY}px)`;
+        place(ev.clientY);
+        ev.preventDefault();
+      };
+      const up = () => {
+        if (hold) clearTimeout(hold);
+        hold = null;
+        li.classList.remove("lifting");
+        document.removeEventListener("pointermove", move);
+        document.removeEventListener("pointerup", up);
+        document.removeEventListener("pointercancel", up);
+        if (!started) return;
+        // 놓은 직후 따라오는 클릭은 무시 (수정 패널이 열리지 않게)
+        const stop = (c: MouseEvent) => {
+          c.stopPropagation();
+          c.preventDefault();
+        };
+        document.addEventListener("click", stop, { capture: true, once: true });
+        setTimeout(() => document.removeEventListener("click", stop, { capture: true }), 0);
+        const d = cur;
+        ghost?.remove();
+        ghost = null;
+        document.body.classList.remove("dragging");
+        cur = null;
+        setDrag(null);
+        if (d) {
+          const rs = rows();
+          cb.current(d.id, d.at > 0 ? rs[d.at - 1].dataset.cat! : null);
+        }
+      };
+      document.addEventListener("pointermove", move, { passive: false });
+      document.addEventListener("pointerup", up);
+      document.addEventListener("pointercancel", up);
+    }
+    const blockScroll = (e: TouchEvent) => {
+      if (cur) e.preventDefault();
+    };
+    list.addEventListener("pointerdown", onDown);
+    document.addEventListener("touchmove", blockScroll, { passive: false });
+    return () => {
+      list.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("touchmove", blockScroll);
+      ghost?.remove();
+    };
+  }, [listRef]);
+
+  return drag;
 }
 
 export function Categories(p: CategoriesProps) {
   const [adding, setAdding] = useState(false);
   const openRef = useRef<HTMLLIElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const catDrag = useCatReorder(listRef, p.onMove);
   const { editCat, setEditCat } = p;
 
   // 수정 패널 바깥을 누르면 닫힘 → 패널이 닫힐 때 이름이 자동 저장됨 (색은 고를 때 바로 저장)
@@ -266,9 +395,21 @@ export function Categories(p: CategoriesProps) {
   return (
     <section>
       <p className="sect-label">카테고리</p>
-      <ul className="cats">
-        {p.cats.map((c) => (
-          <li key={c.id} ref={p.editCat === c.id ? openRef : undefined}>
+      <ul className="cats" ref={listRef}>
+        {p.cats.map((c, i) => (
+          <li
+            key={c.id}
+            data-cat={c.id}
+            ref={p.editCat === c.id ? openRef : undefined}
+            className={catDrag?.id === c.id ? "ghosted" : ""}
+            // 끌고 있는 항목을 뺀 순서에서 at 번째 앞에 자리표시 → 그 자리를 비워 둠
+            style={
+              catDrag && catDrag.id !== c.id && p.cats.filter((x) => x.id !== catDrag.id).indexOf(c) === catDrag.at
+                ? { marginTop: "var(--cat-ph, 30px)" }
+                : undefined
+            }
+            data-i={i}
+          >
             {/* 항목을 누르면 바로 수정 패널이 열리고, 다시 누르면 닫힘 */}
             <button
               className={"cat" + (p.editCat === c.id ? " on" : "") + (p.dropCat === c.id ? " drop" : "")}
@@ -298,7 +439,7 @@ export function Categories(p: CategoriesProps) {
           </li>
         ))}
         {/* 카테고리 없는 할 일: 개수 표시 + 카드를 끌어다 놓으면 카테고리가 떼어짐 (수정할 건 없음) */}
-        <li>
+        <li style={catDrag && catDrag.at >= p.cats.length - 1 ? { marginTop: "var(--cat-ph, 30px)" } : undefined}>
           <div className={"cat nocat" + (p.dropCat === NO_CAT ? " drop" : "")} data-drop={"cat:" + NO_CAT}>
             <span className="dot" style={cvar(NOCAT_COLOR)} />
             <span className="nm">카테고리 없음</span>
