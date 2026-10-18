@@ -291,6 +291,8 @@ export default function App() {
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
   const hasSide = showMemo || showInbox;
   const weekTwoRows = view === "week" && twoRows && !phone;
+  // 가로 보기(주간 한 줄): 메모와 날짜 미정은 7일 아래 한 줄을 반씩 나눠서
+  const weekWide = view === "week" && !twoRows && !phone;
   const memoProps = {
     scope: memoScope,
     period: memoPeriod,
@@ -309,7 +311,12 @@ export default function App() {
       )}
       {showInbox && <SideColumn className="slot-inbox" showMemo={false} showInbox memo={memoProps} ctx={ctx} />}
     </>
-  ) : !hasSide ? null : (
+  ) : !hasSide ? null : weekWide ? (
+    <div className="wide-bottom">
+      {showMemo && <SideColumn showMemo showInbox={false} memo={memoProps} ctx={ctx} />}
+      {showInbox && <SideColumn showMemo={false} showInbox memo={memoProps} ctx={ctx} />}
+    </div>
+  ) : (
     <SideColumn showMemo={showMemo} showInbox={showInbox} memo={memoProps} ctx={ctx} />
   );
 
@@ -440,7 +447,9 @@ export default function App() {
     );
   } else {
     main = (
-      <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" + (showInbox ? " inbox-col" : "") : "")}>{board}</div>
+      <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" + (showInbox ? " inbox-col" : "") : "") + (weekWide && hasSide ? " wide" : "")}>
+        {board}
+      </div>
     );
   }
 
