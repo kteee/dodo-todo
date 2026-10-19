@@ -56,6 +56,16 @@ function writePref(k: string, v: boolean) {
 
 export default function App() {
   const auth = useAuth();
+  // 두두다이어리 홈(dododiary.com)의 로그인 화면에서 "Google 계정으로 로그인"을 누르면 ?login=google 로 넘어옴
+  // → 로그인 안 된 상태면 바로 구글 로그인 시작, 이미 로그인돼 있으면 주소만 정리하고 보드로
+  useEffect(() => {
+    if (auth.status === "loading") return;
+    const q = new URLSearchParams(location.search);
+    if (q.get("login") !== "google") return;
+    q.delete("login");
+    history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "") + location.hash);
+    if (auth.status === "out") signIn();
+  }, [auth.status]);
   const userId = auth.status === "in" ? auth.account.id : null;
   // 사용자가 바뀌면 저장소도 새로 — 이전 사용자 데이터가 섞이지 않게
   const repo = useMemo(() => (!userId ? null : auth.mode === "local" ? localRepo : supabaseRepo()), [userId, auth.mode]);
