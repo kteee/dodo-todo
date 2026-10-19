@@ -983,36 +983,37 @@ html, body, #root{height:auto}
 /* 터치 기기(마우스 올리기 없음): 삭제 버튼을 항상 살짝 보이게 */
 @media (hover:none){ .del{opacity:.5} }
 
-/* ── 날짜 미정: 보드 오른쪽 패널 (큰 화면) ──────────────
-   요일 격자에서 빼서 사이를 띄우고 자기 테두리를 줌 → "월~일"을 한 줄로 읽다가 걸리지 않음.
-   날짜 줄의 [날짜 미정 N] 버튼으로 열고 닫고, 열리면 오른쪽에서 미끄러져 들어옴. 폰은 보드 맨 아래 칸 */
-.main-row{display:flex; align-items:stretch; gap:18px; flex:1; min-height:0}
-.main-row > .board{flex:1; min-width:0}
-.inbox-panel{
-  position:relative; flex:0 0 250px; display:flex; flex-direction:column; min-width:0;
-  box-shadow:0 0 0 1px var(--line); border-radius:8px; background:var(--panel); overflow:hidden;
-  animation:panel-in .22s cubic-bezier(.2,.8,.3,1);
+/* ── 날짜 미정: 요일 칸 위 가로 띠 (큰 화면) ──────────────
+   종이 다이어리 위쪽의 할 일 목록처럼 보드 위에 한 띠. 카드는 가로로 흐르고 줄이 차면 줄바꿈.
+   ⌃ 로 접으면 제목 줄만 남고, 거기로 카드를 끌어다 놓아도 날짜가 비워짐. 폰은 예전처럼 맨 아래 칸 */
+/* 별도 박스가 아니라 요일 격자의 첫 줄처럼: 둥근 모서리·회색 배경·간격 없이 같은 1px 선으로 바로 이어붙임
+   (.board 는 padding 1px 안에 칸을 두므로 좌우 1px 들여서 선을 맞추고, 아래 선은 첫 요일 칸 선과 겹침) */
+.inbox-bar{
+  flex:none; margin:0 1px 0; border-radius:0; background:var(--bg);
+  box-shadow:0 0 0 1px var(--line); overflow:visible;
 }
-@keyframes panel-in{from{transform:translateX(16px); opacity:0} to{transform:none; opacity:1}}
-.inbox-panel > .col{flex:1; min-height:0; background:var(--panel)}
-.inbox-panel > .col.drop{box-shadow:inset 0 0 0 1.5px var(--ink-2)}
-.inbox-panel .colhead{padding-right:34px}
-.inbox-close{
-  position:absolute; top:8px; right:7px; width:24px; height:24px; border-radius:6px;
-  font-size:15px; line-height:1; color:var(--ink-3); display:grid; place-items:center;
+.inbox-bar + .board{margin-top:0}
+.col.unscheduled.inbox-bar{background:var(--bg)} /* 띠는 요일 칸과 같은 흰 배경 (.col.unscheduled 의 회색을 덮음) */
+.inbox-bar.drop{box-shadow:0 0 0 1px var(--line), inset 0 0 0 1.5px var(--ink-2)}
+.inbox-bar > .colhead{min-height:36px; padding:6px 8px 6px 12px}
+.inbox-bar.folded > .colhead{border-bottom:0}
+.inbox-bar > .colhead .dow{color:var(--ink); font-size:12px}
+.inbox-fold{
+  order:10; width:24px; height:24px; margin-left:4px; border-radius:6px; color:var(--ink-3);
+  display:grid; place-items:center;
 }
-.inbox-close:hover{background:var(--panel-2); color:var(--ink)}
-@media (max-width:1180px){ .inbox-panel{flex-basis:220px} }
-/* 날짜 줄의 열기/닫기 버튼 — ⚙ 과 같은 높이·테두리, 켜지면 진하게 */
-.inbox-btn{
-  display:inline-flex; align-items:center; gap:6px; height:28px; padding:0 10px;
-  border:1px solid var(--line); border-radius:7px; font-size:12px; color:var(--ink-2);
-  transition:background .12s ease, color .12s ease;
-}
-.inbox-btn b{font-family:var(--mono); font-weight:500; font-size:11px; color:var(--ink-3); font-variant-numeric:tabular-nums}
-.inbox-btn:hover{background:var(--panel-2); color:var(--ink)}
-.inbox-btn.on{background:var(--ink); border-color:var(--ink); color:var(--ink-rev)}
-.inbox-btn.on b{color:var(--ink-rev); opacity:.75}
+.inbox-fold svg{width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; transition:transform .15s ease}
+.inbox-bar.folded .inbox-fold svg{transform:rotate(180deg)}
+.inbox-fold:hover{background:var(--panel-2); color:var(--ink)}
+.inbox-bar > .colbody{display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px 8px; padding:10px 10px}
+.inbox-bar .list{flex-direction:row; flex-wrap:wrap; gap:6px; min-height:0; max-width:100%}
+.inbox-bar .list:empty{display:none}
+.inbox-bar .list > .card, .inbox-bar .list > .ph{width:220px; max-width:100%}
+.inbox-bar .list > .ph{height:auto !important; min-height:32px} /* 가로 띠에선 높이 대신 폭이 기준 */
+.inbox-bar .list > .grouphead{width:100%; padding-top:2px}
+.inbox-bar .empty{padding:6px 4px; margin:0}
+.inbox-bar .add{width:auto; margin-top:0; padding:6px 10px; opacity:1}
+.inbox-bar .composer{width:220px; max-width:100%; padding:0}
 
 /* ── 왼쪽 달력·카테고리 접기: 날짜 줄 맨 왼쪽(폰의 달력 버튼 자리) 패널 아이콘. 접으면 왼쪽 열이 사라지고 보드가 넓어짐 ── */
 .side-tg{

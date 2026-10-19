@@ -76,10 +76,13 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
       }
       const list = zone.querySelector(".list");
       const cards = list ? Array.from(list.querySelectorAll<HTMLElement>(".card")).filter((n) => n.dataset.id !== cur!.id) : [];
+      // 날짜 미정 띠는 카드가 가로로 흐름 → 같은 줄에선 가로 중간, 아래 줄 카드는 그 앞
+      const horizontal = !!list?.closest(".inbox-bar");
       let beforeId: string | null = null;
       for (const c of cards) {
         const r = c.getBoundingClientRect();
-        if (y < r.top + r.height / 2) {
+        const before = horizontal ? y < r.top || (y <= r.bottom && x < r.left + r.width / 2) : y < r.top + r.height / 2;
+        if (before) {
           beforeId = c.dataset.id!;
           break;
         }
