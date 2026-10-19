@@ -719,6 +719,7 @@ html, body, #root{height:auto}
 
 /* ── 날짜 줄 오른쪽: 보기 옵션 버튼 + 일간·주간·월간 ── */
 .topnav-main .acct{margin-left:auto}
+@media (min-width:641px){ .topnav-main .apps + .acct{margin-left:-12px} } /* 서비스 모음이 오른쪽 끝으로 밀고, 프로필은 4px 옆에 (줄 간격 16px 상쇄) */
 .topbar-right{margin-left:auto; display:flex; align-items:center; gap:8px}
 .topbar-right .views{margin-left:0}
 .optmenu{position:relative}
@@ -879,8 +880,8 @@ html, body, #root{height:auto}
   }
   .search-btn svg{width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round}
   .search-btn[aria-expanded="true"], .search-btn:active{background:var(--panel-2); color:var(--ink)}
-  .search-btn ~ .apps{margin-left:4px}
-  .apps + .acct{margin-left:4px}
+  .search-btn ~ .apps{margin-left:-18px} /* 헤더 줄 간격을 상쇄해 돋보기·앱·프로필을 4px씩 붙임 */
+  .apps + .acct{margin-left:-18px}
   .search-row{order:3; width:100%; display:flex; align-items:center; gap:6px; animation:fade-in .15s ease}
   .search-row .search{flex:1; width:auto; margin-left:0; order:0}
   .search-row .search input{font-size:16px; padding-top:8px; padding-bottom:8px} /* iOS 확대 방지 */
