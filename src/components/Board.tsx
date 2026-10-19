@@ -407,16 +407,12 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   );
 }
 
-/** 날짜 미정 (큰 화면): 왼쪽 사이드바의 "날짜 미정" 탭 내용. 여기서 요일 칸으로 끌어다 놓음 */
+/** 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용 — 예전에 요일 옆에 붙어 있던 칸 그대로(테두리·머리·회색 바탕) */
 export function InboxSection({ ctx }: { ctx: BoardCtx }) {
-  const items = ctx.shown("none");
-  const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
   return (
-    <section className={"inbox-side" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
-      <CardList bucket="none" items={items} ctx={ctx} />
-      {!items.length && <p className="empty">아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.</p>}
-      <Composer bucket="none" ctx={ctx} />
-    </section>
+    <div className="inbox-side">
+      <InboxColumn ctx={ctx} />
+    </div>
   );
 }
 
