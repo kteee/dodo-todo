@@ -10,7 +10,7 @@ import { signIn, signOut, useAuth } from "./data/auth";
 import { useDodo } from "./data/useDodo";
 import { useDrag, type DragState } from "./hooks/useDrag";
 import { useToday } from "./hooks/useToday";
-import { Column, InboxPanel, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
+import { Column, InboxBar, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
 import { SideColumn } from "./components/SideColumn";
 import { Categories, MiniCal } from "./components/Sidebar";
 import { GoogleButton, TopNav, ViewSwitch, type View } from "./components/TopNav";
@@ -37,8 +37,8 @@ function readView(): View {
 const WIDE_PREF = "dodo:wideWeek"; // 주간 "가로 보기"(한 줄). 기본은 두 줄
 const HIDE_DONE_PREF = "dodo:hideDone";
 const GROUP_PREF = "dodo:groupBy";
-const FOLD_PREF = "dodo:sideFolded"; // 왼쪽 달력·카테고리 접기 (헤더 맨 왼쪽 버튼)
-const INBOX_FOLD_PREF = "dodo:inboxFolded"; // 날짜 미정 패널 접기 (오른쪽 세로 탭)
+const FOLD_PREF = "dodo:sideFolded"; // 왼쪽 달력·카테고리 접기 (날짜 줄 왼쪽 버튼)
+const INBOX_FOLD_PREF = "dodo:inboxFolded"; // 요일 칸 위 날짜 미정 띠 접기
 function readPref(k: string, fallback: boolean) {
   try {
     const v = localStorage.getItem(k);
@@ -95,8 +95,8 @@ export default function App() {
     setFolded(v);
     writePref(FOLD_PREF, v);
   };
-  // 날짜 미정 패널: 정한 적 없으면 좁은 화면(1400px 미만)에선 접힌 채로 시작 — 요일 칸을 먼저 넓게 쓰고 필요할 때 편다
-  const [inboxFolded, setInboxFoldedState] = useState(() => readPref(INBOX_FOLD_PREF, typeof innerWidth === "number" && innerWidth < 1400));
+  // 날짜 미정 띠 접기 (제목 줄만 남김). 상태는 브라우저에 기억
+  const [inboxFolded, setInboxFoldedState] = useState(() => readPref(INBOX_FOLD_PREF, false));
   const setInboxFolded = (v: boolean) => {
     setInboxFoldedState(v);
     writePref(INBOX_FOLD_PREF, v);
@@ -290,13 +290,13 @@ export default function App() {
     setCalMonth(firstOfMonth(today));
   };
 
-  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (헤더 맨 왼쪽 버튼). 폰은 서랍이라 해당 없음
+  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (날짜 줄 왼쪽 버튼, 폰의 달력 버튼과 같은 자리). 폰은 서랍이라 해당 없음
   const sideFolded = !phone && folded;
 
   /* ── 오른쪽 칸: 보고 있는 기간의 메모 + 언젠가 할 일 ── */
   const [memoScope, memoPeriod]: [MemoScope, string] =
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
-  // 날짜 미정은 큰 화면에선 보드 밖 오른쪽 패널(접으면 세로 탭), 폰에선 예전처럼 보드 맨 아래 칸
+  // 날짜 미정은 큰 화면에선 요일 칸 위 가로 띠(접으면 제목 줄만), 폰에선 예전처럼 보드 맨 아래 칸
   const inboxInBoard = phone && showInbox;
   const hasSide = showMemo || inboxInBoard;
   const weekTwoRows = view === "week" && twoRows && !phone;
@@ -533,8 +533,6 @@ export default function App() {
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
         onSignOut={() => signOut()}
-        sideFolded={sideFolded}
-        onToggleSide={phone ? undefined : () => toggleFold(!folded)}
       />
       <div className={"app" + (sideFolded ? " side-folded" : "") + (phone ? " phone" : "")}>
         {phone ? (
@@ -550,6 +548,21 @@ export default function App() {
         )}
         <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
           <div className="topbar">
+            {/* 큰 화면: 달력·카테고리 접기/펼치기 (폰의 달력 버튼과 같은 자리) */}
+            {!phone && (
+              <button
+                className="side-tg"
+                aria-label={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
+                aria-pressed={sideFolded}
+                title={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
+                onClick={() => toggleFold(!folded)}
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+                  <path d="M6 2.5v11" />
+                </svg>
+              </button>
+            )}
             {phone && (
               <button className="side-btn" aria-label="달력과 카테고리 열기" aria-expanded={drawer} onClick={() => setDrawer(true)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -633,15 +646,9 @@ export default function App() {
             </OptionsMenu>
             </div>
           </div>
-          {ready && !phone && showInbox ? (
-            // 날짜 미정: 요일 격자 밖, 사이를 띄우고 자기 테두리를 가진 패널. 접으면 오른쪽 가장자리에 세로 탭만
-            <div className="main-row">
-              {main}
-              <InboxPanel ctx={ctx} folded={inboxFolded} onFold={setInboxFolded} />
-            </div>
-          ) : (
-            main
-          )}
+          {/* 날짜 미정: 요일 칸 위 가로 띠 (종이 다이어리 위쪽의 할 일 목록처럼). 접으면 제목 줄만 남고, 거기로 끌어다 놓아도 날짜가 비워짐 */}
+          {ready && !phone && showInbox && <InboxBar ctx={ctx} folded={inboxFolded} onFold={setInboxFolded} />}
+          {main}
         </main>
       </div>
       {store.net.offline && (
