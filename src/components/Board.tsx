@@ -402,34 +402,15 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
  * 큰 화면의 날짜 미정: 요일 칸 위 가로 띠. 카드가 가로로 흐르고(줄바꿈), 접으면 제목 줄만 남는다.
  * 접힌 제목 줄 위로 카드를 끌어다 놓아도 날짜가 비워진다 (data-drop 이 같아서 드래그 쪽은 그대로)
  */
-export function InboxBar({ ctx, folded, onFold }: { ctx: BoardCtx; folded: boolean; onFold: (v: boolean) => void }) {
-  const all = ctx.inBucket("none");
-  const done = all.filter((t) => t.done).length;
-  const items = ctx.shown("none");
-  const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
-  const hint = "아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.";
+/** 날짜 미정: 보드 오른쪽에 사이를 띄우고 자기 테두리를 가진 패널. 날짜 줄의 버튼으로 열고 닫음 */
+export function InboxPanel({ ctx, onClose }: { ctx: BoardCtx; onClose: () => void }) {
   return (
-    <section className={"col unscheduled inbox-bar" + (folded ? " folded" : "") + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="날짜 미정">
-      <div className="colhead">
-        <span className="dow">날짜 미정</span>
-        <span className="hint-ico" tabIndex={0} role="img" aria-label={hint} data-tip={hint}>
-          ?
-        </span>
-        <span className="n">{all.length ? `${done}/${all.length}` : ""}</span>
-        <button className="inbox-fold" aria-label={folded ? "날짜 미정 펼치기" : "날짜 미정 접기"} aria-expanded={!folded} title={folded ? "펼치기" : "접기"} onClick={() => onFold(!folded)}>
-          <svg viewBox="0 0 12 12" aria-hidden="true">
-            <path d="M2.5 7.5L6 4l3.5 3.5" />
-          </svg>
-        </button>
-      </div>
-      {!folded && (
-        <div className="colbody">
-          <CardList bucket="none" items={items} ctx={ctx} />
-          {!items.length && <p className="empty">날짜 없이 적어 둘 일</p>}
-          <Composer bucket="none" ctx={ctx} />
-        </div>
-      )}
-    </section>
+    <aside className="inbox-panel" aria-label="날짜 미정">
+      <InboxColumn ctx={ctx} />
+      <button className="inbox-close" aria-label="날짜 미정 닫기" title="닫기" onClick={onClose}>
+        ×
+      </button>
+    </aside>
   );
 }
 
