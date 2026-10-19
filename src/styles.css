@@ -416,7 +416,7 @@ body{overflow-x:clip} /* 헤더 구분선(100vw)이 세로 스크롤바 폭만�
 /* 로그인 전 / 불러오는 중 */
 .gate{
   flex:1; min-height:320px; display:grid; place-items:center; text-align:center;
-  border:1px solid var(--line); border-radius:10px; background:var(--panel);
+  border:1px solid var(--line); border-radius:0; background:var(--panel); /* 보드 칸과 같이 각진 모서리 */
 }
 .gate h3{margin:0 0 6px; font-size:17px; font-weight:600; letter-spacing:-.02em}
 .gate p{margin:0 0 16px; font-size:13px; color:var(--ink-2)}
