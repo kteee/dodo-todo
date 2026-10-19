@@ -633,9 +633,16 @@ html, body, #root{height:auto}
 }
 .side-tg svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
 .side-tg:hover{background:var(--panel-2); color:var(--ink)}
-.app.side-folded{grid-template-columns:28px minmax(0,1fr); gap:14px}
-.side.folded{padding:0; overflow:visible; align-items:flex-start}
-.side.folded .side-tg{margin-top:-6px}
+/* 접힌 상태: 자리를 전혀 차지하지 않음. 화면 왼쪽 여백(본문 밖)에 보이지 않는 띠를 두고, 마우스를 대면 펼치기 버튼이 나타남 */
+.app.side-folded{position:relative; grid-template-columns:minmax(0,1fr); gap:0}
+.side.folded{
+  position:absolute; top:-6px; bottom:0; left:-24px; width:24px; max-height:none; z-index:5;
+  padding:0; overflow:visible; align-items:flex-start;
+}
+.side.folded .side-tg{position:sticky; top:16px; width:22px; margin-left:1px; opacity:0; transition:opacity .15s ease}
+.side.folded:hover .side-tg, .side.folded .side-tg:focus-visible{opacity:1; background:var(--bg); box-shadow:0 0 0 1px var(--line)}
+@media (hover:none){ .side.folded .side-tg{opacity:.6} } /* 마우스가 없는 기기에선 늘 살짝 보이게 */
+@media (max-width:1180px){ .side.folded{left:-20px; width:20px} }
 
 /* ── 드래그: 카드 자체가 손을 따라옴 ── */
 .card.ghosted{display:none} /* 원래 자리는 비우고, 놓일 자리에 같은 높이의 빈칸(.ph) */
