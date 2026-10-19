@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 /** 두두 패밀리 — 서비스가 열리면 href 를 채우고 soon 을 지움 */
 const APPS: { key: string; name: string; desc: string; href: string; soon?: boolean }[] = [
   { key: "todo", name: "두두 투두", desc: "주간 할 일 보드", href: "https://todo.dododiary.com" },
-  { key: "books", name: "두두 독서노트", desc: "한 문장·필사·느낌·요약", href: "https://books.dododiary.com", soon: true },
+  { key: "books", name: "두두 북로그", desc: "책 한 권에 한 장씩, 독서 기록", href: "https://books.dododiary.com", soon: true },
   { key: "ledger", name: "두두 가계부", desc: "다이어리처럼 쓰는 가계부", href: "https://ledger.dododiary.com", soon: true },
 ];
 const CURRENT = "todo";
