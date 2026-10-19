@@ -407,38 +407,48 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   );
 }
 
-/**
- * 날짜 미정 (큰 화면): 왼쪽 사이드바 달력 아래. 요일 칸과 섞이지 않고, 왼쪽에서 요일 칸으로 끌어다 놓는 흐름.
- * 제목 줄의 ⌃ 로 접으면 제목만 남고, 접힌 제목 위로 카드를 끌어다 놓아도 날짜가 비워짐
- */
-export function InboxSection({ ctx, folded, onFold }: { ctx: BoardCtx; folded: boolean; onFold: (v: boolean) => void }) {
-  const all = ctx.inBucket("none");
-  const done = all.filter((t) => t.done).length;
+/** 날짜 미정 (큰 화면): 왼쪽 사이드바의 "날짜 미정" 탭 내용. 여기서 요일 칸으로 끌어다 놓음 */
+export function InboxSection({ ctx }: { ctx: BoardCtx }) {
   const items = ctx.shown("none");
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
   return (
-    <section className={"inbox-side" + (folded ? " folded" : "") + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="날짜 미정">
-      <div className="inbox-side-head">
-        <span className="sect-label">날짜 미정</span>
-        <span className="hint-ico" tabIndex={0} role="img" aria-label="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요." data-tip="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.">
-          ?
-        </span>
-        <span className="n">{all.length ? `${done}/${all.length}` : ""}</span>
-        <button className="inbox-fold" aria-label={folded ? "날짜 미정 펼치기" : "날짜 미정 접기"} aria-expanded={!folded} title={folded ? "펼치기" : "접기"} onClick={() => onFold(!folded)}>
-          <svg viewBox="0 0 12 12" aria-hidden="true">
-            <path d="M2.5 7.5L6 4l3.5 3.5" />
-          </svg>
-        </button>
-      </div>
-      {!folded && (
-        <div className="inbox-side-body">
-          <CardList bucket="none" items={items} ctx={ctx} />
-          <Composer bucket="none" ctx={ctx} />
-        </div>
-      )}
+    <section className={"inbox-side" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="날짜 미정">
+      <CardList bucket="none" items={items} ctx={ctx} />
+      {!items.length && <p className="empty">아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.</p>}
+      <Composer bucket="none" ctx={ctx} />
     </section>
   );
 }
+
+export type SideTab = "cal" | "inbox";
+
+/**
+ * 왼쪽 사이드바 맨 위 탭: [달력 | 날짜 미정 N]. 보기 전환과 같은 모양(작게).
+ * 달력 탭을 보고 있을 때도 "날짜 미정" 탭 위로 카드를 끌어다 놓으면 날짜가 비워짐
+ */
+export function SideTabs({ tab, onTab, ctx }: { tab: SideTab; onTab: (t: SideTab) => void; ctx: BoardCtx }) {
+  const n = ctx.inBucket("none").filter((t) => !t.done).length;
+  const dropHere = tab === "cal" && !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
+  return (
+    <div className="views side-tabs" role="tablist" aria-label="왼쪽 영역" style={{ "--i": tab === "cal" ? 0 : 1 } as CSSProperties}>
+      <span className="views-thumb" aria-hidden="true" />
+      <button role="tab" aria-selected={tab === "cal"} onClick={() => onTab("cal")}>
+        달력
+      </button>
+      <button
+        role="tab"
+        aria-selected={tab === "inbox"}
+        className={dropHere ? "drop" : undefined}
+        data-drop={tab === "cal" ? "date:none" : undefined}
+        title={HINT_TAB}
+        onClick={() => onTab("inbox")}
+      >
+        날짜 미정{n ? <b>{n}</b> : null}
+      </button>
+    </div>
+  );
+}
+const HINT_TAB = "아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요. 달력 탭에서도 여기로 끌어다 놓으면 날짜가 비워져요.";
 
 export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKey: string; ctx: BoardCtx }) {
   const start = mondayOf(calMonth);

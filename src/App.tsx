@@ -10,7 +10,7 @@ import { signIn, signOut, useAuth } from "./data/auth";
 import { useDodo } from "./data/useDodo";
 import { useDrag, type DragState } from "./hooks/useDrag";
 import { useToday } from "./hooks/useToday";
-import { Column, InboxSection, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
+import { Column, InboxSection, MonthGrid, SideTabs, type SideTab, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
 import { SideColumn } from "./components/SideColumn";
 import { Categories, MiniCal } from "./components/Sidebar";
 import { GoogleButton, TopNav, ViewSwitch, type View } from "./components/TopNav";
@@ -22,7 +22,7 @@ import { isPhone, usePhone } from "./hooks/usePhone";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const INBOX_PREF = "dodo:showInbox";
-const INBOX_FOLD_PREF = "dodo:inboxFolded"; // 왼쪽 사이드바의 날짜 미정 접기
+const SIDE_TAB_PREF = "dodo:sideTab"; // 왼쪽 사이드바 탭: 달력 | 날짜 미정
 const MEMO_PREF = "dodo:showMemo";
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
@@ -84,10 +84,20 @@ export default function App() {
     writePref(HIDE_DONE_PREF, v);
   };
   const [showInbox, setShowInbox] = useState(() => readPref(INBOX_PREF, true));
-  const [inboxFolded, setInboxFoldedState] = useState(() => readPref(INBOX_FOLD_PREF, false));
-  const setInboxFolded = (v: boolean) => {
-    setInboxFoldedState(v);
-    writePref(INBOX_FOLD_PREF, v);
+  const [sideTab, setSideTabState] = useState<SideTab>(() => {
+    try {
+      return localStorage.getItem(SIDE_TAB_PREF) === "inbox" ? "inbox" : "cal";
+    } catch {
+      return "cal";
+    }
+  });
+  const setSideTab = (v: SideTab) => {
+    setSideTabState(v);
+    try {
+      localStorage.setItem(SIDE_TAB_PREF, v);
+    } catch {
+      /* 저장 못 해도 이번 화면에서는 적용됨 */
+    }
   };
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
   const [wide, setWide] = useState(() => readPref(WIDE_PREF, false));
@@ -269,7 +279,7 @@ export default function App() {
       setCalMonth(firstOfMonth(d));
     } else {
       if (folded) toggleFold(false);
-      if (inboxFolded) setInboxFolded(false);
+      setSideTab("inbox");
     }
     if (!t.date && !showInbox) {
       setShowInbox(true); // 언젠가 할 일이 꺼져 있으면 켜서 보여줌
@@ -511,7 +521,12 @@ export default function App() {
     );
   }
 
-  const sideInner = (
+  // 큰 화면 + 날짜 미정 보기 켜짐: 사이드바 위 탭으로 [달력·카테고리 | 날짜 미정] 전환
+  const sideTabs = ready && !phone && showInbox;
+  const onInboxTab = sideTabs && sideTab === "inbox";
+  const sideInner = onInboxTab ? (
+    <InboxSection ctx={ctx} />
+  ) : (
     <>
       <MiniCal
         calMonth={calMonth}
@@ -527,8 +542,6 @@ export default function App() {
           setDrawer(false);
         }}
       />
-      {/* 날짜 미정: 달력 바로 아래 (큰 화면만 — 폰은 보드 맨 아래 칸) */}
-      {ready && !phone && showInbox && <InboxSection ctx={ctx} folded={inboxFolded} onFold={setInboxFolded} />}
       {ready && (
         <Categories
           cats={cats}
@@ -576,8 +589,9 @@ export default function App() {
           </aside>
         ) : (
           <aside className="side">
-            {/* 왼쪽 영역 맨 위 오른쪽: 이 영역을 접는 버튼. 그 아래로 달력·카테고리 */}
-            <div className="side-top">
+            {/* 왼쪽 영역 맨 위: [달력 | 날짜 미정] 탭 + 오른쪽 끝에 이 영역을 접는 버튼 */}
+            <div className={"side-top" + (sideTabs ? " has-tabs" : "")}>
+              {sideTabs && <SideTabs tab={sideTab} onTab={setSideTab} ctx={ctx} />}
               <button className="side-tg" aria-label="달력·카테고리 접기" title="접기" onClick={() => toggleFold(true)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">
                   <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
