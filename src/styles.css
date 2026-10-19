@@ -983,39 +983,42 @@ html, body, #root{height:auto}
 /* 터치 기기(마우스 올리기 없음): 삭제 버튼을 항상 살짝 보이게 */
 @media (hover:none){ .del{opacity:.5} }
 
-/* ── 날짜 미정: 요일 칸 위 가로 띠 (큰 화면) ──────────────
-   종이 다이어리 위쪽의 할 일 목록처럼 보드 위에 한 띠. 카드는 가로로 흐르고 줄이 차면 줄바꿈.
-   ⌃ 로 접으면 제목 줄만 남고, 거기로 카드를 끌어다 놓아도 날짜가 비워짐. 폰은 예전처럼 맨 아래 칸 */
-.inbox-bar{
-  flex:none; margin-bottom:14px; border-radius:8px; background:var(--panel);
-  box-shadow:0 0 0 1px var(--line); overflow:visible;
+/* ── 날짜 미정: 보드 밖 오른쪽 패널 (큰 화면) ──────────────
+   요일 격자에서 빼서 사이를 띄우고 자기 테두리를 줌 → "월~일"을 한 줄로 읽다가 걸리지 않음.
+   › 로 접으면 오른쪽 가장자리에 세로 탭만 남고, 탭 위로 카드를 끌어다 놓으면 날짜가 비워짐 */
+.main-row{display:flex; align-items:stretch; gap:18px; flex:1; min-height:0}
+.main-row > .board{flex:1; min-width:0}
+.inbox-panel{
+  position:relative; flex:0 0 250px; display:flex; flex-direction:column; min-width:0;
+  box-shadow:0 0 0 1px var(--line); border-radius:8px; background:var(--panel); overflow:hidden;
 }
-.inbox-bar.drop{box-shadow:0 0 0 1px var(--line), inset 0 0 0 1.5px var(--ink-2)}
-.inbox-bar > .colhead{min-height:36px; padding:6px 8px 6px 12px}
-.inbox-bar.folded > .colhead{border-bottom:0}
-.inbox-bar > .colhead .dow{color:var(--ink); font-size:12px}
+.inbox-panel > .col{flex:1; min-height:0; background:var(--panel)}
+.inbox-panel > .col.drop{box-shadow:inset 0 0 0 1.5px var(--ink-2)}
+.inbox-panel .colhead{padding-right:36px}
 .inbox-fold{
-  order:10; width:24px; height:24px; margin-left:4px; border-radius:6px; color:var(--ink-3);
-  display:grid; place-items:center;
+  position:absolute; top:7px; right:6px; width:26px; height:26px; border-radius:6px;
+  font-size:16px; line-height:1; color:var(--ink-3); display:grid; place-items:center;
 }
-.inbox-fold svg{width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; transition:transform .15s ease}
-.inbox-bar.folded .inbox-fold svg{transform:rotate(180deg)}
 .inbox-fold:hover{background:var(--panel-2); color:var(--ink)}
-.inbox-bar > .colbody{display:flex; flex-wrap:wrap; align-items:flex-start; gap:6px 8px; padding:10px 10px}
-.inbox-bar .list{flex-direction:row; flex-wrap:wrap; gap:6px; min-height:0; max-width:100%}
-.inbox-bar .list:empty{display:none}
-.inbox-bar .list > .card, .inbox-bar .list > .ph{width:220px; max-width:100%}
-.inbox-bar .list > .ph{height:auto !important; min-height:32px} /* 가로 띠에선 높이 대신 폭이 기준 */
-.inbox-bar .list > .grouphead{width:100%; padding-top:2px}
-.inbox-bar .empty{padding:6px 4px; margin:0}
-.inbox-bar .add{width:auto; margin-top:0; padding:6px 10px; opacity:1}
-.inbox-bar .composer{width:220px; max-width:100%; padding:0}
-
-/* ── 왼쪽 달력·카테고리 접기: 날짜 줄 맨 왼쪽(폰의 달력 버튼 자리) 패널 아이콘. 접으면 왼쪽 열이 사라지고 보드가 넓어짐 ── */
-.side-tg{
-  display:inline-grid; place-items:center; width:28px; height:28px; border-radius:7px; color:var(--ink-3); flex:none; margin-right:-4px;
+.inbox-tab{
+  flex:0 0 30px; align-self:stretch; display:flex; align-items:flex-start; justify-content:center; padding:12px 0;
+  border-radius:8px; box-shadow:0 0 0 1px var(--line); background:var(--panel); color:var(--ink-2); font-size:11.5px;
+  transition:background .12s ease, box-shadow .12s ease, color .12s ease;
 }
-.side-tg svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
-.side-tg:hover{background:var(--panel-2); color:var(--ink)}
-.side-tg[aria-pressed="true"]{color:var(--ink-2)}
+.inbox-tab-text{writing-mode:vertical-rl; letter-spacing:.06em; white-space:nowrap; font-variant-numeric:tabular-nums}
+.inbox-tab:hover{background:var(--panel-2); color:var(--ink)}
+body.dragging .inbox-tab{color:var(--ink)}
+.inbox-tab.drop{background:var(--panel-2); box-shadow:0 0 0 1px var(--line), inset 0 0 0 1.5px var(--ink-2); color:var(--ink)}
+@media (max-width:1180px){ .inbox-panel{flex-basis:220px} }
+
+/* ── 왼쪽 달력·카테고리 접기: 헤더 맨 왼쪽(로고 앞) 패널 아이콘. 접으면 왼쪽 열이 사라지고 보드가 넓어짐 ── */
+.brand{display:flex; align-items:center; gap:8px; min-width:0}
+.side-hd{
+  width:28px; height:28px; margin-left:-6px; border-radius:7px; display:grid; place-items:center; color:var(--ink-3); flex:none;
+}
+.side-hd svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
+.side-hd:hover{background:var(--panel-2); color:var(--ink)}
+.side-hd[aria-pressed="true"]{color:var(--ink-2)}
 .app.side-folded{grid-template-columns:minmax(0,1fr); gap:0}
+/* 접힌 동안 헤더 검색창도 보드 왼쪽 끝에 맞춤 */
+.topnav.side-folded{grid-template-columns:auto minmax(0,1fr)}

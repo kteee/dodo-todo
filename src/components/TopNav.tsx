@@ -21,6 +21,9 @@ interface Props {
   menuOpen: boolean;
   setMenuOpen: (o: boolean) => void;
   onSignOut: () => void;
+  /** 왼쪽 달력·카테고리 접힘 상태 + 토글 (폰에선 안 넘김 → 버튼 없음) */
+  sideFolded?: boolean;
+  onToggleSide?: () => void;
 }
 
 function Avatar({ a }: { a: Account }) {
@@ -66,7 +69,7 @@ export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => 
   );
 }
 
-export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSignOut }: Props) {
+export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSignOut, sideFolded, onToggleSide }: Props) {
   // 폰: 검색창 대신 돋보기 버튼(프로필 왼쪽). 누르면 아래 줄에 검색창이 열리고 바로 입력 가능
   const phone = usePhone();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -112,7 +115,23 @@ export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSign
     </>
   );
   return (
-    <header className="topnav">
+    <header className={"topnav" + (sideFolded ? " side-folded" : "")}>
+      <div className="brand">
+      {/* 맨 왼쪽: 달력·카테고리 접기/펼치기 (패널 아이콘). 접으면 그만큼 보드가 넓어짐 */}
+      {onToggleSide && (
+        <button
+          className="side-hd"
+          aria-label={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
+          aria-pressed={sideFolded}
+          title={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
+          onClick={onToggleSide}
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+            <path d="M6 2.5v11" />
+          </svg>
+        </button>
+      )}
       <a className="logo" href="/">
         <span className="mark" aria-hidden="true">
           <svg viewBox="0 0 16 16">
@@ -122,6 +141,7 @@ export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSign
         <span className="word">DoDo</span>
         <span className="tag">todolist</span>
       </a>
+      </div>
       {/* 로고 오른쪽 영역은 아래 할 일 보드와 같은 열에서 시작 — 검색창 왼쪽 끝이 보드 왼쪽 끝과 맞음 */}
       <div className="topnav-main">
       {searchSlot}
