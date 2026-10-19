@@ -398,6 +398,36 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   );
 }
 
+/**
+ * 큰 화면의 날짜 미정: 보드 밖 오른쪽 패널. 접으면 세로 탭(날짜 미정 · n)만 남고,
+ * 접힌 탭 위로 카드를 끌어다 놓아도 날짜가 비워진다 (data-drop 이 같아서 드래그 쪽은 손댈 게 없음)
+ */
+export function InboxPanel({ ctx, folded, onFold }: { ctx: BoardCtx; folded: boolean; onFold: (v: boolean) => void }) {
+  const n = ctx.inBucket("none").length;
+  const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
+  if (folded) {
+    return (
+      <button
+        className={"inbox-tab" + (dropHere ? " drop" : "")}
+        data-drop="date:none"
+        aria-label="날짜 미정 펼치기"
+        title="날짜 미정 펼치기 — 여기로 끌어다 놓으면 날짜가 비워져요"
+        onClick={() => onFold(false)}
+      >
+        <span className="inbox-tab-text">날짜 미정{n ? ` · ${n}` : ""}</span>
+      </button>
+    );
+  }
+  return (
+    <aside className="inbox-panel" aria-label="날짜 미정">
+      <InboxColumn ctx={ctx} />
+      <button className="inbox-fold" aria-label="날짜 미정 접기" title="접기" onClick={() => onFold(true)}>
+        ›
+      </button>
+    </aside>
+  );
+}
+
 export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKey: string; ctx: BoardCtx }) {
   const start = mondayOf(calMonth);
   const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
