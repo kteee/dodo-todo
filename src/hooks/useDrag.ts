@@ -4,8 +4,10 @@ export interface DragState {
   id: string;
   /** 카테고리 위에 놓으면 카테고리만 바꿈 */
   catTarget: string | null;
-  /** 날짜 칸(bucket). 한번 칸 위에 올라가면 칸 밖으로 나가도 마지막 칸을 유지 */
+  /** 날짜 칸(bucket). 칸 밖으로 나가면 원래 자리(자리표시만 제자리에)로 돌아감 */
   zone: string | null;
+  /** 손가락이 어느 칸·카테고리 위도 아님 → 놓아도 아무 일 없음 (자리표시는 원래 자리에) */
+  outside: boolean;
   /** 자리표시가 이 카드 앞에 들어감. null이면 맨 끝 */
   beforeId: string | null;
   /** 카테고리별 보기: 손가락이 있는 그룹(카테고리 id, 없음은 NO_CAT). 그룹 없는 목록이면 null */
@@ -35,9 +37,10 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
     let ghost: HTMLElement | null = null;
     let grabX = 0; // 카드 안에서 잡은 위치 — 고스트가 그 지점을 손가락 밑에 두고 따라옴
     let grabY = 0;
+    let home: { zone: string | null; beforeId: string | null } = { zone: null, beforeId: null }; // 집어 든 원래 자리
 
     const set = (next: DragState | null) => {
-      if (cur && next && cur.catTarget === next.catTarget && cur.zone === next.zone && cur.beforeId === next.beforeId && cur.group === next.group) return;
+      if (cur && next && cur.catTarget === next.catTarget && cur.zone === next.zone && cur.beforeId === next.beforeId && cur.group === next.group && cur.outside === next.outside) return;
       cur = next;
       setDrag(next);
     };
@@ -59,7 +62,8 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
       const zone = card.closest<HTMLElement>('[data-drop^="date:"]');
       let next = card.nextElementSibling as HTMLElement | null;
       while (next && !next.classList.contains("card")) next = next.nextElementSibling as HTMLElement | null;
-      set({ id, catTarget: null, zone: zone ? zone.dataset.drop!.slice(5) : null, beforeId: next?.dataset.id ?? null, group: null, h: r.height });
+      home = { zone: zone ? zone.dataset.drop!.slice(5) : null, beforeId: next?.dataset.id ?? null };
+      set({ id, catTarget: null, ...home, group: null, outside: false, h: r.height });
       return true;
     }
 
@@ -73,7 +77,8 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
       }
       const zone = el?.closest<HTMLElement>('[data-drop^="date:"]');
       if (!zone) {
-        if (cur.catTarget) set({ ...cur, catTarget: null });
+        // 칸 밖: 자리표시를 원래 자리로 되돌리고, 여기서 놓으면 아무 일도 안 일어남
+        set({ ...cur, catTarget: null, ...home, group: null, outside: true });
         return;
       }
       const list = zone.querySelector(".list");
@@ -94,7 +99,7 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
         group = heads[0].dataset.group ?? null;
         for (const h of heads) if (y >= h.getBoundingClientRect().top) group = h.dataset.group ?? null;
       }
-      set({ ...cur, catTarget: null, zone: zone.dataset.drop!.slice(5), beforeId, group });
+      set({ ...cur, catTarget: null, zone: zone.dataset.drop!.slice(5), beforeId, group, outside: false });
     }
 
     /** 드래그를 놓은 직후 따라오는 클릭 한 번은 무시 — 안 그러면 카드가 수정 모드로 열림 */
@@ -114,7 +119,7 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
       ghost = null;
       document.body.classList.remove("dragging");
       set(null);
-      if (d && (d.catTarget || d.zone)) cb.current.onDrop(d);
+      if (d && !d.outside && (d.catTarget || d.zone)) cb.current.onDrop(d);
     }
 
     function onDown(e: PointerEvent) {
