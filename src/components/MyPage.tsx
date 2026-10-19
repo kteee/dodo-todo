@@ -84,7 +84,7 @@ export function MyPage({ account, isLocal, onExport, onDeleteAccount }: Props) {
       {confirming && (
         <ConfirmDialog
           title="정말 탈퇴하시겠습니까?"
-          body="계정과 할 일·카테고리·메모가 즉시 영구 삭제되며 복구할 수 없습니다. 필요하면 먼저 데이터를 내보내 주세요."
+          body="계정과 모든 데이터가 즉시 영구 삭제되며 복구할 수 없습니다. 필요하면 먼저 데이터를 내보내 주세요."
           confirmLabel="탈퇴"
           onConfirm={withdraw}
           onCancel={() => setConfirming(false)}
