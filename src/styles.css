@@ -987,7 +987,7 @@ html, body, #root{height:auto}
 .seo-intro a{color:var(--ink-3)}
 
 /* ── 왼쪽 사이드바 탭: [달력 | 날짜 미정] — 보기 전환(.views)과 같은 모양, 두 칸 ── */
-.side-top.has-tabs{align-items:center; gap:6px; margin:-4px 0 -6px}
+.side-top.has-tabs{align-items:center; gap:6px; margin:0 0 -6px; padding-top:1px} /* 위로 당기면 사이드바(overflow) 밖으로 나가 탭 윗테두리가 잘림 */
 .side-tabs{flex:1; margin-left:0; grid-template-columns:repeat(2, 1fr)}
 .side-tabs .views-thumb{width:calc((100% - 4px) / 2)}
 .side-tabs button{min-width:0; padding:3px 6px; display:inline-flex; align-items:center; justify-content:center; gap:5px}
