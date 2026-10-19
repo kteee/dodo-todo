@@ -22,7 +22,7 @@ import { isPhone, usePhone } from "./hooks/usePhone";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const INBOX_PREF = "dodo:showInbox";
-const SIDE_TAB_PREF = "dodo:sideTab"; // 왼쪽 사이드바 탭: 달력 | 날짜 미정
+const SIDE_TAB_PREF = "dodo:sideTab"; // 왼쪽 사이드바 탭: 달력 | 보관함
 const MEMO_PREF = "dodo:showMemo";
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
@@ -682,7 +682,7 @@ export default function App() {
                     writePref(INBOX_PREF, e.target.checked);
                   }}
                 />{" "}
-                날짜 미정 보기
+                보관함 보기
               </label>
             </OptionsMenu>
             </div>

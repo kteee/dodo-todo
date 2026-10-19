@@ -1000,3 +1000,7 @@ html, body, #root{height:auto}
 .inbox-side .list:empty{min-height:0}
 .inbox-side .empty{padding:2px 4px 8px}
 .inbox-side .add{opacity:1; margin-top:4px}
+
+/* 사이드바는 화면보다 길어지면 스크롤은 되지만 스크롤바는 보이지 않게 (미관) */
+.side{scrollbar-width:none}
+.side::-webkit-scrollbar{display:none}

@@ -399,7 +399,7 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   return (
     <Column
       bucket="none"
-      label="날짜 미정"
+      label="보관함"
       hint="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요."
       cls=" unscheduled"
       ctx={ctx}
@@ -412,7 +412,7 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
   const items = ctx.shown("none");
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
   return (
-    <section className={"inbox-side" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="날짜 미정">
+    <section className={"inbox-side" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
       <CardList bucket="none" items={items} ctx={ctx} />
       {!items.length && <p className="empty">아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.</p>}
       <Composer bucket="none" ctx={ctx} />
@@ -443,7 +443,7 @@ export function SideTabs({ tab, onTab, ctx }: { tab: SideTab; onTab: (t: SideTab
         title={HINT_TAB}
         onClick={() => onTab("inbox")}
       >
-        날짜 미정{n ? <b>{n}</b> : null}
+        보관함{n ? <b>{n}</b> : null}
       </button>
     </div>
   );
