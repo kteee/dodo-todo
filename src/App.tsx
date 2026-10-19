@@ -37,7 +37,7 @@ function readView(): View {
 const WIDE_PREF = "dodo:wideWeek"; // 주간 "가로 보기"(한 줄). 기본은 두 줄
 const HIDE_DONE_PREF = "dodo:hideDone";
 const GROUP_PREF = "dodo:groupBy";
-const FOLD_PREF = "dodo:sideFolded"; // 가로 보기에서 왼쪽 달력·카테고리 접기
+const FOLD_PREF = "dodo:sideFolded"; // 왼쪽 달력·카테고리 접기 (날짜 줄 왼쪽 버튼)
 function readPref(k: string, fallback: boolean) {
   try {
     const v = localStorage.getItem(k);
@@ -285,8 +285,8 @@ export default function App() {
 
   // 왼쪽 접기는 가로 보기(주간 한 줄)에서만 — 칸이 좁은 보기라서
   // 왼쪽 접기는 가로 보기(주간 한 줄)에서만 — 칸이 좁은 보기라서
-  const canFold = view === "week" && wide;
-  const sideFolded = canFold && folded;
+  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (날짜 줄 왼쪽 버튼, 폰의 달력 버튼과 같은 자리). 폰은 서랍이라 해당 없음
+  const sideFolded = !phone && folded;
 
   /* ── 오른쪽 칸: 보고 있는 기간의 메모 + 언젠가 할 일 ── */
   const [memoScope, memoPeriod]: [MemoScope, string] =
@@ -537,25 +537,26 @@ export default function App() {
               </aside>
             </div>
           )
-        ) : sideFolded ? (
-          // 접힌 상태: 얇은 띠에 펼치기 버튼만
-          <aside className="side folded">
-            <button className="side-toggle" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
-              »
-            </button>
-          </aside>
-        ) : (
-        <aside className="side">
-          {sideInner}
-          {canFold && (
-            <button className="side-fold" onClick={() => toggleFold(true)}>
-              « 접기
-            </button>
-          )}
-        </aside>
+        ) : sideFolded ? null : (
+          <aside className="side">{sideInner}</aside>
         )}
         <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
           <div className="topbar">
+            {/* 큰 화면: 달력·카테고리 접기/펼치기 (폰의 달력 버튼과 같은 자리) */}
+            {!phone && (
+              <button
+                className="side-tg"
+                aria-label={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
+                aria-pressed={sideFolded}
+                title={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
+                onClick={() => toggleFold(!folded)}
+              >
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+                  <path d="M6 2.5v11" />
+                </svg>
+              </button>
+            )}
             {phone && (
               <button className="side-btn" aria-label="달력과 카테고리 열기" aria-expanded={drawer} onClick={() => setDrawer(true)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">

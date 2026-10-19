@@ -625,20 +625,14 @@ html, body, #root{height:auto}
 .mcell.sat:not(.is-today) .mnum{color:var(--sat)}
 .mcell.sun:not(.is-today) .mnum{color:var(--sun)}
 
-/* ── 가로 보기에서 왼쪽 달력·카테고리 접기 ── */
-.side-fold{
-  align-self:flex-start; margin-top:auto; padding:5px 8px; border-radius:6px;
-  font-size:12px; color:var(--ink-3);
+/* ── 왼쪽 달력·카테고리 접기: 날짜 줄 맨 왼쪽(폰의 달력 버튼 자리) 패널 아이콘. 접으면 왼쪽 열이 사라지고 보드가 넓어짐 ── */
+.side-tg{
+  display:inline-grid; place-items:center; width:28px; height:28px; border-radius:7px; color:var(--ink-3); flex:none; margin-right:-4px;
 }
-.side-fold:hover{background:var(--panel-2); color:var(--ink-2)}
-.app.side-folded{grid-template-columns:24px minmax(0,1fr); gap:14px}
-.side.folded{padding:0; overflow:visible; align-items:center}
-.side-toggle{
-  width:24px; height:28px; border-radius:6px; font-size:14px; line-height:1; color:var(--ink-3);
-  display:grid; place-items:center;
-}
-.side-toggle:hover{background:var(--panel-2); color:var(--ink)}
-@media (max-width:820px){ .app.side-folded{grid-template-columns:1fr} }
+.side-tg svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round}
+.side-tg:hover{background:var(--panel-2); color:var(--ink)}
+.side-tg[aria-pressed="true"]{color:var(--ink-2)}
+.app.side-folded{grid-template-columns:minmax(0,1fr); gap:0}
 
 /* ── 드래그: 카드 자체가 손을 따라옴 ── */
 .card.ghosted{display:none} /* 원래 자리는 비우고, 놓일 자리에 같은 높이의 빈칸(.ph) */
