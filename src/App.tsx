@@ -10,7 +10,7 @@ import { signIn, signOut, useAuth } from "./data/auth";
 import { useDodo } from "./data/useDodo";
 import { useDrag, type DragState } from "./hooks/useDrag";
 import { useToday } from "./hooks/useToday";
-import { Column, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
+import { Column, InboxSection, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
 import { SideColumn } from "./components/SideColumn";
 import { Categories, MiniCal } from "./components/Sidebar";
 import { GoogleButton, TopNav, ViewSwitch, type View } from "./components/TopNav";
@@ -22,6 +22,7 @@ import { isPhone, usePhone } from "./hooks/usePhone";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const INBOX_PREF = "dodo:showInbox";
+const INBOX_FOLD_PREF = "dodo:inboxFolded"; // 왼쪽 사이드바의 날짜 미정 접기
 const MEMO_PREF = "dodo:showMemo";
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
@@ -83,6 +84,11 @@ export default function App() {
     writePref(HIDE_DONE_PREF, v);
   };
   const [showInbox, setShowInbox] = useState(() => readPref(INBOX_PREF, true));
+  const [inboxFolded, setInboxFoldedState] = useState(() => readPref(INBOX_FOLD_PREF, false));
+  const setInboxFolded = (v: boolean) => {
+    setInboxFoldedState(v);
+    writePref(INBOX_FOLD_PREF, v);
+  };
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
   const [wide, setWide] = useState(() => readPref(WIDE_PREF, false));
   const twoRows = !wide;
@@ -261,7 +267,11 @@ export default function App() {
       setSelected(t.date);
       setWeekStart(mondayOf(d));
       setCalMonth(firstOfMonth(d));
-    } else if (!showInbox) {
+    } else {
+      if (folded) toggleFold(false);
+      if (inboxFolded) setInboxFolded(false);
+    }
+    if (!t.date && !showInbox) {
       setShowInbox(true); // 언젠가 할 일이 꺼져 있으면 켜서 보여줌
       writePref(INBOX_PREF, true);
     }
@@ -304,7 +314,9 @@ export default function App() {
   /* ── 오른쪽 칸: 보고 있는 기간의 메모 + 언젠가 할 일 ── */
   const [memoScope, memoPeriod]: [MemoScope, string] =
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
-  const hasSide = showMemo || showInbox;
+  // 날짜 미정: 큰 화면은 왼쪽 사이드바(달력 아래), 폰은 보드 맨 아래 칸. 오른쪽 칸은 메모만
+  const inboxInBoard = phone && showInbox;
+  const hasSide = showMemo || inboxInBoard;
   const weekTwoRows = view === "week" && twoRows && !phone;
   const memoProps = {
     scope: memoScope,
@@ -322,10 +334,10 @@ export default function App() {
       ) : (
         <div className="col filler" aria-hidden="true" />
       )}
-      {showInbox && <SideColumn className="slot-inbox" showMemo={false} showInbox memo={memoProps} ctx={ctx} />}
+      {inboxInBoard && <SideColumn className="slot-inbox" showMemo={false} showInbox memo={memoProps} ctx={ctx} />}
     </>
   ) : !hasSide ? null : (
-    <SideColumn showMemo={showMemo} showInbox={showInbox} memo={memoProps} ctx={ctx} />
+    <SideColumn showMemo={showMemo} showInbox={inboxInBoard} memo={memoProps} ctx={ctx} />
   );
 
   /* ── 보드 ── */
@@ -455,7 +467,7 @@ export default function App() {
     );
   } else {
     main = (
-      <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" + (showInbox ? " inbox-col" : "") : "")}>{board}</div>
+      <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" + (inboxInBoard ? " inbox-col" : "") : "")}>{board}</div>
     );
   }
 
@@ -515,6 +527,8 @@ export default function App() {
           setDrawer(false);
         }}
       />
+      {/* 날짜 미정: 달력 바로 아래 (큰 화면만 — 폰은 보드 맨 아래 칸) */}
+      {ready && !phone && showInbox && <InboxSection ctx={ctx} folded={inboxFolded} onFold={setInboxFolded} />}
       {ready && (
         <Categories
           cats={cats}
