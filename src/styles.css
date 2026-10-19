@@ -976,3 +976,9 @@ html, body, #root{height:auto}
 @keyframes drawer-in{from{transform:translateX(-24px); opacity:0} to{transform:none; opacity:1}}
 /* 터치 기기(마우스 올리기 없음): 삭제 버튼을 항상 살짝 보이게 */
 @media (hover:none){ .del{opacity:.5} }
+
+/* 앱이 뜨기 전 검색 로봇용 소개 글 (React 가 그리면 사라짐) — 깜빡임이 거슬리지 않게 본문과 같은 폭·여백 */
+.seo-intro{max-width:560px; margin:48px auto; padding:0 24px; color:var(--ink-2); font-size:14px; line-height:1.7}
+.seo-intro h1{font-size:18px; font-weight:600; color:var(--ink); margin:0 0 10px; letter-spacing:-.02em}
+.seo-intro ul{padding-left:18px; margin:8px 0}
+.seo-intro a{color:var(--ink-3)}

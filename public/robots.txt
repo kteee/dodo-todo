@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /my
+
+Sitemap: https://todo.dododiary.com/sitemap.xml
