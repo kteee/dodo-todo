@@ -572,17 +572,7 @@ export default function App() {
               </aside>
             </div>
           )
-        ) : sideFolded ? (
-          // 접힌 상태: 얇은 띠 맨 위에 펼치기 버튼만
-          <aside className="side folded">
-            <button className="side-tg" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
-              <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
-                  <path d="M6 2.5v11" />
-                </svg>
-            </button>
-          </aside>
-        ) : (
+        ) : sideFolded ? null : (
           <aside className="side">
             {/* 왼쪽 영역 맨 위: [달력 | 날짜 미정] 탭 + 오른쪽 끝에 이 영역을 접는 버튼 */}
             <div className={"side-top" + (sideTabs ? " has-tabs" : "")}>
@@ -599,6 +589,15 @@ export default function App() {
         )}
         <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
           <div className="topbar">
+            {/* 접힌 상태: 펼치기 버튼은 날짜 제목 바로 왼쪽 */}
+            {sideFolded && (
+              <button className="side-tg" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+                  <path d="M6 2.5v11" />
+                </svg>
+              </button>
+            )}
             {phone && (
               <button className="side-btn" aria-label="달력과 카테고리 열기" aria-expanded={drawer} onClick={() => setDrawer(true)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">
