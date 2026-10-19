@@ -1,10 +1,32 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-/** 두두 패밀리 — 서비스가 열리면 href 를 채우고 soon 을 지움 */
-const APPS: { key: string; name: string; desc: string; href: string; soon?: boolean }[] = [
-  { key: "todo", name: "두두 투두", desc: "주간 할 일 보드", href: "https://todo.dododiary.com" },
-  { key: "books", name: "두두 북로그", desc: "책 한 권에 한 장씩, 독서 기록", href: "https://books.dododiary.com", soon: true },
-  { key: "ledger", name: "두두 가계부", desc: "다이어리처럼 쓰는 가계부", href: "https://ledger.dododiary.com", soon: true },
+/** 두두 서비스 — 서비스가 열리면 soon 을 지움 */
+const APPS: { key: string; name: string; href: string; soon?: boolean; icon: ReactNode }[] = [
+  {
+    key: "todo",
+    name: "투두리스트",
+    href: "https://todo.dododiary.com",
+    icon: <polyline points="3.5,8.5 6.8,11.6 12.5,4.6" />,
+  },
+  {
+    key: "books",
+    name: "북로그",
+    href: "https://books.dododiary.com",
+    soon: true,
+    icon: <path d="M8 4.5C6.6 3.6 4.9 3.3 3 3.4v8.3c1.9-.1 3.6.2 5 1.1 1.4-.9 3.1-1.2 5-1.1V3.4c-1.9-.1-3.6.2-5 1.1zM8 4.5v8.3" />,
+  },
+  {
+    key: "ledger",
+    name: "가계부",
+    href: "https://ledger.dododiary.com",
+    soon: true,
+    icon: (
+      <>
+        <rect x="2.8" y="4" width="10.4" height="8" rx="1.6" />
+        <path d="M2.8 6.8h10.4M10.2 9.6h1" />
+      </>
+    ),
+  },
 ];
 const CURRENT = "todo";
 
@@ -45,28 +67,31 @@ export function AppsMenu() {
       </button>
       {open && (
         <div className="apps-pop" role="menu" aria-label="두두 서비스">
-          <p className="apps-title">두두 시리즈</p>
-          {APPS.map((a) =>
-            a.soon ? (
-              <div key={a.key} className="apps-item soon" aria-disabled="true">
-                <span className="apps-mark" aria-hidden="true" />
-                <span className="apps-txt">
-                  <b>{a.name}</b>
-                  <small>{a.desc}</small>
+          {APPS.map((a) => {
+            const inner = (
+              <>
+                <span className="apps-ico" aria-hidden="true">
+                  <svg viewBox="0 0 16 16">{a.icon}</svg>
                 </span>
-                <em>준비 중</em>
-              </div>
+                <span className="apps-name">{a.name}</span>
+              </>
+            );
+            return a.soon ? (
+              <span key={a.key} className="apps-tile soon" aria-disabled="true" aria-label={a.name + " (준비 중)"}>
+                {inner}
+              </span>
             ) : (
-              <a key={a.key} className={"apps-item" + (a.key === CURRENT ? " now" : "")} href={a.href} role="menuitem" aria-current={a.key === CURRENT ? "page" : undefined}>
-                <span className="apps-mark" aria-hidden="true" />
-                <span className="apps-txt">
-                  <b>{a.name}</b>
-                  <small>{a.desc}</small>
-                </span>
-                {a.key === CURRENT && <em>지금</em>}
+              <a
+                key={a.key}
+                className={"apps-tile" + (a.key === CURRENT ? " now" : "")}
+                href={a.href}
+                role="menuitem"
+                aria-current={a.key === CURRENT ? "page" : undefined}
+              >
+                {inner}
               </a>
-            ),
-          )}
+            );
+          })}
         </div>
       )}
     </div>
