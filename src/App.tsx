@@ -21,7 +21,6 @@ import { Toasts } from "./components/Toasts";
 import { isPhone, usePhone } from "./hooks/usePhone";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
-const INBOX_PREF = "dodo:showInbox";
 const SIDE_TAB_PREF = "dodo:sideTab"; // 왼쪽 사이드바 탭: 달력 | 보관함
 const MEMO_PREF = "dodo:showMemo";
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
@@ -83,7 +82,7 @@ export default function App() {
     setHideDoneState(v);
     writePref(HIDE_DONE_PREF, v);
   };
-  const [showInbox, setShowInbox] = useState(() => readPref(INBOX_PREF, true));
+  const showInbox = true; // 보관함은 항상 보임 (설정에서 끄는 옵션 없음)
   const [sideTab, setSideTabState] = useState<SideTab>(() => {
     try {
       return localStorage.getItem(SIDE_TAB_PREF) === "inbox" ? "inbox" : "cal";
@@ -280,10 +279,6 @@ export default function App() {
     } else {
       if (folded) toggleFold(false);
       setSideTab("inbox");
-    }
-    if (!t.date && !showInbox) {
-      setShowInbox(true); // 언젠가 할 일이 꺼져 있으면 켜서 보여줌
-      writePref(INBOX_PREF, true);
     }
     if (t.done && hideDone) setHideDone(false); // 완료 숨기기 중이면 풀어야 보임
     setFlashId(t.id);
@@ -672,17 +667,6 @@ export default function App() {
                   }}
                 />{" "}
                 메모 보기
-              </label>
-              <label className="togg">
-                <input
-                  type="checkbox"
-                  checked={showInbox}
-                  onChange={(e) => {
-                    setShowInbox(e.target.checked);
-                    writePref(INBOX_PREF, e.target.checked);
-                  }}
-                />{" "}
-                보관함 보기
               </label>
             </OptionsMenu>
             </div>
