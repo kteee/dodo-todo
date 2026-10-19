@@ -436,7 +436,6 @@ export function SideTabs({ tab, onTab, ctx }: { tab: SideTab; onTab: (t: SideTab
         aria-selected={tab === "inbox"}
         className={dropHere ? "drop" : undefined}
         data-drop={tab === "cal" ? "date:none" : undefined}
-        title={HINT_TAB}
         onClick={() => onTab("inbox")}
       >
         보관함{n ? <b>{n}</b> : null}
@@ -444,7 +443,6 @@ export function SideTabs({ tab, onTab, ctx }: { tab: SideTab; onTab: (t: SideTab
     </div>
   );
 }
-const HINT_TAB = "아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요. 달력 탭에서도 여기로 끌어다 놓으면 날짜가 비워져요.";
 
 export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKey: string; ctx: BoardCtx }) {
   const start = mondayOf(calMonth);
