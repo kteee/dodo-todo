@@ -13,7 +13,13 @@ const APPS: { key: string; name: string; href: string; soon?: boolean; icon: Rea
     name: "북로그",
     href: "https://books.dododiary.com",
     soon: true,
-    icon: <path d="M8 4.5C6.6 3.6 4.9 3.3 3 3.4v8.3c1.9-.1 3.6.2 5 1.1 1.4-.9 3.1-1.2 5-1.1V3.4c-1.9-.1-3.6.2-5 1.1zM8 4.5v8.3" />,
+    // 펼친 책: 양쪽 페이지가 아이콘 칸을 꽉 채우고, 가운데 책등 + 페이지마다 글줄 하나
+    icon: (
+      <>
+        <path d="M8 3.9C6.3 2.8 4.1 2.4 1.6 2.6v10.1c2.5-.2 4.7.2 6.4 1.3 1.7-1.1 3.9-1.5 6.4-1.3V2.6C11.9 2.4 9.7 2.8 8 3.9z" />
+        <path d="M8 3.9v10.1M3.8 6h2.3M9.9 6h2.3" />
+      </>
+    ),
   },
   {
     key: "ledger",
