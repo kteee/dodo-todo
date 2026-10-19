@@ -1000,7 +1000,10 @@ html, body, #root{height:auto}
 .inbox-side > .col .colbody{overflow:visible}
 .inbox-side > .col.unscheduled{background:var(--bg)} /* 사이드바에선 흰 바탕 */
 /* 사이드바는 폭이 좁고 넘치는 부분이 잘려서, 도움말 풍선을 칸 안에 들어오게 좁힘 */
-.inbox-side .hint-ico::after{width:172px; right:-6px}
+/* 풍선을 아이콘이 아니라 칸 머리 기준으로 펼쳐서(좌우 8px 안쪽) 사이드바 폭 안에 항상 들어오게 */
+.inbox-side .colhead{position:relative}
+.inbox-side .hint-ico{position:static}
+.inbox-side .hint-ico::after{left:8px; right:8px; width:auto; top:calc(100% - 2px)}
 
 /* 사이드바는 화면보다 길어지면 스크롤은 되지만 스크롤바는 보이지 않게 (미관) */
 .side{scrollbar-width:none}
