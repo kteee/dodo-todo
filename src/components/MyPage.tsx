@@ -55,7 +55,7 @@ export function MyPage({ account, isLocal, onExport, onDeleteAccount }: Props) {
             <button onClick={onExport}>
               <span>
                 <b>데이터 내보내기</b>
-                <small>할 일·카테고리·메모를 JSON 파일로 내려받아요</small>
+                <small>할 일, 카테고리, 메모 데이터를 JSON 파일로 내려받아요</small>
               </span>
               <i aria-hidden="true">›</i>
             </button>
