@@ -10,7 +10,7 @@ import { signIn, signOut, useAuth } from "./data/auth";
 import { useDodo } from "./data/useDodo";
 import { useDrag, type DragState } from "./hooks/useDrag";
 import { useToday } from "./hooks/useToday";
-import { Column, InboxPanel, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
+import { Column, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
 import { SideColumn } from "./components/SideColumn";
 import { Categories, MiniCal } from "./components/Sidebar";
 import { GoogleButton, TopNav, ViewSwitch, type View } from "./components/TopNav";
@@ -37,8 +37,7 @@ function readView(): View {
 const WIDE_PREF = "dodo:wideWeek"; // 주간 "가로 보기"(한 줄). 기본은 두 줄
 const HIDE_DONE_PREF = "dodo:hideDone";
 const GROUP_PREF = "dodo:groupBy";
-const FOLD_PREF = "dodo:sideFolded"; // 왼쪽 달력·카테고리 접기 (헤더 맨 왼쪽 버튼)
-const INBOX_FOLD_PREF = "dodo:inboxFolded"; // 날짜 미정 패널 접기 (오른쪽 세로 탭)
+const FOLD_PREF = "dodo:sideFolded"; // 가로 보기에서 왼쪽 달력·카테고리 접기
 function readPref(k: string, fallback: boolean) {
   try {
     const v = localStorage.getItem(k);
@@ -94,12 +93,6 @@ export default function App() {
   const toggleFold = (v: boolean) => {
     setFolded(v);
     writePref(FOLD_PREF, v);
-  };
-  // 날짜 미정 패널: 정한 적 없으면 좁은 화면(1400px 미만)에선 접힌 채로 시작 — 요일 칸을 먼저 넓게 쓰고 필요할 때 편다
-  const [inboxFolded, setInboxFoldedState] = useState(() => readPref(INBOX_FOLD_PREF, typeof innerWidth === "number" && innerWidth < 1400));
-  const setInboxFolded = (v: boolean) => {
-    setInboxFoldedState(v);
-    writePref(INBOX_FOLD_PREF, v);
   };
   const [groupBy, setGroupByState] = useState(() => readPref(GROUP_PREF, false));
   const setGroupBy = (v: boolean) => {
@@ -290,15 +283,15 @@ export default function App() {
     setCalMonth(firstOfMonth(today));
   };
 
-  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (헤더 맨 왼쪽 버튼). 폰은 서랍이라 해당 없음
-  const sideFolded = !phone && folded;
+  // 왼쪽 접기는 가로 보기(주간 한 줄)에서만 — 칸이 좁은 보기라서
+  // 왼쪽 접기는 가로 보기(주간 한 줄)에서만 — 칸이 좁은 보기라서
+  const canFold = view === "week" && wide;
+  const sideFolded = canFold && folded;
 
   /* ── 오른쪽 칸: 보고 있는 기간의 메모 + 언젠가 할 일 ── */
   const [memoScope, memoPeriod]: [MemoScope, string] =
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
-  // 날짜 미정은 큰 화면에선 보드 밖 오른쪽 패널(접으면 세로 탭), 폰에선 예전처럼 보드 맨 아래 칸
-  const inboxInBoard = phone && showInbox;
-  const hasSide = showMemo || inboxInBoard;
+  const hasSide = showMemo || showInbox;
   const weekTwoRows = view === "week" && twoRows && !phone;
   const memoProps = {
     scope: memoScope,
@@ -316,9 +309,10 @@ export default function App() {
       ) : (
         <div className="col filler" aria-hidden="true" />
       )}
+      {showInbox && <SideColumn className="slot-inbox" showMemo={false} showInbox memo={memoProps} ctx={ctx} />}
     </>
   ) : !hasSide ? null : (
-    <SideColumn showMemo={showMemo} showInbox={inboxInBoard} memo={memoProps} ctx={ctx} />
+    <SideColumn showMemo={showMemo} showInbox={showInbox} memo={memoProps} ctx={ctx} />
   );
 
   /* ── 보드 ── */
@@ -448,7 +442,7 @@ export default function App() {
     );
   } else {
     main = (
-      <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" : "")}>{board}</div>
+      <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" + (showInbox ? " inbox-col" : "") : "")}>{board}</div>
     );
   }
 
@@ -533,8 +527,6 @@ export default function App() {
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
         onSignOut={() => signOut()}
-        sideFolded={sideFolded}
-        onToggleSide={phone ? undefined : () => toggleFold(!folded)}
       />
       <div className={"app" + (sideFolded ? " side-folded" : "") + (phone ? " phone" : "")}>
         {phone ? (
@@ -545,8 +537,22 @@ export default function App() {
               </aside>
             </div>
           )
-        ) : sideFolded ? null : (
-          <aside className="side">{sideInner}</aside>
+        ) : sideFolded ? (
+          // 접힌 상태: 얇은 띠에 펼치기 버튼만
+          <aside className="side folded">
+            <button className="side-toggle" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
+              »
+            </button>
+          </aside>
+        ) : (
+        <aside className="side">
+          {sideInner}
+          {canFold && (
+            <button className="side-fold" onClick={() => toggleFold(true)}>
+              « 접기
+            </button>
+          )}
+        </aside>
         )}
         <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
           <div className="topbar">
@@ -633,15 +639,7 @@ export default function App() {
             </OptionsMenu>
             </div>
           </div>
-          {ready && !phone && showInbox ? (
-            // 날짜 미정: 요일 격자 밖, 사이를 띄우고 자기 테두리를 가진 패널. 접으면 오른쪽 가장자리에 세로 탭만
-            <div className="main-row">
-              {main}
-              <InboxPanel ctx={ctx} folded={inboxFolded} onFold={setInboxFolded} />
-            </div>
-          ) : (
-            main
-          )}
+          {main}
         </main>
       </div>
       {store.net.offline && (
