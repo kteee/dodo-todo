@@ -8,6 +8,8 @@ export interface DragState {
   zone: string | null;
   /** 자리표시가 이 카드 앞에 들어감. null이면 맨 끝 */
   beforeId: string | null;
+  /** 카테고리별 보기: 손가락이 있는 그룹(카테고리 id, 없음은 NO_CAT). 그룹 없는 목록이면 null */
+  group: string | null;
   /** 자리표시 높이 = 집어 든 카드 높이 */
   h: number;
 }
@@ -35,7 +37,7 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
     let grabY = 0;
 
     const set = (next: DragState | null) => {
-      if (cur && next && cur.catTarget === next.catTarget && cur.zone === next.zone && cur.beforeId === next.beforeId) return;
+      if (cur && next && cur.catTarget === next.catTarget && cur.zone === next.zone && cur.beforeId === next.beforeId && cur.group === next.group) return;
       cur = next;
       setDrag(next);
     };
@@ -57,7 +59,7 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
       const zone = card.closest<HTMLElement>('[data-drop^="date:"]');
       let next = card.nextElementSibling as HTMLElement | null;
       while (next && !next.classList.contains("card")) next = next.nextElementSibling as HTMLElement | null;
-      set({ id, catTarget: null, zone: zone ? zone.dataset.drop!.slice(5) : null, beforeId: next?.dataset.id ?? null, h: r.height });
+      set({ id, catTarget: null, zone: zone ? zone.dataset.drop!.slice(5) : null, beforeId: next?.dataset.id ?? null, group: null, h: r.height });
       return true;
     }
 
@@ -84,7 +86,15 @@ export function useDrag(getInfo: (id: string) => GhostInfo | null, onDrop: (d: D
           break;
         }
       }
-      set({ ...cur, catTarget: null, zone: zone.dataset.drop!.slice(5), beforeId });
+      // 카테고리별 보기: 그룹 제목들 중 손가락 위쪽에 있는 마지막 것이 "지금 있는 그룹".
+      // 그룹의 마지막 카드 아래(다음 그룹 제목 위)에 놓아도 그 그룹에 남도록 — beforeId 만으로는 다음 그룹 첫 카드로 읽힘
+      const heads = list ? Array.from(list.querySelectorAll<HTMLElement>(".grouphead")) : [];
+      let group: string | null = null;
+      if (heads.length) {
+        group = heads[0].dataset.group ?? null;
+        for (const h of heads) if (y >= h.getBoundingClientRect().top) group = h.dataset.group ?? null;
+      }
+      set({ ...cur, catTarget: null, zone: zone.dataset.drop!.slice(5), beforeId, group });
     }
 
     /** 드래그를 놓은 직후 따라오는 클릭 한 번은 무시 — 안 그러면 카드가 수정 모드로 열림 */

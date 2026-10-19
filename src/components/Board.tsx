@@ -291,8 +291,11 @@ function CardList({ bucket, items, mini, ctx }: { bucket: Bucket; items: Todo[];
   const nodes: ReactNode[] = [];
   let placed = false;
   const ph = <li className="ph" key="__ph" style={d ? { height: d.h } : undefined} />;
+  // 카테고리별 보기에서 드래그 중이면 자리표시는 손가락이 있는 그룹(d.group) 안에만 — 그룹 끝에 놓으면 그 그룹 맨 아래
+  let curGroup: string | null = null;
+  const inGroup = !!d && d.group !== null;
   const push = (t: Todo) => {
-    if (showPh && !placed && d!.beforeId === t.id) {
+    if (showPh && !placed && d!.beforeId === t.id && (!inGroup || curGroup === d!.group)) {
       nodes.push(ph);
       placed = true;
     }
@@ -302,14 +305,20 @@ function CardList({ bucket, items, mini, ctx }: { bucket: Bucket; items: Todo[];
   const grouped = ctx.groupBy && !mini;
   if (grouped) {
     for (const g of groupItems(ctx, items)) {
+      const gid = g.cat?.id ?? NO_CAT;
+      curGroup = gid;
       nodes.push(
-        <li className="grouphead" key={"g:" + (g.cat?.id ?? NO_CAT)}>
+        <li className="grouphead" key={"g:" + gid} data-group={gid}>
           <span className="dot" style={cvar(g.cat?.color ?? NOCAT_COLOR)} />
           <span className="gname">{g.cat?.name ?? "카테고리 없음"}</span>
           <span className="gn">{g.items.length}</span>
         </li>,
       );
       g.items.forEach(push);
+      if (showPh && !placed && inGroup && d!.group === gid) {
+        nodes.push(ph);
+        placed = true;
+      }
     }
   } else {
     items.forEach(push);

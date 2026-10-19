@@ -148,15 +148,28 @@ export default function App() {
     if (!d.zone) return;
     const mini = view === "month" && d.zone !== NONE;
     const items = displayOrder({ ...ctxBase, drag: null } as BoardCtx, d.zone, mini).filter((t) => t.id !== d.id);
-    const at = d.beforeId ? items.findIndex((t) => t.id === d.beforeId) : -1;
-    const prev = at >= 0 ? (items[at - 1] ?? null) : (items[items.length - 1] ?? null);
-    let catId: string | null | undefined; // undefined = 카테고리는 그대로
     const moving = todos.find((t) => t.id === d.id);
-    if (groupBy && !mini && moving && bucketOf(moving) === d.zone) {
+    const grouped = groupBy && !mini && d.group !== null;
+    let prev: Todo | null;
+    if (grouped) {
+      // 손가락이 있던 그룹 안에서만 자리를 정함. beforeId 가 그 그룹 밖(다음 그룹 첫 카드)이면 그룹 맨 아래
+      const inG = items.filter((t) => (catOf(t.categoryId)?.id ?? NO_CAT) === d.group);
+      const at = d.beforeId ? inG.findIndex((t) => t.id === d.beforeId) : -1;
+      prev = at >= 0 ? (inG[at - 1] ?? null) : (inG[inG.length - 1] ?? null);
+      // 그룹이 비어 있으면(첫 카드) 앞 그룹의 마지막 카드 뒤
+      if (!prev && !inG.length) {
+        const flatAt = d.beforeId ? items.findIndex((t) => t.id === d.beforeId) : -1;
+        prev = flatAt >= 0 ? (items[flatAt - 1] ?? null) : (items[items.length - 1] ?? null);
+      }
+    } else {
+      const at = d.beforeId ? items.findIndex((t) => t.id === d.beforeId) : -1;
+      prev = at >= 0 ? (items[at - 1] ?? null) : (items[items.length - 1] ?? null);
+    }
+    let catId: string | null | undefined; // undefined = 카테고리는 그대로
+    if (grouped && moving && bucketOf(moving) === d.zone) {
       // 카테고리별 보기에서 같은 칸 안에서 다른 그룹으로 옮기면 그 그룹의 카테고리로 바뀜 ("카테고리 없음" 그룹이면 null).
       // 다른 날짜로 옮기는 건 날짜만 바꾸는 것 — 그 날에 내 카테고리 그룹이 없다고 해서 남의 카테고리로 바뀌면 안 됨
-      const anchor = at >= 0 ? items[at] : prev;
-      if (anchor) catId = catOf(anchor.categoryId)?.id ?? null;
+      catId = d.group === NO_CAT ? null : d.group;
     }
     actions.moveTodo(d.id, d.zone, prev?.id ?? null, catId);
   };
