@@ -550,26 +550,32 @@ export default function App() {
               </aside>
             </div>
           )
-        ) : sideFolded ? null : (
-          <aside className="side">{sideInner}</aside>
-        )}
-        <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
-          <div className="topbar">
-            {/* 큰 화면: 달력·카테고리 접기/펼치기 (폰의 달력 버튼과 같은 자리) */}
-            {!phone && (
-              <button
-                className="side-tg"
-                aria-label={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
-                aria-pressed={sideFolded}
-                title={sideFolded ? "달력·카테고리 펼치기" : "달력·카테고리 접기"}
-                onClick={() => toggleFold(!folded)}
-              >
+        ) : sideFolded ? (
+          // 접힌 상태: 얇은 띠 맨 위에 펼치기 버튼만
+          <aside className="side folded">
+            <button className="side-tg" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                  <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+                  <path d="M6 2.5v11" />
+                </svg>
+            </button>
+          </aside>
+        ) : (
+          <aside className="side">
+            {/* 왼쪽 영역 맨 위 오른쪽: 이 영역을 접는 버튼. 그 아래로 달력·카테고리 */}
+            <div className="side-top">
+              <button className="side-tg" aria-label="달력·카테고리 접기" title="접기" onClick={() => toggleFold(true)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">
                   <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
                   <path d="M6 2.5v11" />
                 </svg>
               </button>
-            )}
+            </div>
+            {sideInner}
+          </aside>
+        )}
+        <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
+          <div className="topbar">
             {phone && (
               <button className="side-btn" aria-label="달력과 카테고리 열기" aria-expanded={drawer} onClick={() => setDrawer(true)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">
