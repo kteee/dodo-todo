@@ -43,6 +43,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="두두" />
+    <!-- 로봇용 소개 글(#root 안)은 앱이 뜨면 바로 사라지므로 사람에겐 숨김. 1.5초 안에 앱이 안 뜨면(오류 등) 그때 보임.
+         번들 CSS 보다 먼저 적용돼야 해서 여기 인라인 -->
+    <style>
+      .seo-intro{opacity:0; animation:seo-show .2s ease 1.5s forwards}
+      @keyframes seo-show{to{opacity:1}}
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600&family=Roboto:wght@500&display=swap" />
