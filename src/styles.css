@@ -998,6 +998,9 @@ html, body, #root{height:auto}
 .inbox-side > .col{flex:1; box-shadow:0 0 0 1px var(--line); min-height:calc(100vh - 150px)} /* 보드(.board)와 같은 최소 높이 → 아래 끝도 맞음 */
 .inbox-side > .col.drop{box-shadow:0 0 0 1px var(--line), inset 0 0 0 1.5px var(--ink-2)}
 .inbox-side > .col .colbody{overflow:visible}
+.inbox-side > .col.unscheduled{background:var(--bg)} /* 사이드바에선 흰 바탕 */
+/* 사이드바는 폭이 좁고 넘치는 부분이 잘려서, 도움말 풍선을 칸 안에 들어오게 좁힘 */
+.inbox-side .hint-ico::after{width:172px; right:-6px}
 
 /* 사이드바는 화면보다 길어지면 스크롤은 되지만 스크롤바는 보이지 않게 (미관) */
 .side{scrollbar-width:none}
