@@ -1,4 +1,4 @@
-/** 글꼴 설정: 기본(IBM Plex Sans KR) · 맑은 고딕 · 명조(마루부리 — 네이버 화면용 명조, public/fonts 에 직접 넣음). 이 브라우저에만 기억 */
+/** 글꼴 설정: 기본(IBM Plex Sans KR) · 맑은 고딕 · 명조(윈도우는 바탕체, 맥·폰은 본명조). 이 브라우저에만 기억 */
 export type Font = "base" | "gothic" | "serif";
 
 export const FONTS: [Font, string][] = [
