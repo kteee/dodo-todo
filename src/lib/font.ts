@@ -1,4 +1,4 @@
-/** 글꼴 설정: 기본(IBM Plex Sans KR) · 맑은 고딕 · 명조(본명조 = Noto Serif KR, 흐려 보이지 않게 한 단계씩 굵게). 이 브라우저에만 기억 */
+/** 글꼴 설정: 기본(IBM Plex Sans KR) · 맑은 고딕 · 명조(나눔명조 — 화면용으로 만들어 작은 글씨도 덜 번짐). 이 브라우저에만 기억 */
 export type Font = "base" | "gothic" | "serif";
 
 export const FONTS: [Font, string][] = [

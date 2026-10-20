@@ -1021,17 +1021,16 @@ html, body, #root{height:auto}
   --mono:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", -apple-system, sans-serif;
 }
 :root[data-font="serif"]{
-  --sans:"Noto Serif KR", "Source Han Serif K", "AppleMyungjo", "Batang", serif;
-  --mono:"Noto Serif KR", "Source Han Serif K", "AppleMyungjo", "Batang", serif;
+  --sans:"Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --mono:"Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
 }
 /* 설정의 글꼴 버튼은 각자 그 글꼴로 보여서 고르기 전에 느낌을 알 수 있게 */
 .optseg [data-font-preview="base"]{font-family:"IBM Plex Sans KR", sans-serif}
 .optseg [data-font-preview="gothic"]{font-family:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif}
-.optseg [data-font-preview="serif"]{font-family:"Noto Serif KR", serif; font-weight:600}
+.optseg [data-font-preview="serif"]{font-family:"Nanum Myeongjo", serif; font-weight:700}
 
-/* 명조(본명조 = Noto Serif KR)는 보통 굵기의 가로획이 가늘어 작은 글씨에서 흐려 보임 → 한 단계씩 굵게
-   본문 400→500, 강조 500→600, 제목 600→700 (아래 목록은 styles.css 의 굵기 500/600 규칙에서 뽑은 것) */
-:root[data-font="serif"] body{font-weight:500}
+/* 명조(나눔명조)는 굵기가 400·700·800 세 단계뿐 → 본문은 400 그대로, 강조(500)는 600 → 실제로는 700(굵게),
+   제목(600)은 700 으로. 이래야 강조가 본문과 구분됨 (아래 목록은 styles.css 의 굵기 500/600 규칙에서 뽑은 것) */
 :root[data-font="serif"] .sect-label,
 :root[data-font="serif"] .avatar,
 :root[data-font="serif"] .acctmenu .nm2,
