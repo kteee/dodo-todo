@@ -1021,10 +1021,10 @@ html, body, #root{height:auto}
   --mono:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", -apple-system, sans-serif;
 }
 :root[data-font="serif"]{
-  --sans:"Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
-  --mono:"Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --sans:"Gowun Batang", "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+  --mono:"Gowun Batang", "Noto Serif KR", "AppleMyungjo", "Batang", serif;
 }
 /* 설정의 글꼴 버튼은 각자 그 글꼴로 보여서 고르기 전에 느낌을 알 수 있게 */
 .optseg [data-font-preview="base"]{font-family:"IBM Plex Sans KR", sans-serif}
 .optseg [data-font-preview="gothic"]{font-family:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif}
-.optseg [data-font-preview="serif"]{font-family:"Noto Serif KR", "Nanum Myeongjo", serif}
+.optseg [data-font-preview="serif"]{font-family:"Gowun Batang", "Noto Serif KR", serif}
