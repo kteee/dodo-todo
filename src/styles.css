@@ -1069,7 +1069,5 @@ html, body, #root{height:auto}
 :root[data-font="serif"] .mypage-name,
 :root[data-font="serif"] .seo-intro h1{font-weight:700}
 
-/* 명조일 때 글씨 다듬기 끄기 + 아주 얇은 외곽선으로 획 보강
-   - font-smoothing:auto — 맥에서 글자를 가늘게 깎는 효과(antialiased)를 끔 (윈도우는 원래 영향 없음)
-   - text-stroke 0.2px — 윈도우에서도 먹히는 방법. 가는 가로획이 번져 보이는 걸 덜어줌 */
-:root[data-font="serif"] body{-webkit-font-smoothing:auto; -moz-osx-font-smoothing:auto; -webkit-text-stroke:.2px currentColor}
+/* 명조일 때 맥에서 글자를 가늘게 깎는 효과(antialiased)만 끔. (외곽선 text-stroke 는 윈도우에서 글자가 두 겹으로 보여 뺌) */
+:root[data-font="serif"] body{-webkit-font-smoothing:auto; -moz-osx-font-smoothing:auto}
