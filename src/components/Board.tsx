@@ -433,21 +433,28 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
   );
 }
 
-/** 보관함 맨 위 입력칸 — 늘 열려 있음. Enter 로 맨 앞에 쌓이고 입력칸은 그대로 (연달아 적기) */
+/**
+ * 보관함 맨 위 입력칸 — 요일 칸의 입력칸(ComposerForm)과 같은 모양(카테고리 칩 + 제목칸).
+ * 다른 점은 늘 열려 있고(바깥을 눌러도 안 닫힘), Enter 로 목록 맨 앞에 쌓인다는 것뿐
+ */
 function InboxQuickAdd({ ctx }: { ctx: BoardCtx }) {
   const [text, setText] = useState("");
+  const [cat, setCat] = useState(""); // "" = 카테고리 없음
+  const catId = ctx.cats.some((c) => c.id === cat) ? cat : "";
   return (
     <form
-      className="inbox-quick"
+      className="composer inbox-quick"
+      style={cvar(ctx.catOf(catId || null)?.color ?? NOCAT_COLOR)}
       onSubmit={(e) => {
         e.preventDefault();
         const v = text.trim();
         if (!v) return;
-        ctx.onAdd("none", v.slice(0, 500), null, true);
+        ctx.onAdd("none", v.slice(0, 500), catId || null, true);
         setText("");
       }}
     >
-      <input type="text" placeholder="떠오른 걸 적어두세요" aria-label="보관함에 할 일 적기" autoComplete="off" maxLength={500} value={text} onChange={(e) => setText(e.target.value)} />
+      <input type="text" placeholder="할 일" aria-label="보관함에 할 일 적기" autoComplete="off" maxLength={500} value={text} onChange={(e) => setText(e.target.value)} />
+      <CatSelect cats={ctx.cats} value={catId} onChange={setCat} />
     </form>
   );
 }
