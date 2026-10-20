@@ -86,7 +86,7 @@ Sentry 프로젝트 설정에서 **Security & Privacy → Prevent Storing of IP 
 
 설정 > 글꼴: 기본(IBM Plex Sans KR, 구글 폰트) · 고딕(맑은 고딕, 시스템) · 명조(**마루부리**).
 
-- 마루부리는 네이버 글꼴(© NAVER Corp., SIL Open Font License 1.1 — 무료, 사이트에 넣어 배포 가능). `public/fonts/` 에 400·600·700 세 굵기만 둠
+- 마루부리는 네이버 글꼴(© NAVER Corp., SIL Open Font License 1.1 — 무료, 사이트에 넣어 배포 가능). `public/fonts/` 에 SemiBold·Bold 두 파일만 둠 (Regular 는 화면에서 너무 가늘어서 본문에 SemiBold, 강조·제목에 Bold)
 - 윈도우에서 작은 글씨가 번지지 않도록 **힌팅이 들어 있는 TTF 판**을 woff2 로 압축한 것 (OTF 판보다 2배 크지만 또렷함, 굵기당 약 0.8MB)
 - `@font-face` 라서 명조를 고른 사람만 받음. `/fonts/*` 는 1년 캐시 → 파일을 바꿀 땐 이름도 바꿀 것
 
