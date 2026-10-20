@@ -1,4 +1,4 @@
-/** 글꼴 설정: 기본(IBM Plex Sans KR) · 맑은 고딕 · 명조(윈도우는 바탕체, 맥·폰은 본명조). 이 브라우저에만 기억 */
+/** 글꼴 설정: 기본(IBM Plex Sans KR) · 맑은 고딕 · 명조(본명조 = Noto Serif KR). 이 브라우저에만 기억 */
 export type Font = "base" | "gothic" | "serif";
 
 export const FONTS: [Font, string][] = [

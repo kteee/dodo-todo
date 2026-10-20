@@ -1021,16 +1021,16 @@ html, body, #root{height:auto}
   --mono:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", -apple-system, sans-serif;
 }
 :root[data-font="serif"]{
-  --sans:"Batang", "바탕", "Noto Serif KR", "AppleMyungjo", serif;
-  --mono:"Batang", "바탕", "Noto Serif KR", "AppleMyungjo", serif;
+  --sans:"Noto Serif KR", "AppleMyungjo", "Batang", serif;
+  --mono:"Noto Serif KR", "AppleMyungjo", "Batang", serif;
 }
 /* 설정의 글꼴 버튼은 각자 그 글꼴로 보여서 고르기 전에 느낌을 알 수 있게 */
 .optseg [data-font-preview="base"]{font-family:"IBM Plex Sans KR", sans-serif}
 .optseg [data-font-preview="gothic"]{font-family:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif}
-.optseg [data-font-preview="serif"]{font-family:"Batang", "바탕", "Noto Serif KR", serif}
+.optseg [data-font-preview="serif"]{font-family:"Noto Serif KR", serif; font-weight:600}
 
-/* 명조 = 윈도우는 바탕체(작은 글씨용으로 만든 시스템 글꼴이라 또렷함), 바탕체가 없는 맥·폰은 본명조(Noto Serif KR).
-   본명조는 500·600·700 만 받아서 본문(400)도 500 으로 그려짐 → 가는 획이 흐려 보이지 않음.
+/* 명조 = 본명조(Noto Serif KR, 구글 폰트) — 모든 기기 같은 모양.
+   500·600·700 만 받아서 본문(400)도 500 으로 그려짐 → 가는 획이 흐려 보이지 않음.
    강조(500)는 600, 제목(600)은 700 으로 한 단계씩 (아래 목록은 styles.css 의 굵기 500/600 규칙에서 뽑은 것) */
 :root[data-font="serif"] .sect-label,
 :root[data-font="serif"] .avatar,
