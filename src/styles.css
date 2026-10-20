@@ -64,7 +64,7 @@ button{background:none; border:0; cursor:pointer}
   padding-block:16px 20px;
   display:flex; flex-direction:column;
 }
-.app{flex:1; min-height:0; display:grid; grid-template-columns:198px minmax(0,1fr); gap:26px}
+.app{flex:1; min-height:0; display:grid; grid-template-columns:240px minmax(0,1fr); gap:26px}
 .side{min-width:0; overflow-y:auto; display:flex; flex-direction:column; gap:22px; padding-right:6px}
 .main{min-width:0; min-height:0; display:flex; flex-direction:column}
 .sect-label{font-size:11.5px; font-weight:500; letter-spacing:.01em; color:var(--ink-3); margin:0 0 9px 2px}
@@ -382,7 +382,7 @@ body.dragging{cursor:grabbing; user-select:none}
 /* ── responsive ──────────────────────────────────────── */
 @media (max-width:1180px){
   .page{padding-left:max(20px, env(safe-area-inset-left,0px)); padding-right:max(20px, env(safe-area-inset-right,0px))}
-  .app{grid-template-columns:190px minmax(0,1fr); gap:22px}
+  .app{grid-template-columns:228px minmax(0,1fr); gap:22px}
   .board.v-week{overflow-x:auto; grid-template-columns:repeat(7, minmax(142px,1fr)) minmax(160px,1.2fr)}
   .board.v-week.no-inbox{grid-template-columns:repeat(7, minmax(142px,1fr))}
 }
@@ -708,10 +708,10 @@ html, body, #root{height:auto}
 }
 .card.flash{animation:card-flash 1.7s ease}
 
-/* 헤더를 본문과 같은 2열(사이드 198px | 보드)로 — 검색창이 할 일 보드 왼쪽 끝 위에 정렬됨 */
-.topnav{display:grid; grid-template-columns:198px minmax(0,1fr); column-gap:26px}
+/* 헤더를 본문과 같은 2열(사이드 240px | 보드)로 — 검색창이 할 일 보드 왼쪽 끝 위에 정렬됨 */
+.topnav{display:grid; grid-template-columns:240px minmax(0,1fr); column-gap:26px}
 .topnav-main{display:flex; align-items:center; gap:16px; min-width:0}
-@media (max-width:1180px){ .topnav{grid-template-columns:190px minmax(0,1fr); column-gap:22px} }
+@media (max-width:1180px){ .topnav{grid-template-columns:228px minmax(0,1fr); column-gap:22px} }
 @media (max-width:820px){
   .topnav{grid-template-columns:1fr; row-gap:10px}
   .topnav-main{flex-wrap:wrap}
