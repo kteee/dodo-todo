@@ -1,4 +1,10 @@
 /* Layout: 상단 헤더(로고 · 뷰 전환) + 좌측 사이드(달력 · 카테고리) + 보드(일/주/월, 맨 오른쪽 언젠가 할 일 칸) */
+ /* ── 명조 글꼴: 마루부리(네이버, SIL OFL) — 화면용 명조. 사이트에 직접 넣은 파일(public/fonts)
+    윈도우에서 작은 글씨가 번지지 않게 힌팅이 들어 있는 TTF 판을 woff2 로 압축해 씀. 명조를 고른 사람만 받음 */
+@font-face{font-family:"MaruBuri"; font-weight:400; font-style:normal; font-display:swap; src:url("/fonts/MaruBuri-Regular.woff2") format("woff2")}
+@font-face{font-family:"MaruBuri"; font-weight:600; font-style:normal; font-display:swap; src:url("/fonts/MaruBuri-SemiBold.woff2") format("woff2")}
+@font-face{font-family:"MaruBuri"; font-weight:700; font-style:normal; font-display:swap; src:url("/fonts/MaruBuri-Bold.woff2") format("woff2")}
+
 :root{
   --bg:#ffffff;
   --panel:#f9f9f9;
@@ -1021,16 +1027,16 @@ html, body, #root{height:auto}
   --mono:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", -apple-system, sans-serif;
 }
 :root[data-font="serif"]{
-  --sans:"Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
-  --mono:"Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --sans:"MaruBuri", "AppleMyungjo", "Batang", serif;
+  --mono:"MaruBuri", "AppleMyungjo", "Batang", serif;
 }
 /* 설정의 글꼴 버튼은 각자 그 글꼴로 보여서 고르기 전에 느낌을 알 수 있게 */
 .optseg [data-font-preview="base"]{font-family:"IBM Plex Sans KR", sans-serif}
 .optseg [data-font-preview="gothic"]{font-family:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif}
-.optseg [data-font-preview="serif"]{font-family:"Nanum Myeongjo", serif; font-weight:700}
+.optseg [data-font-preview="serif"]{font-family:"MaruBuri", serif; font-weight:600}
 
-/* 명조(나눔명조)는 굵기가 400·700·800 세 단계뿐 → 본문은 400 그대로, 강조(500)는 600 → 실제로는 700(굵게),
-   제목(600)은 700 으로. 이래야 강조가 본문과 구분됨 (아래 목록은 styles.css 의 굵기 500/600 규칙에서 뽑은 것) */
+/* 명조(마루부리)는 400·600·700 을 씀 → 본문 400 그대로, 강조(500)는 600, 제목(600)은 700 으로 한 단계씩.
+   이래야 강조가 본문과 구분됨 (아래 목록은 styles.css 의 굵기 500/600 규칙에서 뽑은 것) */
 :root[data-font="serif"] .sect-label,
 :root[data-font="serif"] .avatar,
 :root[data-font="serif"] .acctmenu .nm2,
