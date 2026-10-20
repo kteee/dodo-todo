@@ -1021,10 +1021,51 @@ html, body, #root{height:auto}
   --mono:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", -apple-system, sans-serif;
 }
 :root[data-font="serif"]{
-  --sans:"Gowun Batang", "Noto Serif KR", "AppleMyungjo", "Batang", serif;
-  --mono:"Gowun Batang", "Noto Serif KR", "AppleMyungjo", "Batang", serif;
+  --sans:"Noto Serif KR", "Source Han Serif K", "AppleMyungjo", "Batang", serif;
+  --mono:"Noto Serif KR", "Source Han Serif K", "AppleMyungjo", "Batang", serif;
 }
 /* 설정의 글꼴 버튼은 각자 그 글꼴로 보여서 고르기 전에 느낌을 알 수 있게 */
 .optseg [data-font-preview="base"]{font-family:"IBM Plex Sans KR", sans-serif}
 .optseg [data-font-preview="gothic"]{font-family:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif}
-.optseg [data-font-preview="serif"]{font-family:"Gowun Batang", "Noto Serif KR", serif}
+.optseg [data-font-preview="serif"]{font-family:"Noto Serif KR", serif; font-weight:600}
+
+/* 명조(본명조 = Noto Serif KR)는 보통 굵기의 가로획이 가늘어 작은 글씨에서 흐려 보임 → 한 단계씩 굵게
+   본문 400→500, 강조 500→600, 제목 600→700 (아래 목록은 styles.css 의 굵기 500/600 규칙에서 뽑은 것) */
+:root[data-font="serif"] body{font-weight:500}
+:root[data-font="serif"] .sect-label,
+:root[data-font="serif"] .avatar,
+:root[data-font="serif"] .acctmenu .nm2,
+:root[data-font="serif"] .views button[aria-selected="true"],
+:root[data-font="serif"] .calhead .m,
+:root[data-font="serif"] .d.today,
+:root[data-font="serif"] .cat.on,
+:root[data-font="serif"] .cated-foot .cdel.arm,
+:root[data-font="serif"] .hint b,
+:root[data-font="serif"] .colhead .dow,
+:root[data-font="serif"] /* 카테고리별 보기: 구분선으로 영역을 나누고 카드의 태그는 숨김 */
+.grouphead,
+:root[data-font="serif"] .views button[aria-selected="true"],
+:root[data-font="serif"] .cated-foot .done,
+:root[data-font="serif"] .modal .danger,
+:root[data-font="serif"] /* 보기 옵션 팝업: 위 "시작 화면"(라디오) / 아래 "보기 옵션"(체크) */
+/* 영역 제목 (구분선 없이 글자만) */
+.optsec,
+:root[data-font="serif"] .optseg button[aria-checked="true"],
+:root[data-font="serif"] .privacy th,
+:root[data-font="serif"] /* 월간 작은 카드는 테두리가 없어서 배경으로 */
+
+/* ── Google 로그인 버튼 (Google 브랜드 가이드 색·간격) ── */
+.gsi-btn,
+:root[data-font="serif"] .mypage-menu b{font-weight:600}
+:root[data-font="serif"] .logo .word,
+:root[data-font="serif"] .signin .gmark,
+:root[data-font="serif"] .gate h3,
+:root[data-font="serif"] .toast button,
+:root[data-font="serif"] .modal h4,
+:root[data-font="serif"] /* 칸 제목 옆 ? 툴팁 */
+.hint-ico,
+:root[data-font="serif"] .privacy h1,
+:root[data-font="serif"] .privacy h2,
+:root[data-font="serif"] .mypage h1,
+:root[data-font="serif"] .mypage-name,
+:root[data-font="serif"] .seo-intro h1{font-weight:700}
