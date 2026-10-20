@@ -171,7 +171,8 @@ export default function App() {
       return;
     }
     if (!d.zone) return;
-    const mini = view === "month" && d.zone !== NONE;
+    // 월간 칸과 큰 화면의 보관함(사이드바)은 한 줄 목록 — 카테고리별로 묶지 않으므로 드롭 순서도 묶지 않고 계산
+    const mini = (view === "month" && d.zone !== NONE) || (d.zone === NONE && !phone);
     const items = displayOrder({ ...ctxBase, drag: null } as BoardCtx, d.zone, mini).filter((t) => t.id !== d.id);
     const moving = todos.find((t) => t.id === d.id);
     const grouped = groupBy && !mini && d.group !== null;
@@ -209,8 +210,8 @@ export default function App() {
   const ctx: BoardCtx = {
     ...ctxBase,
     drag,
-    onAdd: (b, text, catId) => {
-      const id = actions?.addTodo(b, text, catId);
+    onAdd: (b, text, catId, first) => {
+      const id = actions?.addTodo(b, text, catId, first);
       if (id) {
         setNewId(id);
         setTimeout(() => setNewId((n) => (n === id ? null : n)), 400);

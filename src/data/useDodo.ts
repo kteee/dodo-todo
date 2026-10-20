@@ -238,8 +238,11 @@ export function useDodo(repo: Repo | null) {
     };
 
     return {
-      addTodo(bucket: Bucket, text: string, categoryId: string | null) {
-        const t: Todo = { id: uuid(), text, categoryId, date: dateOf(bucket), done: false, rank: rankLast(sortedIn(bucket)) };
+      /** first = 맨 앞에 (보관함 위 입력칸처럼 위에서 적는 곳) */
+      addTodo(bucket: Bucket, text: string, categoryId: string | null, first = false) {
+        const sorted = sortedIn(bucket);
+        const rank = first ? rankAfter(sorted, null) : rankLast(sorted);
+        const t: Todo = { id: uuid(), text, categoryId, date: dateOf(bucket), done: false, rank };
         setTodos([...todosRef.current, t]);
         save(() => repo.insertTodo(t));
         return t.id;

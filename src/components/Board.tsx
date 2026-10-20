@@ -21,7 +21,7 @@ export interface BoardCtx {
   openBucket: Bucket | null;
   setOpenBucket: (b: Bucket | null) => void;
   drag: DragState | null;
-  onAdd: (b: Bucket, text: string, catId: string | null) => void;
+  onAdd: (b: Bucket, text: string, catId: string | null, first?: boolean) => void;
   /** 지금 수정 중인 할 일 (한 번에 하나) */
   editingId: string | null;
   /** 수정을 시작할 때 커서를 둘 글자 위치 (null이면 끝) */
@@ -407,12 +407,48 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   );
 }
 
-/** 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용 — 예전에 요일 옆에 붙어 있던 칸 그대로(테두리·머리·회색 바탕) */
+/**
+ * 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용.
+ * 일단 던져두는 곳이라 맨 위에 늘 열린 입력칸, 아래는 한 줄 목록(체크·색 점·제목). 정해지면 달력으로 끌어다 놓음
+ */
 export function InboxSection({ ctx }: { ctx: BoardCtx }) {
+  const all = ctx.inBucket("none");
+  const left = all.filter((t) => !t.done).length;
+  const items = ctx.shown("none");
+  const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
   return (
     <div className="inbox-side">
-      <InboxColumn ctx={ctx} />
+      <section className={"col unscheduled inbox-list" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
+        <div className="colhead">
+          <span className="dow">보관함</span>
+          <span className="n">{left || ""}</span>
+        </div>
+        <div className="colbody">
+          <InboxQuickAdd ctx={ctx} />
+          <CardList bucket="none" items={items} mini ctx={ctx} />
+          {!items.length && <p className="empty">날짜 없이 적어두고, 정해지면 달력으로 끌어다 놓으세요.</p>}
+        </div>
+      </section>
     </div>
+  );
+}
+
+/** 보관함 맨 위 입력칸 — 늘 열려 있음. Enter 로 맨 앞에 쌓이고 입력칸은 그대로 (연달아 적기) */
+function InboxQuickAdd({ ctx }: { ctx: BoardCtx }) {
+  const [text, setText] = useState("");
+  return (
+    <form
+      className="inbox-quick"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const v = text.trim();
+        if (!v) return;
+        ctx.onAdd("none", v.slice(0, 500), null, true);
+        setText("");
+      }}
+    >
+      <input type="text" placeholder="떠오른 걸 적어두세요" aria-label="보관함에 할 일 적기" autoComplete="off" maxLength={500} value={text} onChange={(e) => setText(e.target.value)} />
+    </form>
   );
 }
 

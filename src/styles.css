@@ -1009,3 +1009,19 @@ html, body, #root{height:auto}
 /* 사이드바는 화면보다 길어지면 스크롤은 되지만 스크롤바는 보이지 않게 (미관) */
 .side{scrollbar-width:none}
 .side::-webkit-scrollbar{display:none}
+
+/* ── 보관함 목록 (큰 화면 사이드바): 위 입력칸 + 한 줄 목록. 칸 머리는 남은 개수만 ── */
+.inbox-quick{margin:0 0 8px}
+.inbox-quick input{
+  width:100%; min-width:0; background:var(--bg); border:1px solid var(--line-2); border-radius:6px;
+  padding:6px 8px; font-size:12.5px; line-height:1.5; color:var(--ink); outline:none;
+}
+.inbox-quick input::placeholder{color:var(--ink-3)}
+.inbox-quick input:focus{border-color:var(--ink-3)}
+.inbox-list .list{gap:1px}
+.inbox-list .card.mini{align-items:start; padding:5px 22px 5px 4px; position:relative}
+.inbox-list .card.mini .check{margin-top:2.5px}
+.inbox-list .card.mini .txt, .inbox-list .card.mini .txt-edit{white-space:normal; font-size:12.5px; line-height:1.5}
+.inbox-list .card.mini .txt::before{vertical-align:1.5px}
+.inbox-list .card.mini .del{display:block; right:2px}
+.inbox-list .empty{text-align:center; padding:28px 10px; margin:0; font-size:12px; line-height:1.65; color:var(--ink-3)}
