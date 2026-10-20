@@ -735,7 +735,7 @@ html, body, #root{height:auto}
 .optbtn svg{width:14px; height:14px; fill:var(--bg); stroke:currentColor; stroke-width:1.4; stroke-linecap:round}
 .optdot{position:absolute; top:4px; right:4px; width:5px; height:5px; border-radius:50%; background:var(--ink)}
 .optpop{
-  position:absolute; top:calc(100% + 6px); right:0; z-index:60; min-width:180px;
+  position:absolute; top:calc(100% + 6px); right:0; z-index:60; min-width:200px;
   display:flex; flex-direction:column; gap:2px; padding:6px;
   background:var(--bg); border:1px solid var(--line-2); border-radius:10px; box-shadow:var(--shadow);
 }
@@ -769,7 +769,7 @@ html, body, #root{height:auto}
 
 /* 시작 화면: 한 줄 버튼식 (옅은 바탕 + 선택 칸만 흰색) */
 .optseg{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin:2px 6px 4px; padding:2px; border-radius:6px; background:var(--panel-2)}
-.optseg button{padding:2px 0; border-radius:5px; font-size:11.5px; line-height:1.5; color:var(--ink-2)}
+.optseg button{padding:2px 0; white-space:nowrap; border-radius:5px; font-size:11.5px; line-height:1.5; color:var(--ink-2)}
 .optseg button:hover{color:var(--ink)}
 .optseg button[aria-checked="true"]{background:var(--bg); color:var(--ink); font-weight:500; box-shadow:0 1px 2px rgba(20,20,20,.08)}
 .optseg + .optsec{margin-top:8px}
@@ -1002,7 +1002,7 @@ html, body, #root{height:auto}
 .inbox-side > .col{flex:1; box-shadow:0 0 0 1px var(--line); min-height:calc(100vh - 150px)} /* 보드(.board)와 같은 최소 높이 → 아래 끝도 맞음 */
 .inbox-side > .col.drop{box-shadow:0 0 0 1px var(--line), inset 0 0 0 1.5px var(--ink-2)}
 .inbox-side > .col .colbody{overflow:visible}
-.inbox-side > .col.unscheduled{background:var(--bg)} /* 사이드바에선 흰 바탕 */
+.inbox-side > .col.unscheduled{background:var(--panel)} /* 보관함은 연한 회색 바탕 (카드는 흰색) */
 /* 사이드바는 폭이 좁고 넘치는 부분이 잘려서, 도움말 풍선을 칸 안에 들어오게 좁힘 */
 /* 풍선을 아이콘이 아니라 칸 머리 기준으로 펼쳐서(좌우 8px 안쪽) 사이드바 폭 안에 항상 들어오게 */
 .inbox-side .colhead{position:relative}
@@ -1013,11 +1013,18 @@ html, body, #root{height:auto}
 .side{scrollbar-width:none}
 .side::-webkit-scrollbar{display:none}
 
-/* ── 보관함 목록 (큰 화면 사이드바): 위 입력칸 + 한 줄 목록. 칸 머리는 남은 개수만 ── */
-.inbox-list .list{gap:1px}
-.inbox-list .card.mini{align-items:start; padding:5px 22px 5px 4px; position:relative}
-.inbox-list .card.mini .check{margin-top:2.5px}
-.inbox-list .card.mini .txt, .inbox-list .card.mini .txt-edit{white-space:normal; font-size:12.5px; line-height:1.5}
-.inbox-list .card.mini .txt::before{vertical-align:1.5px}
-.inbox-list .card.mini .del{display:block; right:2px}
-.inbox-list .empty{text-align:center; padding:28px 10px; margin:0; font-size:12px; line-height:1.65; color:var(--ink-3)}
+
+/* ── 글꼴 설정 (설정 > 글꼴). 기본은 :root 의 IBM Plex Sans KR ──
+   맑은 고딕은 윈도우 기본 글꼴이라 맥·폰에선 시스템 고딕(애플 SD 고딕 네오 등)으로 대신 보임 */
+:root[data-font="gothic"]{
+  --sans:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", -apple-system, sans-serif;
+  --mono:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", -apple-system, sans-serif;
+}
+:root[data-font="serif"]{
+  --sans:"Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+  --mono:"Noto Serif KR", "Nanum Myeongjo", "AppleMyungjo", "Batang", serif;
+}
+/* 설정의 글꼴 버튼은 각자 그 글꼴로 보여서 고르기 전에 느낌을 알 수 있게 */
+.optseg [data-font-preview="base"]{font-family:"IBM Plex Sans KR", sans-serif}
+.optseg [data-font-preview="gothic"]{font-family:"Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif}
+.optseg [data-font-preview="serif"]{font-family:"Noto Serif KR", "Nanum Myeongjo", serif}

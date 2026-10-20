@@ -407,7 +407,7 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   );
 }
 
-/** 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용. 한 줄 목록(체크·색 점·제목) + 맨 아래 ＋ 할 일. 정해지면 달력으로 끌어다 놓음 */
+/** 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용. 할 일 카드는 요일 칸과 똑같이 + 맨 아래 ＋ 할 일. 정해지면 달력으로 끌어다 놓음 */
 export function InboxSection({ ctx }: { ctx: BoardCtx }) {
   const all = ctx.inBucket("none");
   const left = all.filter((t) => !t.done).length;
@@ -424,7 +424,7 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
           <span className="n">{left || ""}</span>
         </div>
         <div className="colbody">
-          <CardList bucket="none" items={items} mini ctx={ctx} />
+          <CardList bucket="none" items={items} ctx={ctx} />
           {/* 요일 칸과 같이: ＋ 할 일 을 눌러서 입력 (맨 아래에 쌓임) */}
           <Composer bucket="none" ctx={ctx} />
         </div>

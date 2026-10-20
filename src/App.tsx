@@ -19,6 +19,7 @@ import { MyPage } from "./components/MyPage";
 import { Search } from "./components/Search";
 import { Toasts } from "./components/Toasts";
 import { isPhone, usePhone } from "./hooks/usePhone";
+import { FONTS, readFont, saveFont, type Font } from "./lib/font";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const SIDE_TAB_PREF = "dodo:sideTab"; // 왼쪽 사이드바 탭: 달력 | 보관함
@@ -83,6 +84,7 @@ export default function App() {
       /* 저장 못 해도 이번 화면에서는 적용됨 */
     }
   };
+  const [font, setFontState] = useState<Font>(readFont);
   const [view, setView] = useState<View>(defaultView);
   const [selected, setSelected] = useState(todayKey);
   const [weekStart, setWeekStart] = useState(() => mondayOf(today));
@@ -171,8 +173,7 @@ export default function App() {
       return;
     }
     if (!d.zone) return;
-    // 월간 칸과 큰 화면의 보관함(사이드바)은 한 줄 목록 — 카테고리별로 묶지 않으므로 드롭 순서도 묶지 않고 계산
-    const mini = (view === "month" && d.zone !== NONE) || (d.zone === NONE && !phone);
+    const mini = view === "month" && d.zone !== NONE;
     const items = displayOrder({ ...ctxBase, drag: null } as BoardCtx, d.zone, mini).filter((t) => t.id !== d.id);
     const moving = todos.find((t) => t.id === d.id);
     const grouped = groupBy && !mini && d.group !== null;
@@ -642,6 +643,23 @@ export default function App() {
                   ["month", "월간"],
                 ] as [View, string][]).map(([v, name]) => (
                   <button key={v} role="radio" aria-checked={defaultView === v} onClick={() => setDefaultView(v)}>
+                    {name}
+                  </button>
+                ))}
+              </div>
+              <p className="optsec">글꼴</p>
+              <div className="optseg" role="radiogroup" aria-label="글꼴">
+                {FONTS.map(([f, name]) => (
+                  <button
+                    key={f}
+                    role="radio"
+                    aria-checked={font === f}
+                    data-font-preview={f}
+                    onClick={() => {
+                      setFontState(f);
+                      saveFont(f);
+                    }}
+                  >
                     {name}
                   </button>
                 ))}

@@ -5,6 +5,10 @@ import { Privacy } from "./components/Privacy";
 import { supabase } from "./data/supabase";
 import { ErrorBoundary } from "./lib/monitoring";
 import "./styles.css";
+import { applyFont, readFont } from "./lib/font";
+
+// 저장해 둔 글꼴을 첫 화면을 그리기 전에 적용 (깜빡임 없이)
+applyFont(readFont());
 
 // 배포판에서 Supabase 환경변수가 빠지면 조용히 "로컬 모드"(브라우저에만 저장)로 돌아가는 사고를 막음
 const misconfigured = import.meta.env.PROD && !supabase;
