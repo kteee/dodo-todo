@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { createPortal } from "react-dom";
 import type { Category, Todo } from "../lib/types";
 import { NO_CAT, PALETTE } from "../lib/types";
 import { DOW, addDays, key, mondayOf } from "../lib/date";
@@ -183,13 +184,14 @@ interface ConfirmProps {
 }
 
 /**
- * 확인 팝업. 수정 패널 안에 그려서(위치는 화면 고정) 패널의 "바깥 클릭 = 닫기"에 걸리지 않게 함.
+ * 확인 팝업. body 에 포털로 그림 — 사이드바(sticky)가 쌓임 맥락을 만들어서 그 안에 두면
+ * 보드의 카드(position:relative)가 팝업 위로 올라오고 어둡게 깔리는 배경도 안 보였음.
  * Esc·배경 클릭 = 취소. 실수 방지로 처음 포커스는 [취소].
  */
 export function ConfirmDialog({ title, body, confirmLabel, onConfirm, onCancel }: ConfirmProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   useEffect(() => cancelRef.current?.focus(), []);
-  return (
+  return createPortal(
     <div
       className="modal-back"
       onPointerDown={(e) => {
@@ -213,7 +215,8 @@ export function ConfirmDialog({ title, body, confirmLabel, onConfirm, onCancel }
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -366,7 +369,9 @@ export function Categories(p: CategoriesProps) {
   useEffect(() => {
     if (!editCat) return;
     const onDown = (e: globalThis.PointerEvent) => {
-      if (!openRef.current?.contains(e.target as Node)) setEditCat(null);
+      const t = e.target as Element;
+      if (t.closest?.(".modal-back")) return; // 삭제 확인 팝업(body 에 포털)은 패널의 일부
+      if (!openRef.current?.contains(t)) setEditCat(null);
     };
     document.addEventListener("pointerdown", onDown);
     return () => document.removeEventListener("pointerdown", onDown);
