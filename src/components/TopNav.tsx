@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { usePhone } from "../hooks/usePhone";
-import { AppsMenu } from "./AppsMenu";
 
-const SHOW_APPS = true;
 import type { Account } from "../data/auth";
 
 export type View = "day" | "week" | "month";
@@ -125,8 +123,6 @@ export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSign
       {/* 로고 오른쪽 영역은 아래 할 일 보드와 같은 열에서 시작 — 검색창 왼쪽 끝이 보드 왼쪽 끝과 맞음 */}
       <div className="topnav-main">
       {searchSlot}
-      {/* 두두 서비스 모음 (프로필 바로 왼쪽) */}
-      {SHOW_APPS && account && <AppsMenu />}
       <div className="acct">
         {/* 로그아웃 상태에선 헤더에 로그인 버튼을 두지 않음 — 화면 가운데 버튼 하나로 */}
         {!account ? null : (
