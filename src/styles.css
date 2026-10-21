@@ -1077,3 +1077,7 @@ html, body, #root{height:auto}
   .site-footer{flex-direction:column; justify-content:center; text-align:center; gap:6px}
   .site-footer nav{justify-content:center}
 }
+/* 로그인 전: 푸터가 생겨서 min-height(100vh-120)만큼이면 10px 넘쳐 스크롤 생김 → flex:1 로만 채움 */
+.page > .signed-out{min-height:0}
+/* 폰에선 .page 가 block 이라 푸터가 위로 붙음 → 푸터 있는 화면만 세로 flex 로 (푸터가 화면 맨 아래) */
+.page:has(> .site-footer){display:flex; flex-direction:column; min-height:100vh}
