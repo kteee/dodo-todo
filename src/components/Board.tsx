@@ -413,7 +413,6 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
  * 할 일은 요일 칸과 같은 카드. 정해지면 달력으로 끌어다 놓음
  */
 export function InboxSection({ ctx }: { ctx: BoardCtx }) {
-  const left = ctx.inBucket("none").filter((t) => !t.done).length;
   const items = ctx.shown("none");
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
   const [adding, setAdding] = useState(false);
@@ -430,7 +429,7 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
         <span className="hint-ico" tabIndex={0} role="img" aria-label="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요." data-tip="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.">
           ?
         </span>
-        <span className="n">{left || ""}</span>
+        {/* 개수는 위 탭 버튼(보관함 N)에 이미 있어서 여기선 뺌 */}
         <button className="sect-add" aria-label="보관함에 할 일 추가" title="할 일 추가" onClick={() => setAdding(true)}>
           <svg viewBox="0 0 12 12" aria-hidden="true">
             <path d="M6 2.2v7.6M2.2 6h7.6" />
