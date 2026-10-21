@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { Privacy } from "./components/Privacy";
+import { SiteFooter } from "./components/SiteFooter";
 import { supabase } from "./data/supabase";
 import { ErrorBoundary } from "./lib/monitoring";
 import "./styles.css";
@@ -33,7 +34,12 @@ createRoot(document.getElementById("root")!).render(
     <ErrorBoundary fallback={crashed}>
     {location.pathname.replace(/\/$/, "") === "/privacy" ? (
       // 개인정보 처리방침은 로그인·설정과 상관없이 누구나 볼 수 있어야 함
-      <Privacy />
+      <>
+        <Privacy />
+        <div className="page page-footer-only">
+          <SiteFooter />
+        </div>
+      </>
     ) : misconfigured ? (
       <div className="page">
         <div className="gate">

@@ -1058,10 +1058,22 @@ html, body, #root{height:auto}
 .sect-add:hover{background:var(--panel-2); color:var(--ink)}
 .sect-head + .catform{margin:-3px 0 6px}
 
-/* 마이페이지 바닥글: 두두 다른 서비스 (작게) */
-.mypage-family{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px 8px; margin-top:32px; font-size:12px; color:var(--ink-3)}
-.mypage-family .mf-label{margin-right:4px}
-.mypage-family a{color:var(--ink-2); text-decoration:none}
-.mypage-family a:hover{color:var(--ink); text-decoration:underline}
-.mypage-family .mf-now{color:var(--ink); font-weight:500}
-.mypage-family .mf-dot{color:var(--line-2)}
+
+/* ── 사이트 푸터 (보드엔 없음: 로그인 전·마이페이지·처리방침) ──
+   헤더처럼 화면 끝에서 끝까지 가는 구분선 위에 작은 회색 글씨 한 줄 */
+.site-footer{
+  position:relative; margin-top:auto; padding:16px 0 4px; display:flex; flex-wrap:wrap; align-items:center;
+  justify-content:space-between; gap:6px 16px; font-size:12px; color:var(--ink-3);
+}
+.site-footer::before{content:""; position:absolute; top:0; left:50%; width:100vw; height:1px; transform:translateX(-50%); background:var(--line)}
+.site-footer nav{display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px}
+.site-footer a{color:var(--ink-3); text-decoration:none}
+.site-footer a:hover{color:var(--ink); text-decoration:underline}
+.site-footer .sf-copy{margin-right:6px}
+.site-footer .sf-now{color:var(--ink-2); font-weight:500}
+.site-footer .sf-dot{color:var(--line-2)}
+.page-footer-only{height:auto; padding-top:0}
+@media (max-width:640px){
+  .site-footer{flex-direction:column; justify-content:center; text-align:center; gap:6px}
+  .site-footer nav{justify-content:center}
+}

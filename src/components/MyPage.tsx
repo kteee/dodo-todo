@@ -81,15 +81,6 @@ export function MyPage({ account, isLocal, onExport, onDeleteAccount }: Props) {
       </ul>
       {error && <p className="mypage-error">{error}</p>}
 
-      {/* 두두 다른 서비스로 가는 작은 바닥글 (헤더의 서비스 모음 버튼 대신) */}
-      <footer className="mypage-family">
-        <span className="mf-label">두두 서비스</span>
-        <a href="https://dododiary.com">두두 홈</a>
-        <span className="mf-dot" aria-hidden="true">·</span>
-        <span className="mf-now" aria-current="page">투두리스트</span>
-        <span className="mf-dot" aria-hidden="true">·</span>
-        <span className="mf-soon">북로그 (준비 중)</span>
-      </footer>
 
       {confirming && (
         <ConfirmDialog

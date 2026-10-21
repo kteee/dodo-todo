@@ -18,6 +18,7 @@ import { OptionsMenu } from "./components/OptionsMenu";
 import { MyPage } from "./components/MyPage";
 import { Search } from "./components/Search";
 import { Toasts } from "./components/Toasts";
+import { SiteFooter } from "./components/SiteFooter";
 import { isPhone, usePhone } from "./hooks/usePhone";
 import { FONTS, readFont, saveFont, type Font } from "./lib/font";
 
@@ -502,10 +503,8 @@ export default function App() {
         <main className="signed-out">
           <p>로그인 후 이용해주세요.</p>
           <GoogleButton onClick={() => signIn()} />
-          <a className="gate-privacy" href="/privacy">
-            개인정보 처리방침
-          </a>
         </main>
+        <SiteFooter />
       </div>
     );
   }
@@ -524,6 +523,7 @@ export default function App() {
             await actions.deleteAccount();
           }}
         />
+        <SiteFooter />
       </div>
     );
   }
