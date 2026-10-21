@@ -86,6 +86,9 @@ export const localRepo: Repo = {
       if (m) m.body = body;
       else s.memos.push({ scope, period, body });
     }),
+  async deleteTodoData() {
+    localStorage.removeItem(KEY);
+  },
   async deleteAccount() {
     localStorage.removeItem(KEY);
   },

@@ -518,6 +518,10 @@ export default function App() {
           account={account}
           isLocal={auth.mode === "local"}
           onExport={ready ? actions.exportJson : null}
+          onDeleteTodoData={async () => {
+            if (!actions) throw new Error("not ready");
+            await actions.deleteTodoData();
+          }}
           onDeleteAccount={async () => {
             if (!actions) throw new Error("not ready");
             await actions.deleteAccount();

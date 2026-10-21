@@ -61,6 +61,16 @@ npm test
 - `src/data/saveQueue.test.ts` — 저장 큐: 순서 보장, 네트워크 오류 재시도(3초→두 배씩, 최대 30초), 연결 복구 시 즉시 재전송, 서버 거부는 그 작업만 버림
 - `src/lib/rank.test.ts` — 정렬 키: 맨 앞·사이 반복 삽입에도 순서 유지, 같은 키 충돌 시 예외 없이 저장
 
+## 두두 계정 (투두·북로그·블로그 공통)
+
+두두 서비스는 Supabase 프로젝트·구글 로그인·계정을 하나로 같이 쓴다.
+
+- **로그인 공유**: 세션을 localStorage 대신 `.dododiary.com` 쿠키에 저장(`src/data/supabase.ts`, `@supabase/ssr`). 한 서비스에서 로그인하면 todo/books/blog/홈 모두 로그인 상태. localhost 에선 그 주소에만 저장. 각 서비스의 `supabase.ts` 가 같은 쿠키 설정을 써야 한다.
+- **서비스 그만두기 vs 계정 탈퇴** (`supabase/migrations/008_account.sql`):
+  - `delete_todo_data()` — 투두 기록만 삭제 (마이페이지 "투두 기록 모두 삭제"). 북로그·블로그는 각자 `delete_books_data()` / `delete_blog_data()`.
+  - `delete_my_account()` — 서비스별 삭제 함수 중 있는 것을 전부 부른 뒤 계정 삭제 (마이페이지 "두두 계정 탈퇴"). **이 함수의 원본은 투두 008** — 다른 서비스 schema.sql 은 다시 정의하지 않는다.
+- 배포 순서: 008 SQL 실행 → 투두 배포(쿠키 전환으로 기존 사용자는 한 번 다시 로그인) → 북로그·블로그·홈 배포.
+
 ## 백업과 복구
 
 Supabase 무료 플랜엔 자동 백업이 없어서, GitHub Actions가 매일 백업한다 (`.github/workflows/backup.yml`).

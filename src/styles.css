@@ -814,6 +814,7 @@ html, body, #root{height:auto}
 .mypage-back{display:inline-block; margin-bottom:18px; font-size:12.5px; color:var(--ink-3); text-decoration:none}
 .mypage-back:hover{color:var(--ink)}
 .mypage h1{margin:0 0 18px; font-size:20px; font-weight:600; letter-spacing:-.02em}
+.mypage-sub{margin:26px 0 8px; font-size:12px; font-weight:600; letter-spacing:.04em; color:var(--ink-3)} /* "두두 계정" 구역 제목 (사이드바 .sect-label 톤) */
 .mypage-profile{display:flex; align-items:center; gap:14px; padding:16px; border:1px solid var(--line); border-radius:10px; margin-bottom:16px}
 .avatar.avatar-lg{width:48px; height:48px; font-size:18px}
 .mypage-who{min-width:0}

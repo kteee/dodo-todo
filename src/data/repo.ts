@@ -20,6 +20,8 @@ export interface Repo {
   deleteCategory(id: string): Promise<void>;
   /** 기간 하나에 메모 하나 — 있으면 덮어쓰고 없으면 만듦 */
   saveMemo(scope: MemoScope, period: string, body: string): Promise<void>;
-  /** 회원 탈퇴: 계정과 모든 데이터를 즉시 영구 삭제 */
+  /** 투두 그만두기: 이 서비스 기록(카테고리·할 일·메모)만 즉시 삭제. 계정과 다른 두두 서비스는 그대로 */
+  deleteTodoData(): Promise<void>;
+  /** 두두 계정 탈퇴: 계정과 모든 두두 서비스의 데이터를 즉시 영구 삭제 */
   deleteAccount(): Promise<void>;
 }

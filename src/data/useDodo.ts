@@ -304,7 +304,12 @@ export function useDodo(repo: Repo | null) {
         if (on) dirty.current.add(key);
         else dirty.current.delete(key);
       },
-      /** 회원 탈퇴 — 되돌릴 수 없어서 낙관적 처리 없이 서버 결과를 기다림 */
+      /** 투두 그만두기 — 이 서비스 기록만 삭제. 되돌릴 수 없어서 서버 결과를 기다린 뒤 빈 상태로 다시 불러옴 */
+      async deleteTodoData() {
+        await repo.deleteTodoData();
+        await reloadRef.current(false);
+      },
+      /** 두두 계정 탈퇴 — 되돌릴 수 없어서 낙관적 처리 없이 서버 결과를 기다림 */
       async deleteAccount() {
         await repo.deleteAccount();
       },

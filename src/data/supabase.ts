@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
 import type { Category, Memo, Todo } from "../lib/types";
 import type { Repo, Snapshot } from "./repo";
 
@@ -6,10 +6,25 @@ const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 // Publishable key(sb_publishable_...) 권장. 예전 anon 키도 받아줌
 const anon = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY) as string | undefined;
 
+/**
+ * 두두 계정: 로그인 세션을 localStorage 대신 `.dododiary.com` 쿠키에 둔다.
+ * 투두·북로그·블로그·홈이 같은 쿠키를 읽으므로 한 번 로그인하면 전부 열린다 (각 서비스의 supabase.ts 가 같은 설정).
+ * 세션이 4KB 를 넘으면 @supabase/ssr 이 쿠키를 여러 개로 쪼개 저장한다. localhost 에선 도메인 없이(이 주소에만) 저장.
+ */
+const SHARED_COOKIE_DOMAIN = ".dododiary.com";
+const onDodo = typeof location !== "undefined" && location.hostname.endsWith(SHARED_COOKIE_DOMAIN.slice(1));
+
 /** 환경변수가 없으면 null → 앱은 로컬 모드로 동작 */
 export const supabase =
   url && anon
-    ? createClient(url, anon, {
+    ? createBrowserClient(url, anon, {
+        cookieOptions: {
+          ...(onDodo ? { domain: SHARED_COOKIE_DOMAIN } : {}),
+          path: "/",
+          sameSite: "lax",
+          secure: onDodo,
+          maxAge: 60 * 60 * 24 * 400, // 브라우저 상한(400일). 실제 로그인 유지는 refresh token 수명을 따름
+        },
         // keepalive: 탭을 닫는 순간 보낸 저장(메모 자동저장 등)도 끝까지 전송됨. 요청 본문은 최대 15KB 수준이라 64KB 한도 안
         global: { fetch: (input, init) => fetch(input, { ...init, keepalive: true }) },
       })
@@ -108,6 +123,9 @@ export function supabaseRepo(): Repo {
     },
     async deleteCategory(id) {
       check(await db.rpc("delete_category", { p_id: id }));
+    },
+    async deleteTodoData() {
+      check(await db.rpc("delete_todo_data"));
     },
     async deleteAccount() {
       check(await db.rpc("delete_my_account"));
