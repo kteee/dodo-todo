@@ -1079,4 +1079,5 @@ html, body, #root{height:auto}
 .page:has(> .site-footer){display:flex; flex-direction:column; min-height:100vh}
 /* 사이드바 오른쪽 세로축: 접기 버튼·달력의 › 와 "일" 칸 가운데(= 오른쪽 끝에서 14px). ＋ 도 그 축에, 보관함 묶음 개수는 그 축 오른쪽 끝(240px 선)에 */
 .sect-head .sect-add, .inbox-sec-head .sect-add{margin-right:2px}
-.inbox-sec .grouphead{padding-right:8px}
+.inbox-sec .grouphead{padding-right:0} /* 묶음 개수는 목록 오른쪽 끝(240px)에 */
+.inbox-sec .list, .inbox-sec .catform{margin-right:8px} /* 카드·입력칸 오른쪽 끝도 ＋·개수와 같은 240px 선에 */
