@@ -1081,3 +1081,6 @@ html, body, #root{height:auto}
 .page > .signed-out{min-height:0}
 /* 폰에선 .page 가 block 이라 푸터가 위로 붙음 → 푸터 있는 화면만 세로 flex 로 (푸터가 화면 맨 아래) */
 .page:has(> .site-footer){display:flex; flex-direction:column; min-height:100vh}
+/* ＋ 의 오른쪽 끝을 그 아래 숫자(개수) 오른쪽 끝에 맞춤 — 카테고리 줄은 안쪽 여백 8px 라 10px 당기고, 보관함 그룹 제목은 2px 라 4px 내밈 */
+.sect-head .sect-add{margin-right:10px}
+.inbox-sec-head .sect-add{margin-right:-4px}
