@@ -47,6 +47,20 @@ GitHub `main`에 푸시하면 Cloudflare가 자동으로 빌드·배포한다. �
    - Site URL = 배포 주소, Redirect URLs = 배포 주소 + `http://localhost:5175`
    - 이걸 안 하면 구글 로그인 후 localhost로 튕김
 
+`npm run build`는 먼저 `npm run check`(타입 검사 + 단위 테스트)를 돌리므로, 깨진 코드는 Cloudflare에서 빌드가 실패해 배포되지 않는다.
+같은 검사가 GitHub Actions(`.github/workflows/ci.yml`)에서도 돌아 푸시·PR 마다 결과가 보인다.
+
+## 테스트
+
+```
+npm test
+```
+
+데이터가 꼬이면 제일 아픈 두 곳만 단위 테스트로 묶어 둔다 (전부 커버하려는 게 아님).
+
+- `src/data/saveQueue.test.ts` — 저장 큐: 순서 보장, 네트워크 오류 재시도(3초→두 배씩, 최대 30초), 연결 복구 시 즉시 재전송, 서버 거부는 그 작업만 버림
+- `src/lib/rank.test.ts` — 정렬 키: 맨 앞·사이 반복 삽입에도 순서 유지, 같은 키 충돌 시 예외 없이 저장
+
 ## 백업과 복구
 
 Supabase 무료 플랜엔 자동 백업이 없어서, GitHub Actions가 매일 백업한다 (`.github/workflows/backup.yml`).
@@ -102,7 +116,7 @@ Sentry 프로젝트 설정에서 **Security & Privacy → Prevent Storing of IP 
 | 카테고리 삭제 중간 실패 | 할 일 이동 + 삭제를 DB 함수 하나(`delete_category`)로 원자 처리 |
 | 할 일 1000개 넘는 사용자 | Supabase 기본 1000행 제한 → 페이지 나눠 전부 읽음 |
 | 오프라인·연결 끊김 중 편집 | 저장 큐에 남겨 두고 연결이 돌아오면 자동 재전송. 화면 위 배너로 대기 건수 표시 |
-| 삭제→실행 취소, 연속 드래그 요청이 뒤바뀜 | 모든 저장을 큐에서 순서대로 하나씩 보냄 |
+| 삭제→실행 취소, 연속 드래그 요청이 뒤바뀜 | 모든 저장을 큐에서 순서대로 하나씩 보냄 (`src/data/saveQueue.ts`, 단위 테스트 있음) |
 | 메모 자동저장(0.5초) 전에 탭 닫음 | 닫기 경고 + beforeunload 에서 즉시 저장 + fetch keepalive |
 | 한 계정이 DB 용량을 다 채움 | 사용자당 상한(할 일 2만/카테고리 100/메모 3천) + 정렬 키 길이 제한 (`007_limits.sql`) |
 | XSS → 토큰 탈취 | `public/_headers` CSP(스크립트는 우리 것만) + HSTS |

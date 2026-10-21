@@ -4,6 +4,7 @@ import { bucketOf, dateOf, memoKey, nextColor } from "../lib/types";
 import { byRank, rankAfter, rankLast } from "../lib/rank";
 import type { Repo } from "./repo";
 import { describeError, report } from "../lib/monitoring";
+import { createSaveQueue } from "./saveQueue";
 
 export interface Toast {
   id: number;
@@ -52,8 +53,9 @@ export function useDodo(repo: Repo | null) {
   // 액션은 렌더 사이에 연달아 불릴 수 있어서, 항상 최신 값을 ref로 읽는다
   const catsRef = useRef(cats);
   const todosRef = useRef(todos);
-  /** 아직 서버에 반영되지 않은 저장 작업 수 (큐 + 진행 중) */
-  const pending = useRef(0);
+  /** 저장 큐 — 아직 서버에 반영되지 않은 작업 수는 queueRef.current.pending */
+  const queueRef = useRef<ReturnType<typeof createSaveQueue> | null>(null);
+  const pendingNow = () => queueRef.current?.pending ?? 0;
   /** 화면에만 있고 아직 저장 요청도 안 된 입력(메모 자동저장 대기 등) — 창 닫기 경고용 */
   const dirty = useRef(new Set<string>());
   const toastSeq = useRef(0);
@@ -91,10 +93,10 @@ export function useDodo(repo: Repo | null) {
         try {
           const seq = saveSeq.current;
           const snap = await repo.load();
-          if (silent && (pending.current > 0 || seq !== saveSeq.current)) {
+          if (silent && (pendingNow() > 0 || seq !== saveSeq.current)) {
             // 저장 중인 변경을 덮어쓰지 않음. 저장이 끝나면(이미 끝났으면 바로) 다시 불러옴
             stale.current = true;
-            if (pending.current === 0) setTimeout(() => reloadRef.current(true), 0);
+            if (pendingNow() === 0) setTimeout(() => reloadRef.current(true), 0);
             return;
           }
           stale.current = false;
@@ -131,7 +133,7 @@ export function useDodo(repo: Repo | null) {
   useEffect(() => {
     if (!repo) return;
     const onVis = () => {
-      if (document.visibilityState === "visible" && pending.current === 0) reload(true);
+      if (document.visibilityState === "visible" && pendingNow() === 0) reload(true);
     };
     document.addEventListener("visibilitychange", onVis);
     return () => document.removeEventListener("visibilitychange", onVis);
@@ -140,7 +142,7 @@ export function useDodo(repo: Repo | null) {
   // 저장 중이거나 아직 저장 안 된 입력이 있는데 창을 닫으려 하면 경고
   useEffect(() => {
     const onLeave = (e: BeforeUnloadEvent) => {
-      if (pending.current > 0 || dirty.current.size > 0) e.preventDefault();
+      if (pendingNow() > 0 || dirty.current.size > 0) e.preventDefault();
     };
     window.addEventListener("beforeunload", onLeave);
     return () => window.removeEventListener("beforeunload", onLeave);
@@ -149,83 +151,43 @@ export function useDodo(repo: Repo | null) {
   const reloadRef = useRef(reload);
   reloadRef.current = reload;
 
-  /**
-   * 저장 큐. 모든 저장은 들어온 순서대로 하나씩 보낸다.
-   * - 순서 보장: "삭제 → 실행 취소"나 연속 드래그가 서버에 뒤바뀐 순서로 닿지 않는다
-   * - 네트워크 오류(오프라인 등)면 작업을 버리지 않고 큐에 둔 채 연결이 돌아오면 다시 보낸다
-   * - 서버가 거부한 오류(제약 위반 등)면 그 작업만 버리고 알린 뒤, 큐가 비면 서버 상태로 다시 맞춘다
-   */
-  const queue = useRef<{ run: () => Promise<void>; tries: number }[]>([]);
-  const running = useRef(false);
-  const retryTimer = useRef<number | null>(null);
+  /** 저장 큐 (saveQueue.ts). 실패·밀림 처리만 여기서 화면에 이어 붙인다 */
   const toastRef = useRef(toast);
   toastRef.current = toast;
-
-  const pump = useCallback(() => {
-    if (running.current) return;
-    const job = queue.current[0];
-    if (!job) {
-      if (stale.current) reloadRef.current(true);
-      return;
-    }
-    running.current = true;
-    job
-      .run()
-      .then(() => {
-        queue.current.shift();
-        pending.current--;
-        if (job.tries > 0) setNet({ offline: false, waiting: 0 });
-      })
-      .catch((e) => {
-        if (isNetworkError(e)) {
-          // 작업을 큐에 그대로 두고 잠시 뒤 다시 시도 (online 이벤트가 오면 더 빨리)
-          job.tries++;
-          setNet({ offline: true, waiting: queue.current.length });
-          if (retryTimer.current) clearTimeout(retryTimer.current);
-          retryTimer.current = window.setTimeout(() => {
-            retryTimer.current = null;
-            pump();
-          }, Math.min(30000, 3000 * 2 ** Math.min(job.tries - 1, 4)));
-          running.current = false;
-          return;
-        }
-        queue.current.shift();
-        pending.current--;
-        report(e, "save");
-        // 원인 파악용으로 DB 오류 코드·메시지를 짧게 덧붙임 (예: 23503 foreign key …)
-        const detail = describeError(e);
-        toastRef.current("저장하지 못했어요. 마지막으로 저장된 상태로 되돌릴게요." + (detail ? ` (${detail.slice(0, 120)})` : ""), "err");
-        stale.current = true;
-      })
-      .then(() => {
-        if (!running.current) return; // 재시도 대기 중
-        running.current = false;
-        pump();
-      });
-  }, []);
+  const queue = useMemo(
+    () =>
+      createSaveQueue({
+        isNetworkError,
+        onNet: setNet,
+        onFail(e) {
+          report(e, "save");
+          // 원인 파악용으로 DB 오류 코드·메시지를 짧게 덧붙임 (예: 23503 foreign key …)
+          const detail = describeError(e);
+          toastRef.current("저장하지 못했어요. 마지막으로 저장된 상태로 되돌릴게요." + (detail ? ` (${detail.slice(0, 120)})` : ""), "err");
+          stale.current = true;
+        },
+        onIdle() {
+          if (stale.current) reloadRef.current(true);
+        },
+      }),
+    [],
+  );
+  queueRef.current = queue;
 
   const save = useCallback(
     (remote: () => Promise<void>) => {
-      pending.current++;
       saveSeq.current++;
-      queue.current.push({ run: remote, tries: 0 });
-      pump();
+      queue.push(remote);
     },
-    [pump],
+    [queue],
   );
 
   // 연결이 돌아오면 밀린 저장을 바로 다시 보냄
   useEffect(() => {
-    const onOnline = () => {
-      if (retryTimer.current) {
-        clearTimeout(retryTimer.current);
-        retryTimer.current = null;
-      }
-      pump();
-    };
+    const onOnline = () => queue.retryNow();
     window.addEventListener("online", onOnline);
     return () => window.removeEventListener("online", onOnline);
-  }, [pump]);
+  }, [queue]);
 
   const sortedIn = (b: Bucket, exceptId?: string) =>
     todosRef.current.filter((t) => bucketOf(t) === b && t.id !== exceptId).sort(byRank);
