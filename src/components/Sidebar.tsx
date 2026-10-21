@@ -382,15 +382,8 @@ export function Categories(p: CategoriesProps) {
     setAdding(false);
   };
 
-  const known = new Set(p.cats.map((c) => c.id));
   const totals = new Map<string, number>(); // 완료 포함 — 삭제 확인 문구용
   for (const t of p.todos) if (t.categoryId) totals.set(t.categoryId, (totals.get(t.categoryId) ?? 0) + 1);
-  const counts = new Map<string, number>();
-  for (const t of p.todos) {
-    if (t.done) continue;
-    const k = t.categoryId && known.has(t.categoryId) ? t.categoryId : NO_CAT;
-    counts.set(k, (counts.get(k) ?? 0) + 1);
-  }
 
   return (
     <section>
@@ -466,7 +459,6 @@ export function Categories(p: CategoriesProps) {
             >
               <span className="dot" style={cvar(c.color)} />
               <span className="nm">{c.name}</span>
-              <span className="n">{counts.get(c.id) ?? 0}</span>
             </button>
             {p.editCat === c.id && (
               <CatEditor
@@ -484,12 +476,11 @@ export function Categories(p: CategoriesProps) {
             )}
           </li>
         ))}
-        {/* 카테고리 없는 할 일: 개수 표시 + 카드를 끌어다 놓으면 카테고리가 떼어짐 (수정할 건 없음) */}
+        {/* 카테고리 없는 할 일: 카드를 끌어다 놓으면 카테고리가 떼어짐 (수정할 건 없음) */}
         <li style={catDrag && catDrag.at >= p.cats.length - 1 ? { marginTop: "var(--cat-ph, 30px)" } : undefined}>
           <div className={"cat nocat" + (p.dropCat === NO_CAT ? " drop" : "")} data-drop={"cat:" + NO_CAT}>
             <span className="dot" style={cvar(NOCAT_COLOR)} />
             <span className="nm">카테고리 없음</span>
-            <span className="n">{counts.get(NO_CAT) ?? 0}</span>
           </div>
         </li>
       </ul>
