@@ -394,7 +394,53 @@ export function Categories(p: CategoriesProps) {
 
   return (
     <section>
-      <p className="sect-label">카테고리</p>
+      {/* 제목 줄 오른쪽 끝 ＋ 로 추가 (보관함과 같은 모양). 입력칸은 제목 바로 아래 */}
+      <div className="sect-head">
+        <p className="sect-label">카테고리</p>
+        <button
+          className="sect-add"
+          aria-label="카테고리 추가"
+          title="카테고리 추가"
+          onClick={() => {
+            committed.current = false;
+            setAdding(true);
+          }}
+        >
+          <svg viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M6 2.2v7.6M2.2 6h7.6" />
+          </svg>
+        </button>
+      </div>
+      {adding && (
+        <form
+          className="catform"
+          onSubmit={(e) => {
+            e.preventDefault();
+            commitNew(); // Enter는 창 포커스와 상관없이 바로 추가
+          }}
+        >
+          <input
+            type="text"
+            placeholder="카테고리 이름"
+            maxLength={14}
+            autoComplete="off"
+            autoFocus
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            onBlur={() => {
+              // 바깥을 누르면: 쓴 게 있으면 추가하고 닫음, 비어 있으면 그냥 닫음 (할 일 입력과 같은 규칙)
+              if (!document.hasFocus()) return; // 다른 창으로 전환한 경우엔 그대로 둠
+              commitNew();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setNewName("");
+                setAdding(false);
+              }
+            }}
+          />
+        </form>
+      )}
       <ul className="cats" ref={listRef}>
         {p.cats.map((c, i) => (
           <li
@@ -447,46 +493,6 @@ export function Categories(p: CategoriesProps) {
           </div>
         </li>
       </ul>
-      {adding ? (
-        <form
-          className="catform"
-          onSubmit={(e) => {
-            e.preventDefault();
-            commitNew(); // Enter는 창 포커스와 상관없이 바로 추가
-          }}
-        >
-          <input
-            type="text"
-            placeholder="카테고리 이름"
-            maxLength={14}
-            autoComplete="off"
-            autoFocus
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onBlur={() => {
-              // 바깥을 누르면: 쓴 게 있으면 추가하고 닫음, 비어 있으면 그냥 닫음 (할 일 입력과 같은 규칙)
-              if (!document.hasFocus()) return; // 다른 창으로 전환한 경우엔 그대로 둠
-              commitNew();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") {
-                setNewName("");
-                setAdding(false);
-              }
-            }}
-          />
-        </form>
-      ) : (
-        <button
-          className="addcat"
-          onClick={() => {
-            committed.current = false;
-            setAdding(true);
-          }}
-        >
-          ＋ 카테고리 추가
-        </button>
-      )}
     </section>
   );
 }

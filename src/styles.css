@@ -1004,8 +1004,7 @@ html, body, #root{height:auto}
 .inbox-sec-head .sect-label{margin:0 0 0 2px}
 .inbox-sec-head .hint-ico{order:0; margin-left:0; position:static}
 .inbox-sec-head .hint-ico::after{left:0; right:0; width:auto; top:calc(100% + 6px)} /* 사이드바 폭 안에 들어오게 머리 줄 기준으로 */
-.inbox-sec-head .n{margin-left:auto; margin-right:6px; font-family:var(--mono); font-size:11px; color:var(--ink-3); font-variant-numeric:tabular-nums}
-.inbox-sec .addcat{margin-bottom:6px}
+.inbox-sec-head .n{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--ink-3); font-variant-numeric:tabular-nums}
 .inbox-sec .catform{margin-bottom:6px}
 .inbox-sec .list{gap:5px}
 
@@ -1072,3 +1071,15 @@ html, body, #root{height:auto}
 
 /* 명조일 때 맥에서 글자를 가늘게 깎는 효과(antialiased)만 끔. (외곽선 text-stroke 는 윈도우에서 글자가 두 겹으로 보여 뺌) */
 :root[data-font="serif"] body{-webkit-font-smoothing:auto; -moz-osx-font-smoothing:auto}
+
+/* 사이드바 섹션 제목 줄(카테고리·보관함): 제목 … 오른쪽 끝 ＋ (추가) */
+.sect-head{display:flex; align-items:center; gap:6px; margin:0 0 9px}
+.sect-head .sect-label{margin:0 0 0 2px}
+.sect-add, .inbox-sec-head .sect-add{
+  margin-left:auto; width:24px; height:24px; margin-block:-4px; border-radius:6px; color:var(--ink-3);
+  display:grid; place-items:center; flex:none;
+}
+.inbox-sec-head .n + .sect-add{margin-left:2px}
+.sect-add svg{width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round}
+.sect-add:hover{background:var(--panel-2); color:var(--ink)}
+.sect-head + .catform{margin:-3px 0 6px}

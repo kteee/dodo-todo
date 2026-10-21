@@ -409,7 +409,7 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
 
 /**
  * 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용. 달력·카테고리처럼 테두리 없는 사이드바 섹션.
- * 맨 위 "＋ 할 일 추가"(카테고리 추가와 같은 모양) → 입력칸, Enter 로 맨 위에 쌓이고 입력칸은 그대로(연달아 적기).
+ * 제목 줄 오른쪽 ＋(카테고리와 같은 모양) → 제목 아래 입력칸, Enter 로 맨 위에 쌓이고 입력칸은 그대로(연달아 적기).
  * 할 일은 요일 칸과 같은 카드. 정해지면 달력으로 끌어다 놓음
  */
 export function InboxSection({ ctx }: { ctx: BoardCtx }) {
@@ -431,8 +431,13 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
           ?
         </span>
         <span className="n">{left || ""}</span>
+        <button className="sect-add" aria-label="보관함에 할 일 추가" title="할 일 추가" onClick={() => setAdding(true)}>
+          <svg viewBox="0 0 12 12" aria-hidden="true">
+            <path d="M6 2.2v7.6M2.2 6h7.6" />
+          </svg>
+        </button>
       </div>
-      {adding ? (
+      {adding && (
         <form
           className="catform"
           onSubmit={(e) => {
@@ -463,10 +468,6 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
             }}
           />
         </form>
-      ) : (
-        <button className="addcat" onClick={() => setAdding(true)}>
-          ＋ 할 일 추가
-        </button>
       )}
       <CardList bucket="none" items={items} ctx={ctx} />
     </section>
