@@ -407,29 +407,69 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
   );
 }
 
-/** 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용. 할 일 카드는 요일 칸과 똑같이 + 맨 아래 ＋ 할 일. 정해지면 달력으로 끌어다 놓음 */
+/**
+ * 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용. 달력·카테고리처럼 테두리 없는 사이드바 섹션.
+ * 맨 위 "＋ 할 일 추가"(카테고리 추가와 같은 모양) → 입력칸, Enter 로 맨 위에 쌓이고 입력칸은 그대로(연달아 적기).
+ * 할 일은 요일 칸과 같은 카드. 정해지면 달력으로 끌어다 놓음
+ */
 export function InboxSection({ ctx }: { ctx: BoardCtx }) {
-  const all = ctx.inBucket("none");
-  const left = all.filter((t) => !t.done).length;
+  const left = ctx.inBucket("none").filter((t) => !t.done).length;
   const items = ctx.shown("none");
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
+  const [adding, setAdding] = useState(false);
+  const [text, setText] = useState("");
+  const commit = () => {
+    const v = text.trim();
+    if (v) ctx.onAdd("none", v.slice(0, 500), null, true);
+    setText("");
+  };
   return (
-    <div className="inbox-side">
-      <section className={"col unscheduled inbox-list" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
-        <div className="colhead">
-          <span className="dow">보관함</span>
-          <span className="hint-ico" tabIndex={0} role="img" aria-label="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요." data-tip="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.">
-            ?
-          </span>
-          <span className="n">{left || ""}</span>
-        </div>
-        <div className="colbody">
-          <CardList bucket="none" items={items} ctx={ctx} />
-          {/* 요일 칸과 같이: ＋ 할 일 을 눌러서 입력 (맨 아래에 쌓임) */}
-          <Composer bucket="none" ctx={ctx} />
-        </div>
-      </section>
-    </div>
+    <section className={"inbox-sec" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
+      <div className="inbox-sec-head">
+        <p className="sect-label">보관함</p>
+        <span className="hint-ico" tabIndex={0} role="img" aria-label="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요." data-tip="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.">
+          ?
+        </span>
+        <span className="n">{left || ""}</span>
+      </div>
+      {adding ? (
+        <form
+          className="catform"
+          onSubmit={(e) => {
+            e.preventDefault();
+            commit();
+          }}
+        >
+          <input
+            type="text"
+            placeholder="할 일"
+            aria-label="보관함에 할 일 적기"
+            maxLength={500}
+            autoComplete="off"
+            autoFocus
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onBlur={() => {
+              // 바깥을 누르면: 쓴 게 있으면 추가하고 닫음 (카테고리 추가와 같은 규칙)
+              if (!document.hasFocus()) return;
+              commit();
+              setAdding(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setText("");
+                setAdding(false);
+              }
+            }}
+          />
+        </form>
+      ) : (
+        <button className="addcat" onClick={() => setAdding(true)}>
+          ＋ 할 일 추가
+        </button>
+      )}
+      <CardList bucket="none" items={items} ctx={ctx} />
+    </section>
   );
 }
 
