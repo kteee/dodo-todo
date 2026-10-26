@@ -1230,7 +1230,8 @@ html, body, #root{height:auto}
 .dayview .check svg{width:11px; height:11px}
 .dayview .txt{font-size:0.875rem; line-height:1.5; padding-right:28px}
 .dayview .card .txt-edit{font-size:0.875rem}
-.dayview .chip{grid-area:chip; margin:0 24px 0 0}
+.dayview .chip{grid-area:chip; margin:0 24px 0 0; font-size:0.71875rem; padding:4px 7px} /* 행 칩 글자 10.5 → 11.5px */
+.dayview .composer select.catsel{font-size:0.71875rem}
 .dayview .del{right:8px}
 .dayview .grouphead{padding:16px 4px 4px}
 .dayview .add{margin:0; padding:15px 4px; font-size:0.8125rem; color:var(--ink-3); border-radius:0}
