@@ -1463,3 +1463,7 @@ html, body, #root{height:auto}
 .board.v-week .composer{border-bottom:0}
 .board.v-week .composer input[type=text]{border-bottom:1px solid var(--line)}
 .board.v-week .composer input[type=text]:focus-visible{border-bottom-color:var(--ink-3)}
+/* 주간 가로 보기: 할 일은 한 줄, 넘치면 … (수정할 땐 전체가 보이게 원래대로) */
+.board.v-week.wide .card:not(.is-editing) .txt{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.board.v-week.wide .card{align-items:center}
+.board.v-week.wide .check{margin-top:0}
