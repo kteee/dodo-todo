@@ -749,7 +749,7 @@ export default function App() {
       {quickOpen && ready && (
         <QuickAdd
           cats={cats}
-          defaultDate={view === "day" ? selected : todayKey}
+          defaultDate={todayKey}
           onAdd={(b, text, catId) => {
             ctx.onAdd(b, text, catId);
             // 적은 날이 화면에 없으면 그 날 일간으로 가서 보여줌. 보관함이면 보관함 탭으로

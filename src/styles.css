@@ -1280,13 +1280,17 @@ html, body, #root{height:auto}
 /* 헤더 ＋ 할 일 추가 팝업 */
 .quickadd-modal{width:min(420px, 100%); padding:20px 20px 16px}
 .quickadd-modal h4{margin-bottom:12px; font-size:0.9375rem}
-.qa-text{width:100%; border:0; border-bottom:1px solid var(--line-2); padding:8px 2px 10px; font-size:1rem; background:none; outline:none}
+.qa-text{width:100%; border:0; border-radius:0; border-bottom:1px solid var(--line-2); padding:8px 2px 10px; font-size:1rem; background:none; outline:none}
 .qa-text:focus{border-bottom-color:var(--ink-3)}
-.qa-row{display:flex; gap:14px; margin-top:16px}
-.qa-field{flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; font-size:0.6875rem; color:var(--ink-3)}
+.qa-field{display:flex; flex-direction:column; gap:5px; margin-top:14px; font-size:0.6875rem; color:var(--ink-3)}
+.qa-date{display:flex; align-items:center; gap:12px}
+.qa-date input[type=date]{flex:1; min-width:0}
+.qa-date input[type=date]:disabled{opacity:.45}
+.qa-nodate{display:inline-flex; align-items:center; gap:6px; font-size:0.78125rem; color:var(--ink-2); white-space:nowrap; cursor:pointer}
+.qa-nodate input{width:14px; height:14px; margin:0; accent-color:var(--ink)}
 .qa-field input, .qa-field select{width:100%; height:34px; padding:0 9px; border:1px solid var(--line-2); border-radius:7px; background:var(--bg); font-size:0.8125rem; color:var(--ink); outline:none}
 .qa-field input:focus, .qa-field select:focus{border-color:var(--ink-3)}
-.qa-hint{min-height:1.2em; margin:8px 0 10px; font-size:0.71875rem; color:var(--ink-3)}
+.quickadd-modal .acts{margin-top:18px}
 .modal .acts .primary{background:var(--ink); color:var(--ink-rev); font-weight:500}
 .modal .acts .primary:disabled{opacity:.35; cursor:default}
 .modal .acts .primary:not(:disabled):hover{filter:brightness(1.15)}
