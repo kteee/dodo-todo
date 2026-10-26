@@ -400,6 +400,8 @@ interface DayViewProps {
   ctx: BoardCtx;
   /** 맨 아래 메모 칸 (메모 보기 꺼져 있으면 null) */
   memo?: ReactNode;
+  /** 메모 본문 — 접혀 있을 때 첫 줄 미리보기용 */
+  memoText?: string;
 }
 
 /**
@@ -407,8 +409,10 @@ interface DayViewProps {
  * 접을 수 있는 "완료한 일 N", 맨 아래 메모. 칸 테두리 없이 행마다 밑줄만.
  * 드롭은 이 영역 어디에 놓아도 이 날짜로 (data-drop)
  */
-export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo }: DayViewProps) {
+export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoText = "" }: DayViewProps) {
   const [doneOpen, setDoneOpen] = useState(true);
+  const [memoOpen, setMemoOpen] = useState(true);
+  const memoPreview = memoText.trim().split("\n")[0]?.slice(0, 40) ?? "";
   const items = ctx.shown(dateKey);
   const open = items.filter((t) => !t.done);
   const done = items.filter((t) => t.done);
@@ -455,7 +459,17 @@ export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo }: Day
           )}
         </div>
       )}
-      {memo && <div className="daymemo">{memo}</div>}
+      {memo && (
+        <div className={"dv-done dv-memo" + (memoOpen ? "" : " closed")}>
+          <button className="dv-tg" aria-expanded={memoOpen} onClick={() => setMemoOpen((o) => !o)}>
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <polyline points="2.5,4.5 6,8 9.5,4.5" />
+            </svg>
+            메모{!memoOpen && memoPreview && <span className="n preview">{memoPreview}</span>}
+          </button>
+          {memoOpen && <div className="daymemo">{memo}</div>}
+        </div>
+      )}
     </section>
   );
 }

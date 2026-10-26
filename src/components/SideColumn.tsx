@@ -13,14 +13,19 @@ export interface MemoProps {
   onSave: (scope: MemoScope, period: string, body: string) => void;
   /** 자동저장 타이머가 돌고 있는(아직 저장 요청 전인) 글이 있는지 — 창 닫기 경고용 */
   onDirty?: (dirty: boolean) => void;
+  /** 제목 줄 없이 입력칸만 (일간의 접이식 메모 섹션용) */
+  bare?: boolean;
+  /** 테두리·크기 조절 손잡이 없이 내용 길이만큼 자동으로 늘어남 */
+  autoGrow?: boolean;
 }
 
 /**
  * 타이핑이 멈추고 0.5초 뒤 자동 저장, 포커스가 빠지거나 기간이 바뀌거나 탭을 숨기면 즉시 저장.
  * 입력 중에는 서버에서 다시 불러온 값으로 덮어쓰지 않는다(쓰던 글이 튀지 않게).
  */
-export function MemoBox({ scope, period, value, onSave, onDirty }: MemoProps) {
+export function MemoBox({ scope, period, value, onSave, onDirty, bare, autoGrow }: MemoProps) {
   const [draft, setDraft] = useState(value);
+  const area = useRef<HTMLTextAreaElement>(null);
   const focused = useRef(false);
   const timer = useRef<number | null>(null);
   const pending = useRef<{ scope: MemoScope; period: string; body: string } | null>(null);
@@ -66,14 +71,26 @@ export function MemoBox({ scope, period, value, onSave, onDirty }: MemoProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 자동 확장: 내용이 바뀔 때마다 높이를 내용 높이에 맞춤
+  useEffect(() => {
+    const el = area.current;
+    if (!autoGrow || !el) return;
+    el.style.height = "0px";
+    el.style.height = el.scrollHeight + "px";
+  }, [draft, autoGrow]);
+
   return (
-    <section className="memo">
-      <div className="colhead">
-        <span className="dow">{LABEL[scope]}</span>
-      </div>
+    <section className={"memo" + (autoGrow ? " grow" : "")}>
+      {!bare && (
+        <div className="colhead">
+          <span className="dow">{LABEL[scope]}</span>
+        </div>
+      )}
       <textarea
+        ref={area}
+        rows={autoGrow ? 1 : undefined}
         aria-label={LABEL[scope]}
-        placeholder={PLACEHOLDER[scope]}
+        placeholder={bare ? "메모를 적어보세요" : PLACEHOLDER[scope]}
         maxLength={5000}
         value={draft}
         onFocus={() => (focused.current = true)}

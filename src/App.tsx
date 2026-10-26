@@ -445,7 +445,8 @@ export default function App() {
           pickDay(k);
         }}
         ctx={ctx}
-        memo={showMemo ? <MemoBox {...memoProps} /> : null}
+        memo={showMemo ? <MemoBox {...memoProps} bare autoGrow /> : null}
+        memoText={memoProps.value}
       />
     );
   } else {

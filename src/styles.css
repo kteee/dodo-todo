@@ -1241,12 +1241,15 @@ html, body, #root{height:auto}
 .dv-tg svg{width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; transition:transform .15s ease}
 .dv-done.closed .dv-tg svg{transform:rotate(-90deg)}
 .dv-done .card.done .txt{color:var(--ink-3)}
-/* 메모: 맨 아래, 제목 밑줄 + 테두리 없는 입력칸 */
-.daymemo{margin-top:34px}
-.daymemo .memo{background:none; border:0; box-shadow:none; min-height:0}
-.daymemo .colhead{padding:0 4px 8px; min-height:0; border-bottom:1px solid var(--line); background:none}
-.daymemo .colhead .dow{font-size:0.8125rem; font-weight:600; color:var(--ink)}
-.daymemo textarea{width:100%; min-height:96px; padding:12px 4px; border:0; background:none; resize:vertical; font-size:0.875rem; line-height:1.6; outline:none}
+/* 메모: "완료한 일"과 같은 접이식 섹션. 제목 밑줄·크기 조절 손잡이 없이 내용만큼 늘어나는 입력칸 */
+.dv-memo .dv-tg .preview{font-weight:400; color:var(--ink-3); max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.daymemo{margin:0}
+.daymemo .memo{background:none; border:0; box-shadow:none; min-height:0; display:block}
+.daymemo textarea{
+  display:block; width:100%; min-height:0; padding:8px 4px 4px; border:0; background:none; resize:none; overflow:hidden;
+  font-size:0.875rem; line-height:1.6; outline:none; box-shadow:none;
+}
+.daymemo textarea::placeholder{color:var(--ink-3)}
 @media (max-width:640px){
   .weekstrip{gap:2px; margin-bottom:18px}
   .ws-day{padding:9px 0 8px; border-radius:8px}
