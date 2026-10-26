@@ -1261,3 +1261,12 @@ html, body, #root{height:auto}
 /* 일간: 제목 영역 아래 선 대신 날짜 스트립 아래에 선 */
 .titlebar[data-tab="day"]{border-bottom:0; padding-bottom:10px}
 .weekstrip{padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:24px}
+/* 제목 영역을 2행 격자로: 1행 제목 | 보기 전환, 2행 설명 문구 | ‹ 오늘 › — 설명과 ‹ 오늘 ›이 같은 줄 */
+@media (min-width:821px){
+  .titlebar{display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:auto auto; row-gap:14px; column-gap:24px; align-items:center}
+  .titlebar .tl, .titlebar .tr{display:contents}
+  .titlebar .h1row{grid-column:1; grid-row:1}
+  .titlebar .vswitch{grid-column:2; grid-row:1; justify-self:end}
+  .titlebar .sub{grid-column:1; grid-row:2; margin:0}
+  .titlebar .nav{grid-column:2; grid-row:2; justify-self:end}
+}
