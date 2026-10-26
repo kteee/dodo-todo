@@ -1299,7 +1299,7 @@ html, body, #root{height:auto}
   .topnav{display:grid; grid-template-columns:240px minmax(0,1fr); column-gap:60px; align-items:center}
   .topnav-main{justify-content:flex-start}
   .topnav .search{width:400px}
-  .topnav .search input{height:36px; font-size:0.8125rem; padding-left:34px}
+  .topnav .search input{height:38px; font-size:0.8125rem; padding-left:34px}
   .topnav .quickadd{margin-left:auto}
 }
 @media (min-width:821px) and (max-width:1180px){
