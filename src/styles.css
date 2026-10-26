@@ -1508,3 +1508,32 @@ html, body, #root{height:auto}
 .board.v-week .card.is-editing{border:1px solid var(--ink-3); padding-bottom:8px}
 .board.v-week .card.is-editing .txt-edit{border-bottom:0; padding-bottom:0}
 .dayview .card.is-editing{border-color:var(--ink-3)}
+
+/* ══ 주간 세로 보기(.vert): 7일을 위에서 아래로. 하루가 한 줄 — 머리 "월 26 … N개의 할 일" 뒤에 할 일 카드 ══ */
+@media (min-width:641px){
+  .board.v-week.vert, .board.v-week.vert.no-inbox{
+    display:flex; flex-direction:column; gap:0; grid-auto-rows:auto; min-height:0;
+    border-top:1px solid var(--line); border-bottom:0;
+  }
+  .board.v-week.vert > .col, .board.v-week.vert > .col:first-child, .board.v-week.vert > .col:last-child, .board.v-week.vert > .col:nth-child(5){
+    border-left:0; border-bottom:1px solid var(--line); padding:14px 2px 16px;
+  }
+  .board.v-week.vert > .col:nth-child(-n+4){border-bottom:1px solid var(--line); padding-bottom:16px}
+  .board.v-week.vert > .col:nth-child(n+5){padding-top:14px}
+  .board.v-week.vert .colhead{
+    display:flex; align-items:center; gap:8px; height:auto; grid-template-rows:none;
+    margin:0 0 10px; padding:0 2px 0 0; border-bottom:0;
+  }
+  .board.v-week.vert .colhead .dow{order:0; font-size:0.75rem}
+  .board.v-week.vert .colhead .dnum{order:1; font-size:1.125rem; font-weight:600; line-height:1}
+  .board.v-week.vert .col.is-today .colhead .dnum{width:26px; height:26px; font-size:0.875rem}
+  .board.v-week.vert .colhead .hol-name{order:2}
+  .board.v-week.vert .colhead .col-tag{order:3; font-size:0.6875rem; color:var(--ink-3)}
+  .board.v-week.vert .colhead .n{order:4; margin-left:auto; font-size:0.6875rem}
+  .board.v-week.vert .list{gap:6px}
+  .board.v-week.vert .card{padding:10px 12px; border-radius:8px}
+  .board.v-week.vert .txt{font-size:0.875rem}
+  .board.v-week.vert .card .txt-edit{font-size:0.875rem}
+  .board.v-week.vert .add{padding:10px 2px; font-size:0.8125rem}
+  .board.v-week.vert .composer input[type=text]{padding:9px 12px; border-radius:8px; font-size:0.875rem}
+}

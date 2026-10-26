@@ -27,7 +27,7 @@ import { TEXT_SIZES, effectiveTextSize, readTextSize, saveTextSize, type TextSiz
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const MEMO_PREF = "dodo:showMemo";
-const WIDE_PREF = "dodo:weekWide"; // 주간 가로 보기(7일 한 줄). 기본은 두 줄
+const WIDE_PREF = "dodo:weekVertical"; // 주간 세로 보기(7일을 위에서 아래로). 기본은 두 줄
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
   try {
@@ -109,15 +109,7 @@ export default function App() {
   const phone = usePhone();
   const [drawer, setDrawer] = useState(false);
   const [folded, setFolded] = useState(() => readPref(FOLD_PREF, false));
-  /** 주간 가로 보기 중에 직접 펼쳤는지 — 가로 보기는 칸이 좁아 기본으로 접히고, 펼치면 그 상태를 이 화면 동안 기억 */
-  const [wideSideOpen, setWideSideOpen] = useState(false);
-  const wideWeek = view === "week" && wide && !phone;
   const toggleFold = (v: boolean) => {
-    if (wideWeek) {
-      // 가로 보기 중 접기/펼치기는 평소 설정을 건드리지 않음
-      setWideSideOpen(!v);
-      return;
-    }
     setFolded(v);
     writePref(FOLD_PREF, v);
   };
@@ -332,9 +324,8 @@ export default function App() {
     setCalMonth(firstOfMonth(today));
   };
 
-  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (제목 왼쪽 버튼). 폰은 서랍이라 해당 없음.
-  // 주간 가로 보기는 7칸이 좁아서 기본으로 접힘 (그 안에서 직접 펼치면 펼친 채로)
-  const sideFolded = !phone && (wideWeek ? !wideSideOpen : folded);
+  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (제목 왼쪽 버튼). 폰은 서랍이라 해당 없음
+  const sideFolded = !phone && folded;
 
   /* ── 오른쪽 칸: 보고 있는 기간의 메모 + 언젠가 할 일 ── */
   const [memoScope, memoPeriod]: [MemoScope, string] =
@@ -501,7 +492,7 @@ export default function App() {
   } else {
     main = (
       <>
-        <div className={"board v-" + view + " no-inbox" + (view === "week" && wide ? " wide" : "")}>{board}</div>
+        <div className={"board v-" + view + " no-inbox" + (view === "week" && wide ? " vert" : "")}>{board}</div>
         {view !== "day" && memoSection}
       </>
     );
@@ -637,7 +628,7 @@ export default function App() {
         <label className="togg">
           <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
         </label>
-        {/* 주간 전용: 기본은 두 줄(월~목 / 금~일), 켜면 7일을 한 줄로 */}
+        {/* 주간 전용: 기본은 두 줄(월~목 / 금~일), 켜면 7일을 위에서 아래로 */}
         {view === "week" && !phone && (
           <label className="togg">
             <input
@@ -648,7 +639,7 @@ export default function App() {
                 writePref(WIDE_PREF, e.target.checked);
               }}
             />{" "}
-            가로 보기
+            세로 보기
           </label>
         )}
         <label className="togg">
