@@ -1283,7 +1283,7 @@ html, body, #root{height:auto}
 .quickadd-modal h4{margin-bottom:12px; font-size:0.9375rem}
 .qa-text{width:100%; border:0; border-radius:0; border-bottom:1px solid var(--line-2); padding:8px 2px 10px; font-size:1rem; background:none; outline:none}
 .qa-text:focus{border-bottom-color:var(--ink-3)}
-.qa-field{display:flex; flex-direction:column; gap:5px; margin-top:14px; font-size:0.6875rem; color:var(--ink-3)}
+.qa-field{display:flex; flex-direction:column; gap:5px; margin-top:18px; font-size:0.6875rem; color:var(--ink-3)}
 .qa-field input[type=date]:disabled{opacity:.45}
 .qa-lbl{display:flex; align-items:center; justify-content:space-between; gap:8px}
 .qa-nodate{display:inline-flex; align-items:center; gap:6px; margin:0; font-size:0.75rem; color:var(--ink-2); cursor:pointer}
