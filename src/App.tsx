@@ -109,7 +109,15 @@ export default function App() {
   const phone = usePhone();
   const [drawer, setDrawer] = useState(false);
   const [folded, setFolded] = useState(() => readPref(FOLD_PREF, false));
+  /** 주간 가로 보기 중에 직접 펼쳤는지 — 가로 보기는 칸이 좁아 기본으로 접히고, 펼치면 그 상태를 이 화면 동안 기억 */
+  const [wideSideOpen, setWideSideOpen] = useState(false);
+  const wideWeek = view === "week" && wide && !phone;
   const toggleFold = (v: boolean) => {
+    if (wideWeek) {
+      // 가로 보기 중 접기/펼치기는 평소 설정을 건드리지 않음
+      setWideSideOpen(!v);
+      return;
+    }
     setFolded(v);
     writePref(FOLD_PREF, v);
   };
@@ -324,10 +332,9 @@ export default function App() {
     setCalMonth(firstOfMonth(today));
   };
 
-  // 왼쪽 접기는 가로 보기(주간 한 줄)에서만 — 칸이 좁은 보기라서
-  // 왼쪽 접기는 가로 보기(주간 한 줄)에서만 — 칸이 좁은 보기라서
-  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (날짜 줄 왼쪽 버튼, 폰의 달력 버튼과 같은 자리). 폰은 서랍이라 해당 없음
-  const sideFolded = !phone && folded;
+  // 왼쪽 달력·카테고리 접기: 어느 보기에서나 (제목 왼쪽 버튼). 폰은 서랍이라 해당 없음.
+  // 주간 가로 보기는 7칸이 좁아서 기본으로 접힘 (그 안에서 직접 펼치면 펼친 채로)
+  const sideFolded = !phone && (wideWeek ? !wideSideOpen : folded);
 
   /* ── 오른쪽 칸: 보고 있는 기간의 메모 + 언젠가 할 일 ── */
   const [memoScope, memoPeriod]: [MemoScope, string] =

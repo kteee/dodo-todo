@@ -1466,3 +1466,7 @@ html, body, #root{height:auto}
 .board.v-week.wide .card:not(.is-editing) .txt{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .board.v-week.wide .card{align-items:center}
 .board.v-week.wide .check{margin-top:0}
+/* 주간 가로 보기: × 자리를 비워 글 폭을 넓힘 — 마우스를 올리면 글 끝 위에 흰 배경으로 겹쳐 뜸 */
+.board.v-week.wide .txt{padding-right:0}
+.board.v-week.wide .del{right:0; padding:2px 4px; background:linear-gradient(to right, transparent, var(--bg) 8px)}
+.board.v-week.wide .card:hover .del{opacity:1}

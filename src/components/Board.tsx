@@ -74,7 +74,7 @@ function Card({ t, mini, ctx }: { t: Todo; mini?: boolean; ctx: BoardCtx }) {
           <polyline points="2,6.3 4.7,9 10,3.2" />
         </svg>
       </button>
-      {editing ? <InlineEditor t={t} ctx={ctx} /> : <span className="txt">{t.text}</span>}
+      {editing ? <InlineEditor t={t} ctx={ctx} /> : <span className="txt" title={t.text}>{t.text}</span>}
       {c && !editing && <span className="chip">{c.name}</span>}
       {!editing && (
         <button
