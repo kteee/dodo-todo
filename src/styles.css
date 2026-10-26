@@ -1459,3 +1459,7 @@ html, body, #root{height:auto}
 .board.v-week.wide .grouphead{padding:10px 2px 2px; font-size:0.6875rem}
 /* 주간 입력칸: 카테고리 선택은 입력칸 아래 */
 .board.v-week .composer select.catsel{order:1; margin:4px 0 2px 2px}
+/* 주간 입력칸: 밑선은 할 일 입력칸에만, 아래 카테고리 선택 밑엔 선 없음 */
+.board.v-week .composer{border-bottom:0}
+.board.v-week .composer input[type=text]{border-bottom:1px solid var(--line)}
+.board.v-week .composer input[type=text]:focus-visible{border-bottom-color:var(--ink-3)}
