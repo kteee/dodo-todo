@@ -1433,7 +1433,8 @@ html, body, #root{height:auto}
 .board.v-week > .col:first-child .colhead{margin-left:-2px; padding-left:2px}
 .board.v-week > .col:last-child .colhead{margin-right:-2px; padding-right:2px}
 /* 가로 보기 머리: 높이 고정(38px) — 오늘 동그라미가 있어도 모든 칸의 밑선 높이가 같게. 좌우 여백은 그대로 */
-.board.v-week.wide .colhead{height:38px; padding-top:0; padding-bottom:0; margin-bottom:6px}
+.board.v-week.wide > .col{padding-top:0} /* 머리 상자가 보드 윗선에 바로 붙어 글자 위아래 여백이 같게 */
+.board.v-week.wide .colhead{height:44px; padding-top:0; padding-bottom:0; margin-bottom:6px}
 /* 두 줄 보기 머리: 날짜 줄 높이 32px 고정 — 오늘 동그라미 유무와 상관없이 밑선 높이 같게 */
 .board.v-week:not(.wide) .colhead{grid-template-rows:auto 32px}
 @media (min-width:641px){
