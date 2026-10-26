@@ -16,6 +16,7 @@ import { Categories, MiniCal, TodayBlock } from "./components/Sidebar";
 import { GoogleButton, TopNav, type View } from "./components/TopNav";
 import { OptionsMenu } from "./components/OptionsMenu";
 import { TitleBar, type Tab } from "./components/TitleBar";
+import { QuickAdd } from "./components/QuickAdd";
 import { MyPage } from "./components/MyPage";
 import { Search } from "./components/Search";
 import { Toasts } from "./components/Toasts";
@@ -100,6 +101,8 @@ export default function App() {
   };
   /** 보관함(날짜 없는 할 일)을 본문에 펼친 상태 — 제목 영역의 보기 전환 4번째 탭. 보기(view)는 그대로 둔 채 겹쳐 열림 */
   const [inboxOpen, setInboxOpen] = useState(false);
+  /** 헤더 ＋ 할 일 추가 팝업 */
+  const [quickOpen, setQuickOpen] = useState(false);
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
   const [wide, setWide] = useState(() => readPref(WIDE_PREF, false));
   const twoRows = !wide;
@@ -260,21 +263,8 @@ export default function App() {
     setInboxOpen(false);
     changeView(t);
   };
-  /** 헤더 ＋ 할 일 추가: 일간이면 보고 있는 날, 그 밖엔 오늘. 오늘이 화면에 없으면 오늘 일간으로 가서 적기 */
-  const quickAdd = () => {
-    setInboxOpen(false);
-    if (view === "day") {
-      setOpenBucket(selected);
-      return;
-    }
-    const inWeek = view === "week" && todayKey >= key(weekStart) && todayKey <= key(addDays(weekStart, 6));
-    const inMonth = view === "month" && todayKey.slice(0, 7) === key(calMonth).slice(0, 7);
-    if (!inWeek && !inMonth) {
-      pickDay(todayKey);
-      setView("day");
-    }
-    setOpenBucket(todayKey);
-  };
+  /** 헤더 ＋ 할 일 추가: 팝업으로 할 일·날짜·카테고리를 받아 추가 */
+  const quickAdd = () => setQuickOpen(true);
   const pickDay = (k: string) => {
     setSelected(k);
     setWeekStart(mondayOf(parse(k)));
@@ -407,7 +397,6 @@ export default function App() {
   }
   const sideDate = view === "day" ? selected : todayKey;
   const sideStats = stats([sideDate]);
-  const headerDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${DOW[(today.getDay() + 6) % 7]}요일`;
 
   /* ── 보드 ── */
   let board: ReactNode;
@@ -688,7 +677,6 @@ export default function App() {
     <div className="page">
       <TopNav
         search={ready ? <Search todos={todos} catOf={catOf} onPick={goToTodo} /> : null}
-        dateText={phone ? undefined : headerDate}
         onQuickAdd={ready ? quickAdd : undefined}
         options={ready ? options : undefined}
         account={account}
@@ -757,6 +745,19 @@ export default function App() {
         <div className="netbar" role="status">
           연결이 끊겼어요. 저장 대기 중 {store.net.waiting}건 — 연결되면 자동으로 저장돼요.
         </div>
+      )}
+      {quickOpen && ready && (
+        <QuickAdd
+          cats={cats}
+          defaultDate={view === "day" ? selected : todayKey}
+          onAdd={(b, text, catId) => {
+            ctx.onAdd(b, text, catId);
+            // 적은 날이 화면에 없으면 그 날 일간으로 가서 보여줌. 보관함이면 보관함 탭으로
+            if (b === "none") setInboxOpen(true);
+            else if (view === "day" && b !== selected) pickDay(b);
+          }}
+          onClose={() => setQuickOpen(false)}
+        />
       )}
       <Toasts toasts={store.toasts} dismiss={store.dismiss} />
     </div>
