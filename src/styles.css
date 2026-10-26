@@ -1425,6 +1425,6 @@ html, body, #root{height:auto}
 .board.v-week.wide .colhead .col-tag, .board.v-week.wide .colhead .n{display:none}
 .board.v-week.wide .card{grid-template-areas:"check text"}
 .board.v-week.wide .card .chip{display:none}
-.board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::after{
-  content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--c); margin-left:6px; vertical-align:middle;
+.board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::before{
+  content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--c); margin-right:6px; vertical-align:middle;
 }
