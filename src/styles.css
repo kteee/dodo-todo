@@ -58,7 +58,7 @@ button{background:none; border:0; cursor:pointer}
 /* ── shell ───────────────────────────────────────────── */
 .page{
   height:100%;
-  max-width:1520px; margin-inline:auto;
+  max-width:1440px; margin-inline:auto; /* 1440급 화면에선 꽉 차고, 1920에선 양옆 240px — 어중간하지 않은 표준 폭 */
   padding-left:max(24px, env(safe-area-inset-left, 0px));
   padding-right:max(24px, env(safe-area-inset-right, 0px));
   padding-block:16px 20px;
