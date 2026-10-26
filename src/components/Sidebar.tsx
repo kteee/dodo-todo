@@ -493,6 +493,8 @@ export function Categories(p: CategoriesProps) {
   );
 }
 
+const MONTHS_EN = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
 interface TodayBlockProps {
   /** 보여줄 날 (일간이면 고른 날, 그 밖엔 오늘) */
   dateKey: string;
@@ -502,7 +504,7 @@ interface TodayBlockProps {
 }
 
 /**
- * 사이드바 맨 위: "2026년 10월 / 26 / 월요일" + 그날의 할 일(마친 수/전체) 진행 막대
+ * 사이드바 맨 위: "OCTOBER 2026 / 26 / 2026년 10월 26일 월요일" + 그날의 할 일(마친 수/전체) 진행 막대
  */
 export function TodayBlock({ dateKey, todayKey, total, done }: TodayBlockProps) {
   const d = parse(dateKey);
@@ -511,11 +513,11 @@ export function TodayBlock({ dateKey, todayKey, total, done }: TodayBlockProps) 
   return (
     <section className="todayblk" aria-label="오늘의 할 일">
       <p className="tb-month">
-        {d.getFullYear()}년 {d.getMonth() + 1}월
+        {MONTHS_EN[d.getMonth()]} {d.getFullYear()}
       </p>
       <p className="tb-num">{d.getDate()}</p>
       <p className="tb-dow">
-        {DOW[(d.getDay() + 6) % 7]}요일
+        {d.getFullYear()}년 {d.getMonth() + 1}월 {d.getDate()}일 {DOW[(d.getDay() + 6) % 7]}요일
       </p>
       <div className="tb-prog">
         <span>{isToday ? "오늘의 할 일" : "이 날의 할 일"}</span>
