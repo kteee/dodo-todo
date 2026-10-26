@@ -401,7 +401,7 @@ export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, to
  * 접이식 메모 섹션 (일간·주간·월간 맨 아래): "▾ 메모" 제목, 접으면 첫 줄 미리보기.
  * memo = <MemoBox bare autoGrow …/>
  */
-export function MemoSection({ memo, memoText = "" }: { memo: ReactNode; memoText?: string }) {
+export function MemoSection({ memo, memoText = "", label = "메모" }: { memo: ReactNode; memoText?: string; label?: string }) {
   const [open, setOpen] = useState(true);
   const preview = memoText.trim().split("\n")[0]?.slice(0, 40) ?? "";
   return (
@@ -410,7 +410,8 @@ export function MemoSection({ memo, memoText = "" }: { memo: ReactNode; memoText
         <svg viewBox="0 0 12 12" aria-hidden="true">
           <polyline points="2.5,4.5 6,8 9.5,4.5" />
         </svg>
-        메모{!open && preview && <span className="n preview">{preview}</span>}
+        {label}
+        {!open && preview && <span className="n preview">{preview}</span>}
       </button>
       {open && <div className="daymemo">{memo}</div>}
     </div>
@@ -483,7 +484,7 @@ export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoT
           )}
         </div>
       )}
-      {memo && <MemoSection memo={memo} memoText={memoText} />}
+      {memo && <MemoSection memo={memo} memoText={memoText} label="일간 메모" />}
     </section>
   );
 }

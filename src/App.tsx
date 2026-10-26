@@ -340,7 +340,9 @@ export default function App() {
     onDirty: (d: boolean) => actions?.markDirty("memo", d),
   };
   /** 보기 맨 아래 접이식 메모 (일간은 DayView 안에서 그림) */
-  const memoSection = showMemo ? <MemoSection memo={<MemoBox {...memoProps} bare autoGrow />} memoText={memoProps.value} /> : null;
+  const memoSection = showMemo ? (
+    <MemoSection memo={<MemoBox {...memoProps} bare autoGrow />} memoText={memoProps.value} label={view === "week" ? "주간 메모" : "월간 메모"} />
+  ) : null;
 
   /* ── 제목 영역 문구 ── */
   const stats = (keys: string[]) => {
