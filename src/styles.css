@@ -1449,12 +1449,12 @@ html, body, #root{height:auto}
 .board.v-week.wide .card{padding:7px 2px; gap:2px 7px}
 .board.v-week.wide .check{width:14px; height:14px; margin-top:2px; border-radius:3.5px}
 .board.v-week.wide .check svg{width:9px; height:9px}
-.board.v-week.wide .txt{font-size:0.8125rem; line-height:1.45; padding-right:14px} /* 13px */
-.board.v-week.wide .card .txt-edit{font-size:0.8125rem}
+.board.v-week.wide .txt{font-size:0.78125rem; line-height:1.45; padding-right:14px} /* 12.5px */
+.board.v-week.wide .card .txt-edit{font-size:0.78125rem}
 .board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::before{width:5px; height:5px; margin-right:5px}
 .board.v-week.wide .del{font-size:0.75rem; right:-2px}
 .board.v-week.wide .add{padding:8px 2px; font-size:0.71875rem}
-.board.v-week.wide .composer input[type=text]{font-size:0.8125rem; padding:5px 2px}
+.board.v-week.wide .composer input[type=text]{font-size:0.78125rem; padding:5px 2px}
 .board.v-week.wide .composer select.catsel{font-size:0.625rem}
 .board.v-week.wide .grouphead{padding:10px 2px 2px; font-size:0.6875rem}
 /* 주간 입력칸: 카테고리 선택은 입력칸 아래 */
