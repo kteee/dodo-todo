@@ -1428,5 +1428,12 @@ html, body, #root{height:auto}
 .board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::before{
   content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--c); margin-right:6px; vertical-align:0.18em; /* 한글 글자 세로 가운데(middle 은 조금 낮게 붙음) */
 }
-/* 주간: 요일·날짜 머리 아래 구분선 */
-.board.v-week .colhead{border-bottom:1px solid var(--line); margin-bottom:4px}
+/* 주간: 요일·날짜 머리 아래 밑선 — 칸 양옆 끝까지(칸 안쪽 여백만큼 밖으로 당김) */
+.board.v-week .colhead{border-bottom:1px solid var(--line); margin:0 -12px 4px; padding-left:12px; padding-right:12px}
+.board.v-week > .col:first-child .colhead{margin-left:-2px; padding-left:2px}
+.board.v-week > .col:last-child .colhead{margin-right:-2px; padding-right:2px}
+.board.v-week.wide .colhead{padding-bottom:12px}
+@media (min-width:641px){
+  .board.v-week:not(.wide) > .col:nth-child(5) .colhead{margin-left:-2px; padding-left:2px}
+  .board.v-week:not(.wide) > .col:last-child .colhead{margin-right:-12px; padding-right:12px}
+}
