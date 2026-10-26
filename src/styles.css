@@ -1441,3 +1441,7 @@ html, body, #root{height:auto}
   .board.v-week:not(.wide) > .col:nth-child(5) .colhead{margin-left:-2px; padding-left:2px}
   .board.v-week:not(.wide) > .col:last-child .colhead{margin-right:-12px; padding-right:12px}
 }
+/* 주간 가로 보기: 세로를 화면 높이에 맞추지 않고 내용만큼(최소 360px), 아래에도 밑선 */
+@media (min-width:641px){
+  .board.v-week.wide, .board.v-week.wide.no-inbox{min-height:0; grid-auto-rows:minmax(360px, auto); border-bottom:1px solid var(--line)}
+}
