@@ -445,15 +445,7 @@ export default function App() {
             }}
           />
         ) : (
-          <MonthGrid
-            calMonth={calMonth}
-            todayKey={todayKey}
-            ctx={ctx}
-            onMore={(k) => {
-              pickDay(k);
-              setView("day");
-            }}
-          />
+          <MonthGrid calMonth={calMonth} todayKey={todayKey} ctx={ctx} />
         )}
       </>
     );

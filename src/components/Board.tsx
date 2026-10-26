@@ -599,9 +599,7 @@ export function SideTabs({ tab, onTab, ctx }: { tab: SideTab; onTab: (t: SideTab
   );
 }
 
-const MONTH_MAX = 3; // 월간 칸에 보이는 할 일 수, 넘으면 "+N개"
-
-export function MonthGrid({ calMonth, todayKey, ctx, onMore }: { calMonth: Date; todayKey: string; ctx: BoardCtx; onMore?: (k: string) => void }) {
+export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKey: string; ctx: BoardCtx }) {
   const start = mondayOf(calMonth);
   const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
   return (
@@ -637,23 +635,7 @@ export function MonthGrid({ calMonth, todayKey, ctx, onMore }: { calMonth: Date;
                   <span className="mtag">{d.getMonth() + 1}월</span>
                 ) : null}
               </div>
-              {(() => {
-                const items = ctx.shown(k);
-                // 드래그 중엔 자리표시가 들어가야 하니 다 보여주고, 평소엔 MONTH_MAX 개까지만
-                const dragging = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === k;
-                const list = dragging || ctx.openBucket === k ? items : items.slice(0, MONTH_MAX);
-                const more = items.length - list.length;
-                return (
-                  <>
-                    <CardList bucket={k} items={list} mini ctx={ctx} />
-                    {more > 0 && (
-                      <button className="mmore" onClick={() => onMore?.(k)}>
-                        + {more}개
-                      </button>
-                    )}
-                  </>
-                );
-              })()}
+              <CardList bucket={k} items={ctx.shown(k)} mini ctx={ctx} />
               <Composer bucket={k} ctx={ctx} formOnly />
             </div>
           );
