@@ -1186,6 +1186,8 @@ html, body, #root{height:auto}
   .topnav-main{display:contents}
   .hdr-date{display:none}
   .topnav .optbtn{width:34px; height:34px}
+  .topnav .search-btn{margin-left:auto}
+  .quickadd{margin-left:0}
   .quickadd{height:36px; padding:0; width:36px; justify-content:center; border-radius:9px; margin-left:auto}
   .quickadd span{display:none}
   .topnav .search-btn{margin-left:0}
@@ -1253,3 +1255,4 @@ html, body, #root{height:auto}
   .dayview .txt{font-size:0.9375rem}
   .dayview .chip{margin-right:26px}
 }
+@media (max-width:640px){ .logo .tag{display:none} }
