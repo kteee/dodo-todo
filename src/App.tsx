@@ -374,7 +374,7 @@ export default function App() {
     sub = `${a.getMonth() + 1}월 ${nth} 주 · 할 일 ${total}개, 완료 ${done}개`;
   } else {
     title = `${calMonth.getFullYear()}년 ${calMonth.getMonth() + 1}월`;
-    sub = `나의 ${calMonth.getMonth() + 1}월을 한눈에, 하루하루의 할 일을 모아봐요.`;
+    sub = "";
   }
   const sideDate = view === "day" ? selected : todayKey;
   const sideStats = stats([sideDate]);

@@ -28,7 +28,7 @@ const TABS: [Tab, string][] = [
 ];
 
 /**
- * 헤더 아래 제목 영역: 왼쪽에 큰 제목·설명, 오른쪽에 보기 전환과 ‹ 오늘 ›.
+ * 헤더 아래 제목 영역: 왼쪽에 큰 제목, 둘째 줄에 ‹ 오늘 › + 설명. 오른쪽에 보기 전환.
  * 아래 가로선으로 본문(사이드바 + 보드)과 나뉨
  */
 export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left }: Props) {
@@ -39,7 +39,23 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
           {left}
           <h1>{title}</h1>
         </div>
-        <p className="sub">{sub}</p>
+        {/* 둘째 줄: ‹ 오늘 › 왼쪽, 그 옆에 한 줄 설명 */}
+        <div className="row2">
+          {onStep && onToday && (
+            <div className="nav">
+              <button aria-label="이전" onClick={() => onStep(-1)}>
+                ‹
+              </button>
+              <button className="today" onClick={onToday}>
+                오늘
+              </button>
+              <button aria-label="다음" onClick={() => onStep(1)}>
+                ›
+              </button>
+            </div>
+          )}
+          {sub && <p className="sub">{sub}</p>}
+        </div>
       </div>
       <div className="tr">
         <div className="vswitch" role="tablist" aria-label="보기 전환">
@@ -55,19 +71,6 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
             </button>
           ))}
         </div>
-        {onStep && onToday && (
-          <div className="nav">
-            <button aria-label="이전" onClick={() => onStep(-1)}>
-              ‹
-            </button>
-            <button className="today" onClick={onToday}>
-              오늘
-            </button>
-            <button aria-label="다음" onClick={() => onStep(1)}>
-              ›
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
