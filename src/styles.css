@@ -1154,7 +1154,7 @@ html, body, #root{height:auto}
 .side-top{margin:0 0 2px; justify-content:flex-end}
 /* 오늘 블록 */
 .todayblk{margin-top:4px}
-.todayblk + .cal{margin-top:34px} /* 진행 막대와 달력 사이 */
+.todayblk + .cal{margin-top:36px} /* 진행 막대와 달력 사이 */
 .tb-month{margin:0 0 2px; font-size:0.6875rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-variant-numeric:tabular-nums}
 .tb-num{margin:0; font-size:4.5rem; font-weight:300; line-height:1; letter-spacing:-.04em; color:var(--ink); font-variant-numeric:tabular-nums}
 .tb-dow{margin:10px 0 0; font-size:0.8125rem; font-weight:400; display:flex; align-items:baseline; gap:8px; color:var(--ink-3)} /* 날짜·요일 한 줄은 흐리게 */
