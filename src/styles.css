@@ -1412,6 +1412,7 @@ html, body, #root{height:auto}
 @media (min-width:641px){
   .board.v-week, .board.v-week.no-inbox{grid-template-columns:repeat(4, minmax(0,1fr)); grid-auto-rows:minmax(280px, auto); min-height:0}
   .board.v-week > .col:nth-child(5){border-left:0; padding-left:2px}
-  .board.v-week > .col:nth-child(n+5){border-top:1px solid var(--line); padding-top:18px}
+  .board.v-week > .col:nth-child(-n+4){border-bottom:1px solid var(--line); padding-bottom:18px} /* 줄 사이 선은 첫 줄 네 칸 아래로 — 둘째 줄 빈 칸까지 이어짐 */
+  .board.v-week > .col:nth-child(n+5){padding-top:18px}
   .board.v-week > .col:last-child{padding-right:12px}
 }
