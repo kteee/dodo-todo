@@ -1150,11 +1150,11 @@ html, body, #root{height:auto}
 .app.side-folded{grid-template-columns:minmax(0,1fr)}
 .main{padding-top:0}
 .side{gap:0; padding-right:0}
-.side > section + section{margin-top:26px}
+.side > section + section{margin-top:32px} /* 달력 ↔ 카테고리 */
 .side-top{position:absolute; top:30px; right:0; margin:0; justify-content:flex-end} /* OCTOBER 글자 잉크 세로 중심(131px)에 버튼 중심 */ /* 접기 버튼을 OCTOBER 2026 줄 오른쪽 끝에 (흐름에서 빼서 그 줄과 세로 중심 맞춤) */
 /* 오늘 블록 */
 .todayblk{margin-top:34px} /* 헤더 선과 OCTOBER 줄 사이 (원래 간격) */
-.todayblk + .cal{margin-top:36px} /* 진행 막대와 달력 사이 */
+.todayblk + .cal{margin-top:40px} /* 진행 막대와 달력 사이 */
 .tb-month{margin:0 0 2px; font-size:0.6875rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-variant-numeric:tabular-nums}
 .tb-num{margin:0; font-size:4.5rem; font-weight:300; line-height:1; letter-spacing:-.04em; color:var(--ink); font-variant-numeric:tabular-nums}
 .tb-dow{margin:10px 0 0; font-size:0.8125rem; font-weight:400; display:flex; align-items:baseline; gap:8px; color:var(--ink-3)} /* 날짜·요일 한 줄은 흐리게 */
@@ -1256,3 +1256,5 @@ html, body, #root{height:auto}
   .dayview .chip{margin-right:26px}
 }
 @media (max-width:640px){ .logo .tag{display:none} }
+/* 사이드바 '카테고리' 제목: 달력의 '2026년 10월'과 같은 글자(0.8125rem · 500 · 본문색) */
+.side .sect-head .sect-label{font-size:0.8125rem; font-weight:500; color:var(--ink); letter-spacing:-.01em}
