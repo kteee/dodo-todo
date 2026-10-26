@@ -1145,8 +1145,8 @@ html, body, #root{height:auto}
 .titlebar .nav .today{border:1px solid var(--line-2); padding:0 14px; color:var(--ink); font-weight:500; font-size:0.8125rem}
 .titlebar .nav .today:hover{background:var(--panel)}
 
-/* 본문: 사이드바 폭·간격은 원래대로(230px / 26px, 1180px↓ 220px / 22px) */
-.app{grid-template-columns:230px minmax(0,1fr); gap:26px; padding:0 48px 48px}
+/* 본문: 사이드바 240px / 간격 26px (1180px↓ 220px / 22px) */
+.app{grid-template-columns:240px minmax(0,1fr); gap:26px; padding:0 48px 48px}
 .app.side-folded{grid-template-columns:minmax(0,1fr)}
 .main{padding-top:0}
 .side{gap:0; padding-right:0}
