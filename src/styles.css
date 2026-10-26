@@ -1151,7 +1151,7 @@ html, body, #root{height:auto}
 .main{padding-top:0}
 .side{gap:0; padding-right:0}
 .side > section + section{margin-top:26px}
-.side-top{position:absolute; top:28px; right:0; margin:0; justify-content:flex-end} /* 접기 버튼을 OCTOBER 2026 줄 오른쪽 끝에 (흐름에서 빼서 그 줄과 세로 중심 맞춤) */
+.side-top{position:absolute; top:29px; right:0; margin:0; justify-content:flex-end} /* OCTOBER 글자 잉크 세로 중심(131px)에 버튼 중심 */ /* 접기 버튼을 OCTOBER 2026 줄 오른쪽 끝에 (흐름에서 빼서 그 줄과 세로 중심 맞춤) */
 /* 오늘 블록 */
 .todayblk{margin-top:34px} /* 헤더 선과 OCTOBER 줄 사이 (원래 간격) */
 .todayblk + .cal{margin-top:36px} /* 진행 막대와 달력 사이 */
