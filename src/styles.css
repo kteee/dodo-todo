@@ -1105,8 +1105,8 @@ html, body, #root{height:auto}
 .topnav .search{width:220px}
 .hdr-date{font-size:0.8125rem; color:var(--ink-2); white-space:nowrap; margin-left:4px}
 .quickadd{
-  display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 18px 0 14px; border-radius:10px;
-  background:var(--ink); color:var(--ink-rev); font-size:0.875rem; font-weight:500; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:7px; height:38px; padding:0 16px 0 13px; border-radius:9px; /* 검색칸(38px)과 같은 높이 */
+  background:var(--ink); color:var(--ink-rev); font-size:0.8125rem; font-weight:500; white-space:nowrap;
   transition:transform .12s ease, filter .12s ease;
 }
 .quickadd svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round}
