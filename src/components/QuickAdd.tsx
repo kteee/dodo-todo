@@ -68,11 +68,13 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
         <div className="qa-field">
           <span>날짜</span>
           <div className="qa-date">
-            <input type="date" value={date} disabled={noDate} onChange={(e) => setDate(e.target.value)} aria-label="날짜" />
+            {/* 날짜 없음을 켜면 칸을 비워 "연도-월-일" 자리표시만 보이게 */}
+            <input type="date" value={noDate ? "" : date} disabled={noDate} onChange={(e) => setDate(e.target.value)} aria-label="날짜" />
             <label className="qa-nodate">
-              <input type="checkbox" checked={noDate} onChange={(e) => setNoDate(e.target.checked)} /> 날짜 없음 · 보관함
+              <input type="checkbox" checked={noDate} onChange={(e) => setNoDate(e.target.checked)} /> 날짜 없음
             </label>
           </div>
+          {noDate && <p className="qa-hint">날짜 없는 할 일은 보관함에 보관돼요. 정해지면 달력으로 끌어다 놓으세요.</p>}
         </div>
         <div className="qa-field">
           <span>카테고리</span>
