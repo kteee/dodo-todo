@@ -357,12 +357,17 @@ interface ColProps {
   hint?: string;
   /** 공휴일 이름 (요일 옆에 작게) */
   holiday?: string | null;
+  /** 머리 오른쪽 위 작은 글자 — "오늘", 달이 바뀌는 날의 "11월" */
+  topRight?: string;
+  /** 개수 표기: ratio = "완료/전체", open = "N개의 할 일"(남은 것) */
+  countStyle?: "ratio" | "open";
   ctx: BoardCtx;
 }
 
-export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, ctx }: ColProps) {
+export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, topRight, countStyle = "ratio", ctx }: ColProps) {
   const all = ctx.inBucket(bucket);
   const done = all.filter((t) => t.done).length; // 완료/전체
+  const count = countStyle === "open" ? (all.length - done > 0 ? `${all.length - done}개의 할 일` : "") : all.length ? `${done}/${all.length}` : "";
   const items = ctx.shown(bucket);
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === bucket;
   return (
@@ -380,7 +385,8 @@ export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, ct
             ?
           </span>
         )}
-        <span className="n">{all.length ? `${done}/${all.length}` : ""}</span>
+        {topRight && <span className="col-tag">{topRight}</span>}
+        <span className="n">{count}</span>
       </div>
       <div className="colbody">
         <CardList bucket={bucket} items={items} ctx={ctx} />
@@ -388,6 +394,26 @@ export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, ct
         <Composer bucket={bucket} ctx={ctx} />
       </div>
     </section>
+  );
+}
+
+/**
+ * 접이식 메모 섹션 (일간·주간·월간 맨 아래): "▾ 메모" 제목, 접으면 첫 줄 미리보기.
+ * memo = <MemoBox bare autoGrow …/>
+ */
+export function MemoSection({ memo, memoText = "" }: { memo: ReactNode; memoText?: string }) {
+  const [open, setOpen] = useState(true);
+  const preview = memoText.trim().split("\n")[0]?.slice(0, 40) ?? "";
+  return (
+    <div className={"dv-done dv-memo" + (open ? "" : " closed")}>
+      <button className="dv-tg" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <svg viewBox="0 0 12 12" aria-hidden="true">
+          <polyline points="2.5,4.5 6,8 9.5,4.5" />
+        </svg>
+        메모{!open && preview && <span className="n preview">{preview}</span>}
+      </button>
+      {open && <div className="daymemo">{memo}</div>}
+    </div>
   );
 }
 
@@ -411,8 +437,6 @@ interface DayViewProps {
  */
 export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoText = "" }: DayViewProps) {
   const [doneOpen, setDoneOpen] = useState(true);
-  const [memoOpen, setMemoOpen] = useState(true);
-  const memoPreview = memoText.trim().split("\n")[0]?.slice(0, 40) ?? "";
   const items = ctx.shown(dateKey);
   const open = items.filter((t) => !t.done);
   const done = items.filter((t) => t.done);
@@ -459,17 +483,7 @@ export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoT
           )}
         </div>
       )}
-      {memo && (
-        <div className={"dv-done dv-memo" + (memoOpen ? "" : " closed")}>
-          <button className="dv-tg" aria-expanded={memoOpen} onClick={() => setMemoOpen((o) => !o)}>
-            <svg viewBox="0 0 12 12" aria-hidden="true">
-              <polyline points="2.5,4.5 6,8 9.5,4.5" />
-            </svg>
-            메모{!memoOpen && memoPreview && <span className="n preview">{memoPreview}</span>}
-          </button>
-          {memoOpen && <div className="daymemo">{memo}</div>}
-        </div>
-      )}
+      {memo && <MemoSection memo={memo} memoText={memoText} />}
     </section>
   );
 }
@@ -584,7 +598,9 @@ export function SideTabs({ tab, onTab, ctx }: { tab: SideTab; onTab: (t: SideTab
   );
 }
 
-export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKey: string; ctx: BoardCtx }) {
+const MONTH_MAX = 3; // 월간 칸에 보이는 할 일 수, 넘으면 "+N개"
+
+export function MonthGrid({ calMonth, todayKey, ctx, onMore }: { calMonth: Date; todayKey: string; ctx: BoardCtx; onMore?: (k: string) => void }) {
   const start = mondayOf(calMonth);
   const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
   return (
@@ -614,12 +630,46 @@ export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKe
                 <button className="plus" aria-label="할 일 추가" onClick={() => ctx.setOpenBucket(k)}>
                   ＋
                 </button>
+                {k === todayKey ? (
+                  <span className="mtag">오늘</span>
+                ) : d.getDate() === 1 && d.getMonth() !== calMonth.getMonth() ? (
+                  <span className="mtag">{d.getMonth() + 1}월</span>
+                ) : null}
               </div>
-              <CardList bucket={k} items={ctx.shown(k)} mini ctx={ctx} />
+              {(() => {
+                const items = ctx.shown(k);
+                // 드래그 중엔 자리표시가 들어가야 하니 다 보여주고, 평소엔 MONTH_MAX 개까지만
+                const dragging = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === k;
+                const list = dragging || ctx.openBucket === k ? items : items.slice(0, MONTH_MAX);
+                const more = items.length - list.length;
+                return (
+                  <>
+                    <CardList bucket={k} items={list} mini ctx={ctx} />
+                    {more > 0 && (
+                      <button className="mmore" onClick={() => onMore?.(k)}>
+                        + {more}개
+                      </button>
+                    )}
+                  </>
+                );
+              })()}
               <Composer bucket={k} ctx={ctx} formOnly />
             </div>
           );
         })}
+      </div>
+      <div className="mlegend">
+        <span>
+          <i className="lg-today" aria-hidden="true" />
+          오늘
+        </span>
+        <span>
+          <svg className="lg-check" viewBox="0 0 12 12" aria-hidden="true">
+            <polyline points="2,6.3 4.7,9 10,3.2" />
+          </svg>
+          완료한 일
+        </span>
+        <span className="r">날짜 없는 할 일은 보관함에 있어요.</span>
       </div>
     </div>
   );

@@ -1307,3 +1307,91 @@ html, body, #root{height:auto}
 @media (min-width:821px) and (max-width:1180px){
   .topnav{grid-template-columns:220px minmax(0,1fr); column-gap:22px}
 }
+
+/* ══ 디자인 교체 ③ 주간: 7열 한 줄, 요일·큰 날짜·개수 머리, 밑줄 행, 열 사이 세로선 ══════════ */
+.board.v-week, .board.v-week.no-inbox{
+  display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); grid-template-rows:none; gap:0;
+  box-shadow:none; background:none; border-top:1px solid var(--line); min-height:calc(100vh - 230px);
+}
+.board.v-week > .col{box-shadow:none; border-left:1px solid var(--line); background:none; padding:14px 12px 16px}
+.board.v-week > .col:first-child{border-left:0; padding-left:2px}
+.board.v-week > .col:last-child{padding-right:2px}
+.board.v-week > .col.drop{box-shadow:inset 0 0 0 1.5px var(--ink-2); border-radius:8px}
+/* 머리: [요일 ........ 오늘/11월] / [큰 날짜 ..... N개의 할 일] */
+.board.v-week .colhead{
+  display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"dow tag" "dnum n";
+  align-items:center; gap:8px 6px; padding:0 0 14px; min-height:0; border-bottom:0;
+}
+.board.v-week .colhead .dow{grid-area:dow; font-size:0.6875rem; font-weight:500; color:var(--ink-2)}
+.board.v-week .colhead .col-tag, .board.v-week .colhead .hol-name{grid-area:tag; justify-self:end; font-size:0.6875rem; color:var(--ink-3); margin:0}
+.board.v-week .colhead .hol-name{color:var(--sun)}
+.board.v-week .colhead .dnum{grid-area:dnum; justify-self:start; font-size:1.5rem; font-weight:500; line-height:1; letter-spacing:-.02em; padding:0; background:none; border-radius:0}
+.board.v-week .col.is-today .colhead .dnum{width:32px; height:32px; display:grid; place-items:center; border-radius:50%; background:var(--ink); color:var(--ink-rev); font-size:1.125rem}
+.board.v-week .colhead .n{grid-area:n; justify-self:end; font-size:0.6875rem; color:var(--ink-3)}
+.board.v-week .colbody{padding:0; overflow:visible}
+/* 행: 밑줄만 */
+.board.v-week .list{gap:0; min-height:0}
+.board.v-week .card{
+  padding:11px 2px; border:0; border-bottom:1px solid var(--line); border-radius:0; background:none; box-shadow:none;
+  grid-template-columns:auto minmax(0,1fr); grid-template-areas:"chip chip" "check text"; gap:3px 9px; align-items:start;
+}
+.board.v-week .card:hover{box-shadow:none; border-color:var(--line)}
+.board.v-week .card.nocat{grid-template-areas:"check text"}
+.board.v-week .check{width:16px; height:16px; margin-top:1px; border-radius:4px}
+.board.v-week .check svg{width:10px; height:10px}
+.board.v-week .txt{font-size:0.8125rem; line-height:1.5; padding-right:18px}
+.board.v-week .card .txt-edit{font-size:0.8125rem}
+.board.v-week .del{right:0}
+.board.v-week .add{margin:2px 0 0; padding:12px 2px; font-size:0.78125rem; color:var(--ink-3); border-radius:0}
+.board.v-week .add:hover{background:none; color:var(--ink)}
+.board.v-week .composer{padding:6px 0 4px; border-bottom:1px solid var(--line)}
+.board.v-week .composer:focus-within{border-bottom-color:var(--ink-3)}
+.board.v-week .composer input[type=text]{border:0; border-radius:0; background:none; padding:6px 2px; font-size:0.8125rem}
+.board.v-week .empty{padding:10px 2px}
+/* 주간·월간 아래 메모 섹션 */
+.main > .dv-memo{margin-top:30px}
+
+/* ══ 디자인 교체 ④ 월간: 요일 줄, 격자 칸(날짜·오늘 배지), ✓ 행, +N개, 범례 ══════════ */
+.board.v-month, .board.v-month.no-inbox{display:block; box-shadow:none; background:none; min-height:0}
+.board > .month{box-shadow:none}
+.month{background:none}
+.mdow{border-bottom:0}
+.mdow span{font-size:0.75rem; color:var(--ink-2); padding:10px 0 12px}
+.mgrid{gap:0; background:none; border-top:1px solid var(--line); border-left:1px solid var(--line); grid-template-rows:repeat(6, minmax(112px, auto))}
+.mcell{padding:10px 10px 8px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--bg)}
+.mcell.out{background:var(--panel)}
+.mcell.drop{box-shadow:inset 0 0 0 1.5px var(--ink-2)}
+.mhead{padding:0 0 6px; gap:6px}
+.mnum{font-size:0.8125rem; color:var(--ink); font-weight:500}
+.mcell.out .mnum{color:var(--ink-3); opacity:.7}
+.mcell.is-today .mnum{width:22px; height:22px; display:grid; place-items:center; border-radius:50%; padding:0; background:var(--ink); color:var(--ink-rev); font-size:0.75rem}
+.mtag{margin-left:auto; font-size:0.625rem; color:var(--ink-3)}
+.mhead .plus{margin-left:0}
+.mcell .mtag + .plus, .mhead .mtag ~ .plus{margin-left:0}
+/* 행: ✓ + 글, 밑줄 없이 촘촘하게 */
+.mcell .list{gap:2px}
+.mcell .card.mini{padding:2px 0; border:0; background:none; box-shadow:none; gap:6px; grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"; align-items:center}
+.mcell .card.mini:hover{background:none}
+.mcell .card.mini .check{width:12px; height:12px; border-radius:3px}
+.mcell .card.mini .txt{font-size:0.71875rem; padding-right:14px}
+.mcell .card.mini.done .txt{color:var(--ink-3)}
+.mcell .card.mini .del{right:0; font-size:0.75rem}
+.mmore{align-self:flex-start; padding:2px 0; font-size:0.6875rem; color:var(--ink-3)}
+.mmore:hover{color:var(--ink)}
+.mlegend{display:flex; align-items:center; gap:18px; padding:14px 2px 0; font-size:0.71875rem; color:var(--ink-2)}
+.mlegend > span{display:inline-flex; align-items:center; gap:6px}
+.mlegend .lg-today{width:8px; height:8px; border-radius:50%; background:var(--ink)}
+.mlegend .lg-check{width:11px; height:11px; fill:none; stroke:var(--ink-2); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.mlegend .r{margin-left:auto; color:var(--ink-3)}
+/* 폰: 주간은 7일 세로 쌓기(기존대로), 칸은 둥근 테두리 카드. 월간 격자는 가로 스크롤 */
+@media (max-width:640px){
+  .board.v-week, .board.v-week.no-inbox{display:flex; flex-direction:column; gap:14px; border-top:0; min-height:0}
+  .board.v-week > .col, .board.v-week > .col:first-child, .board.v-week > .col:last-child{border-left:0; padding:12px 12px 10px; box-shadow:0 0 0 1px var(--line); border-radius:8px; background:var(--bg)}
+  .board.v-week .colhead{padding-bottom:10px}
+  .board.v-week .colhead .dnum{font-size:1.25rem}
+  .board.v-week .col.is-today .colhead .dnum{width:28px; height:28px; font-size:1rem}
+  .board.v-week .card{padding:10px 2px}
+  .board.v-week .txt{font-size:0.875rem}
+  .board.v-month{overflow-x:auto}
+  .month{min-width:640px}
+}

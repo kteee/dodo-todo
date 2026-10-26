@@ -10,8 +10,8 @@ import { signIn, signOut, useAuth } from "./data/auth";
 import { useDodo } from "./data/useDodo";
 import { useDrag, type DragState } from "./hooks/useDrag";
 import { useToday } from "./hooks/useToday";
-import { Column, DayView, InboxSection, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
-import { MemoBox, SideColumn } from "./components/SideColumn";
+import { Column, DayView, InboxSection, MemoSection, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
+import { MemoBox } from "./components/SideColumn";
 import { Categories, MiniCal, TodayBlock } from "./components/Sidebar";
 import { GoogleButton, TopNav, type View } from "./components/TopNav";
 import { OptionsMenu } from "./components/OptionsMenu";
@@ -38,7 +38,6 @@ function readView(): View {
   // 정한 적 없으면: 폰은 하루 보기(한 화면에 하루가 딱 맞음), 큰 화면은 주간
   return isPhone() ? "day" : "week";
 }
-const WIDE_PREF = "dodo:wideWeek"; // 주간 "가로 보기"(한 줄). 기본은 두 줄
 const HIDE_DONE_PREF = "dodo:hideDone";
 const GROUP_PREF = "dodo:groupBy";
 const FOLD_PREF = "dodo:sideFolded"; // 왼쪽 달력·카테고리 접기 (날짜 줄 왼쪽 버튼)
@@ -104,8 +103,6 @@ export default function App() {
   /** 헤더 ＋ 할 일 추가 팝업 */
   const [quickOpen, setQuickOpen] = useState(false);
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
-  const [wide, setWide] = useState(() => readPref(WIDE_PREF, false));
-  const twoRows = !wide;
   // 폰: 달력·카테고리는 왼쪽 서랍으로, 주간은 7일을 세로로 쌓고, 좌우로 쓸어 넘겨 날짜 이동
   const phone = usePhone();
   const [drawer, setDrawer] = useState(false);
@@ -333,10 +330,6 @@ export default function App() {
   /* ── 오른쪽 칸: 보고 있는 기간의 메모 + 언젠가 할 일 ── */
   const [memoScope, memoPeriod]: [MemoScope, string] =
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
-  // 날짜 미정: 큰 화면은 왼쪽 사이드바(달력 아래), 폰은 보드 맨 아래 칸. 오른쪽 칸은 메모만
-  const inboxInBoard = false; // 보관함은 보기 전환 탭으로 (폰도 같음) — 보드 아래 칸으로는 더 안 넣음
-  const hasSide = view !== "day" && (showMemo || inboxInBoard); // 일간은 메모가 목록 아래에 들어가서 오른쪽 칸 없음
-  const weekTwoRows = view === "week" && twoRows && !phone;
   const memoProps = {
     scope: memoScope,
     period: memoPeriod,
@@ -344,20 +337,8 @@ export default function App() {
     onSave: (sc: MemoScope, pe: string, body: string) => actions?.saveMemo(sc, pe, body),
     onDirty: (d: boolean) => actions?.markDirty("memo", d),
   };
-  // 두 줄 보기: 메모는 7일 뒤 남는 8번째 칸, 언젠가 할 일은 맨 오른쪽 세로 칸(두 줄 높이)으로 따로
-  // 메모를 끄면 8번째 칸이 비어 선이 끊기므로, 빈 칸을 하나 채워 테두리를 이어줌
-  const side = weekTwoRows ? (
-    <>
-      {showMemo ? (
-        <SideColumn className="slot-memo" showMemo showInbox={false} memo={memoProps} ctx={ctx} />
-      ) : (
-        <div className="col filler" aria-hidden="true" />
-      )}
-      {inboxInBoard && <SideColumn className="slot-inbox" showMemo={false} showInbox memo={memoProps} ctx={ctx} />}
-    </>
-  ) : !hasSide ? null : (
-    <SideColumn showMemo={showMemo} showInbox={inboxInBoard} memo={memoProps} ctx={ctx} />
-  );
+  /** 보기 맨 아래 접이식 메모 (일간은 DayView 안에서 그림) */
+  const memoSection = showMemo ? <MemoSection memo={<MemoBox {...memoProps} bare autoGrow />} memoText={memoProps.value} /> : null;
 
   /* ── 제목 영역 문구 ── */
   const stats = (keys: string[]) => {
@@ -416,11 +397,12 @@ export default function App() {
               holiday={hol}
               // 공휴일은 일요일처럼 빨간 글씨
               cls={(k === todayKey ? " is-today" : "") + (hol || i === 6 ? " sun" : i === 5 ? " sat" : "")}
+              topRight={k === todayKey ? "오늘" : d.getDate() === 1 ? `${d.getMonth() + 1}월` : undefined}
+              countStyle="open"
               ctx={ctx}
             />
           );
         })}
-        {side}
       </>
     );
   } else if (view === "day") {
@@ -459,9 +441,16 @@ export default function App() {
             }}
           />
         ) : (
-          <MonthGrid calMonth={calMonth} todayKey={todayKey} ctx={ctx} />
+          <MonthGrid
+            calMonth={calMonth}
+            todayKey={todayKey}
+            ctx={ctx}
+            onMore={(k) => {
+              pickDay(k);
+              setView("day");
+            }}
+          />
         )}
-        {side}
       </>
     );
   }
@@ -508,7 +497,10 @@ export default function App() {
     );
   } else {
     main = (
-      <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" + (inboxInBoard ? " inbox-col" : "") : "")}>{board}</div>
+      <>
+        <div className={"board v-" + view + " no-inbox"}>{board}</div>
+        {view !== "day" && memoSection}
+      </>
     );
   }
 
@@ -642,20 +634,6 @@ export default function App() {
         <label className="togg">
           <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
         </label>
-        {/* 주간 보기 전용: 기본은 두 줄(월~목 / 금~일+메모), 켜면 7일을 한 줄로 가로로 펼침 */}
-        {view === "week" && !phone && (
-          <label className="togg">
-            <input
-              type="checkbox"
-              checked={wide}
-              onChange={(e) => {
-                setWide(e.target.checked);
-                writePref(WIDE_PREF, e.target.checked);
-              }}
-            />{" "}
-            가로 보기
-          </label>
-        )}
         <label className="togg">
           <input type="checkbox" checked={groupBy} onChange={(e) => setGroupBy(e.target.checked)} /> 카테고리별 보기
         </label>
