@@ -1457,3 +1457,5 @@ html, body, #root{height:auto}
 .board.v-week.wide .composer input[type=text]{font-size:0.75rem; padding:5px 2px}
 .board.v-week.wide .composer select.catsel{font-size:0.625rem}
 .board.v-week.wide .grouphead{padding:10px 2px 2px; font-size:0.6875rem}
+/* 주간 입력칸: 카테고리 선택은 입력칸 아래 */
+.board.v-week .composer select.catsel{order:1; margin:4px 0 2px 2px}
