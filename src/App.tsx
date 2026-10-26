@@ -21,6 +21,7 @@ import { Toasts } from "./components/Toasts";
 import { SiteFooter } from "./components/SiteFooter";
 import { isPhone, usePhone } from "./hooks/usePhone";
 import { FONTS, readFont, saveFont, type Font } from "./lib/font";
+import { TEXT_SIZES, effectiveTextSize, readTextSize, saveTextSize, type TextSize } from "./lib/textSize";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const SIDE_TAB_PREF = "dodo:sideTab"; // 왼쪽 사이드바 탭: 달력 | 보관함
@@ -86,6 +87,8 @@ export default function App() {
     }
   };
   const [font, setFontState] = useState<Font>(readFont);
+  /** 글자 크기: 저장된 선택(없으면 자동). 자동일 땐 화면 폭으로 "보통/크게" 중 지금 적용된 쪽을 표시 */
+  const [textSize, setTextSizeState] = useState<TextSize | null>(readTextSize);
   const [view, setView] = useState<View>(defaultView);
   const [selected, setSelected] = useState(todayKey);
   const [weekStart, setWeekStart] = useState(() => mondayOf(today));
@@ -662,6 +665,22 @@ export default function App() {
                     onClick={() => {
                       setFontState(f);
                       saveFont(f);
+                    }}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+              <p className="optsec">글자 크기</p>
+              <div className="optseg" role="radiogroup" aria-label="글자 크기">
+                {TEXT_SIZES.map(([sz, name]) => (
+                  <button
+                    key={sz}
+                    role="radio"
+                    aria-checked={effectiveTextSize(textSize) === sz}
+                    onClick={() => {
+                      setTextSizeState(sz);
+                      saveTextSize(sz);
                     }}
                   >
                     {name}
