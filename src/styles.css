@@ -1196,6 +1196,8 @@ body{background:var(--page)}
   .topnav{display:flex; flex-wrap:wrap; height:auto; padding:10px 16px; gap:10px; row-gap:10px}
   .topnav-main{display:contents}
   .hdr-date{display:none}
+  .logo .tag{display:none} /* 폰 헤더 한 줄: 로고 · 검색 · ＋ · ⚙ · 아바타 */
+  .topnav .optbtn{width:34px; height:34px}
   .quickadd{height:36px; padding:0; width:36px; justify-content:center; border-radius:9px; margin-left:auto}
   .quickadd span{display:none}
   .topnav .search-btn{margin-left:0}

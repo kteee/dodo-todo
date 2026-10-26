@@ -98,7 +98,6 @@ export default function App() {
     setHideDoneState(v);
     writePref(HIDE_DONE_PREF, v);
   };
-  const showInbox = true; // 보관함은 항상 보임 (설정에서 끄는 옵션 없음)
   /** 보관함(날짜 없는 할 일)을 본문에 펼친 상태 — 제목 영역의 보기 전환 4번째 탭. 보기(view)는 그대로 둔 채 겹쳐 열림 */
   const [inboxOpen, setInboxOpen] = useState(false);
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
@@ -345,7 +344,7 @@ export default function App() {
   const [memoScope, memoPeriod]: [MemoScope, string] =
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
   // 날짜 미정: 큰 화면은 왼쪽 사이드바(달력 아래), 폰은 보드 맨 아래 칸. 오른쪽 칸은 메모만
-  const inboxInBoard = phone && showInbox;
+  const inboxInBoard = false; // 보관함은 보기 전환 탭으로 (폰도 같음) — 보드 아래 칸으로는 더 안 넣음
   const hasSide = showMemo || inboxInBoard;
   const weekTwoRows = view === "week" && twoRows && !phone;
   const memoProps = {
