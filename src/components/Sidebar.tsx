@@ -504,7 +504,7 @@ interface TodayBlockProps {
 }
 
 /**
- * 사이드바 맨 위: "OCTOBER 2026 / 26 / 월요일 · 오늘" + 그날의 할 일(마친 수/전체) 진행 막대
+ * 사이드바 맨 위: "OCTOBER 2026 / 26 / 월요일" + 그날의 할 일(마친 수/전체) 진행 막대
  */
 export function TodayBlock({ dateKey, todayKey, total, done }: TodayBlockProps) {
   const d = parse(dateKey);
@@ -517,7 +517,7 @@ export function TodayBlock({ dateKey, todayKey, total, done }: TodayBlockProps) 
       </p>
       <p className="tb-num">{d.getDate()}</p>
       <p className="tb-dow">
-        {DOW[(d.getDay() + 6) % 7]}요일{isToday && <span className="is">오늘</span>}
+        {DOW[(d.getDay() + 6) % 7]}요일
       </p>
       <hr className="tb-rule" />
       <div className="tb-prog">
