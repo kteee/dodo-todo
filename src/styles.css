@@ -1477,5 +1477,5 @@ html, body, #root{height:auto}
 .board.v-week .card.is-editing, .board.v-week.wide .card.is-editing{
   grid-template-areas:"check text" "chip chip"; row-gap:0; align-items:start; border-bottom:0; padding-bottom:2px;
 }
-.board.v-week .card.is-editing .txt-edit{border-bottom:1px solid var(--ink-3); padding-bottom:6px}
+.board.v-week .card.is-editing .txt-edit{border-bottom:1px solid var(--ink-3); border-radius:0; padding-bottom:6px} /* 밑줄 직선 */
 .board.v-week .card.is-editing .chip{justify-self:start; margin:4px 0 2px 0}
