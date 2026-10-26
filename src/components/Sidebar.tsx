@@ -528,7 +528,6 @@ export function TodayBlock({ dateKey, todayKey, total, done }: TodayBlockProps) 
       <div className="tb-bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
         <i style={{ width: pct + "%" }} />
       </div>
-      <hr className="tb-rule" />
     </section>
   );
 }
