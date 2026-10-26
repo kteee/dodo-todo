@@ -1146,8 +1146,8 @@ html, body, #root{height:auto}
 .titlebar .nav .today{border:1px solid var(--line-2); padding:0 14px; color:var(--ink); font-weight:500; font-size:0.8125rem}
 .titlebar .nav .today:hover{background:var(--panel)}
 
-/* 본문: 사이드바 240px / 간격 60px (1180px↓ 220px / 22px) */
-.app{grid-template-columns:240px minmax(0,1fr); gap:60px; padding:0 48px 48px}
+/* 본문: 사이드바 230px / 간격 60px (1180px↓ 220px / 22px) */
+.app{grid-template-columns:230px minmax(0,1fr); gap:60px; padding:0 48px 48px}
 .app.side-folded{grid-template-columns:minmax(0,1fr)}
 .main{padding-top:0}
 .side{gap:0; padding-right:0}
@@ -1300,7 +1300,7 @@ html, body, #root{height:auto}
 .modal .acts .primary:not(:disabled):hover{filter:brightness(1.15)}
 /* 헤더를 본문과 같은 2열(사이드바 240 | 본문)로 — 검색창 왼쪽 끝이 본문 왼쪽 끝과 맞음. 검색창은 조금 크게 */
 @media (min-width:821px){
-  .topnav{display:grid; grid-template-columns:240px minmax(0,1fr); column-gap:60px; align-items:center}
+  .topnav{display:grid; grid-template-columns:230px minmax(0,1fr); column-gap:60px; align-items:center}
   .topnav-main{justify-content:flex-start}
   .topnav .search{width:400px}
   .topnav .search input{height:38px; font-size:0.8125rem; padding-left:34px}
