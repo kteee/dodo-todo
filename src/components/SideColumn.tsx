@@ -6,7 +6,7 @@ const LABEL: Record<MemoScope, string> = { day: "일간 메모", week: "주간 �
 const PLACEHOLDER: Record<MemoScope, string> = { day: "오늘의 메모", week: "이번 주 메모", month: "이번 달 메모" };
 const SAVE_DELAY = 500;
 
-interface MemoProps {
+export interface MemoProps {
   scope: MemoScope;
   period: string;
   value: string;
@@ -19,7 +19,7 @@ interface MemoProps {
  * 타이핑이 멈추고 0.5초 뒤 자동 저장, 포커스가 빠지거나 기간이 바뀌거나 탭을 숨기면 즉시 저장.
  * 입력 중에는 서버에서 다시 불러온 값으로 덮어쓰지 않는다(쓰던 글이 튀지 않게).
  */
-function MemoBox({ scope, period, value, onSave, onDirty }: MemoProps) {
+export function MemoBox({ scope, period, value, onSave, onDirty }: MemoProps) {
   const [draft, setDraft] = useState(value);
   const focused = useRef(false);
   const timer = useRef<number | null>(null);

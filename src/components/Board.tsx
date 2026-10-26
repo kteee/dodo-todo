@@ -215,11 +215,11 @@ function InlineEditor({ t, ctx }: { t: Todo; ctx: BoardCtx }) {
   );
 }
 
-function Composer({ bucket, ctx, formOnly }: { bucket: Bucket; ctx: BoardCtx; formOnly?: boolean }) {
+function Composer({ bucket, ctx, formOnly, label = "＋ 할 일" }: { bucket: Bucket; ctx: BoardCtx; formOnly?: boolean; label?: string }) {
   if (ctx.openBucket === bucket) return <ComposerForm bucket={bucket} ctx={ctx} />;
   return formOnly ? null : (
     <button className="add" onClick={() => ctx.setOpenBucket(bucket)}>
-      ＋ 할 일
+      {label}
     </button>
   );
 }
@@ -387,6 +387,75 @@ export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, ct
         {!items.length && empty && <p className="empty">{empty}</p>}
         <Composer bucket={bucket} ctx={ctx} />
       </div>
+    </section>
+  );
+}
+
+interface DayViewProps {
+  dateKey: string;
+  todayKey: string;
+  /** 날짜 스트립에 보일 주의 월요일 */
+  weekStart: Date;
+  onPick: (k: string) => void;
+  ctx: BoardCtx;
+  /** 맨 아래 메모 칸 (메모 보기 꺼져 있으면 null) */
+  memo?: ReactNode;
+}
+
+/**
+ * 일간 보기: 위에 그 주 7일 날짜 스트립(고른 날은 회색 상자), "할 일 N" 밑줄 행 목록, ＋ 새로운 할 일 추가,
+ * 접을 수 있는 "완료한 일 N", 맨 아래 메모. 칸 테두리 없이 행마다 밑줄만.
+ * 드롭은 이 영역 어디에 놓아도 이 날짜로 (data-drop)
+ */
+export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo }: DayViewProps) {
+  const [doneOpen, setDoneOpen] = useState(true);
+  const items = ctx.shown(dateKey);
+  const open = items.filter((t) => !t.done);
+  const done = items.filter((t) => t.done);
+  const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === dateKey;
+  return (
+    <section className={"dayview" + (dropHere ? " drop" : "")} data-drop={"date:" + dateKey}>
+      <div className="weekstrip" role="tablist" aria-label="이 주의 날짜">
+        {Array.from({ length: 7 }, (_, i) => {
+          const d = addDays(weekStart, i);
+          const k = key(d);
+          const hol = holidayName(k);
+          const cls =
+            "ws-day" +
+            (k === dateKey ? " sel" : "") +
+            (k === todayKey ? " today" : "") +
+            (hol || i === 6 ? " sun" : i === 5 ? " sat" : "");
+          return (
+            <button key={k} role="tab" aria-selected={k === dateKey} className={cls} title={hol ?? undefined} onClick={() => onPick(k)}>
+              <span className="ws-dow">{DOW[i]}</span>
+              <span className="ws-num">{d.getDate()}</span>
+            </button>
+          );
+        })}
+      </div>
+      <div className="dv-head">
+        할 일<span className="n">{open.length}</span>
+      </div>
+      <CardList bucket={dateKey} items={open} ctx={ctx} />
+      <Composer bucket={dateKey} ctx={ctx} label="＋ 새로운 할 일 추가" />
+      {done.length > 0 && (
+        <div className={"dv-done" + (doneOpen ? "" : " closed")}>
+          <button className="dv-tg" aria-expanded={doneOpen} onClick={() => setDoneOpen((o) => !o)}>
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <polyline points="2.5,4.5 6,8 9.5,4.5" />
+            </svg>
+            완료한 일<span className="n">{done.length}</span>
+          </button>
+          {doneOpen && (
+            <ul className="list">
+              {done.map((t) => (
+                <Card key={t.id} t={t} ctx={ctx} />
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+      {memo && <div className="daymemo">{memo}</div>}
     </section>
   );
 }

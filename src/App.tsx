@@ -10,8 +10,8 @@ import { signIn, signOut, useAuth } from "./data/auth";
 import { useDodo } from "./data/useDodo";
 import { useDrag, type DragState } from "./hooks/useDrag";
 import { useToday } from "./hooks/useToday";
-import { Column, InboxSection, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
-import { SideColumn } from "./components/SideColumn";
+import { Column, DayView, InboxSection, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
+import { MemoBox, SideColumn } from "./components/SideColumn";
 import { Categories, MiniCal, TodayBlock } from "./components/Sidebar";
 import { GoogleButton, TopNav, type View } from "./components/TopNav";
 import { OptionsMenu } from "./components/OptionsMenu";
@@ -345,7 +345,7 @@ export default function App() {
     view === "day" ? ["day", selected] : view === "week" ? ["week", key(weekStart)] : ["month", key(calMonth).slice(0, 7)];
   // 날짜 미정: 큰 화면은 왼쪽 사이드바(달력 아래), 폰은 보드 맨 아래 칸. 오른쪽 칸은 메모만
   const inboxInBoard = false; // 보관함은 보기 전환 탭으로 (폰도 같음) — 보드 아래 칸으로는 더 안 넣음
-  const hasSide = showMemo || inboxInBoard;
+  const hasSide = view !== "day" && (showMemo || inboxInBoard); // 일간은 메모가 목록 아래에 들어가서 오른쪽 칸 없음
   const weekTwoRows = view === "week" && twoRows && !phone;
   const memoProps = {
     scope: memoScope,
@@ -436,21 +436,18 @@ export default function App() {
       </>
     );
   } else if (view === "day") {
-    const sd = parse(selected);
-    const si = (sd.getDay() + 6) % 7;
     board = (
-      <>
-        <Column
-          key={selected}
-          bucket={selected}
-          label={DOW[si] + "요일"}
-          dnum={sd.getDate()}
-          holiday={holidayName(selected)}
-          cls={(selected === todayKey ? " is-today" : "") + (holidayName(selected) || si === 6 ? " sun" : si === 5 ? " sat" : "")}
-          ctx={ctx}
-        />
-        {side}
-      </>
+      <DayView
+        dateKey={selected}
+        todayKey={todayKey}
+        weekStart={weekStart}
+        onPick={(k) => {
+          setInboxOpen(false);
+          pickDay(k);
+        }}
+        ctx={ctx}
+        memo={showMemo ? <MemoBox {...memoProps} /> : null}
+      />
     );
   } else {
     board = (
