@@ -15,7 +15,7 @@ interface Props {
  * 헤더 "＋ 할 일 추가" 팝업: 할 일 / 날짜(기본 오늘, '날짜 없음' 체크 = 보관함) / 카테고리 — 세 줄. Enter/추가 → 그 날에 추가되고 닫힘.
  * body 에 포털로 그림 (ConfirmDialog 와 같은 .modal 모양). Esc·배경 클릭 = 닫기
  */
-const NODATE_HINT = "날짜 없는 할 일은 보관함에 보관돼요. 정해지면 달력으로 끌어다 놓으세요.";
+const NODATE_HINT = "날짜 없는 할 일은 보관함에 보관돼요.";
 
 export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
   const [text, setText] = useState("");
