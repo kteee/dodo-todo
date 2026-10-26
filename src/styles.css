@@ -1258,3 +1258,5 @@ html, body, #root{height:auto}
 @media (max-width:640px){ .logo .tag{display:none} }
 /* 사이드바 '카테고리' 제목: 달력의 '2026년 10월'과 같은 글자(0.8125rem · 500 · 본문색) */
 .side .sect-head .sect-label{font-size:0.8125rem; font-weight:500; color:var(--ink); letter-spacing:-.01em}
+/* 일간: 제목 영역 아래 선 없음 (날짜 스트립이 바로 이어짐) */
+.titlebar[data-tab="day"]{border-bottom:0}

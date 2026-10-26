@@ -33,7 +33,7 @@ const TABS: [Tab, string][] = [
  */
 export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left }: Props) {
   return (
-    <div className="titlebar">
+    <div className="titlebar" data-tab={tab}>
       <div className="tl">
         <div className="h1row">
           {left}
