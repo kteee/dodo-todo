@@ -1288,8 +1288,7 @@ html, body, #root{height:auto}
 .qa-nodate input{width:14px; height:14px; margin:0; accent-color:var(--ink)}
 .qa-field input[type=date], .qa-field select{width:100%; height:34px; padding:0 9px; border:1px solid var(--line-2); border-radius:7px; background:var(--bg); font-size:0.8125rem; color:var(--ink); outline:none}
 .qa-field input[type=date]:focus, .qa-field select:focus{border-color:var(--ink-3)}
-.qa-nodate{flex-wrap:wrap}
-.qa-nodate .qa-hint{flex-basis:100%; margin:0 0 0 20px; font-size:0.6875rem; color:var(--ink-3)} /* 체크 아래 한 줄 */
+.qa-nodate .qa-hint{margin-left:8px; font-size:0.6875rem; color:var(--ink-3); white-space:nowrap} /* 체크 오른쪽 같은 줄 */
 .quickadd-modal .acts{margin-top:18px}
 .modal .acts .primary{background:var(--ink); color:var(--ink-rev); font-weight:500}
 .modal .acts .primary:disabled{opacity:.35; cursor:default}
