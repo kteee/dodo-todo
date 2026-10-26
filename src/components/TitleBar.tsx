@@ -10,8 +10,7 @@ interface Props {
   onTab: (t: Tab) => void;
   /** 보관함 탭 옆 숫자 — 날짜 없는 남은 할 일 수 */
   inboxCount: number;
-  /** 작은 글씨 / 큰 제목 / 한 줄 설명 */
-  eyebrow: string;
+  /** 큰 제목 / 한 줄 설명 */
   title: string;
   sub: string;
   /** ‹ 오늘 › — 보관함에선 없음 */
@@ -29,14 +28,13 @@ const TABS: [Tab, string][] = [
 ];
 
 /**
- * 헤더 아래 제목 영역: 왼쪽에 작은 글씨·큰 제목·설명, 오른쪽에 보기 전환과 ‹ 오늘 ›.
+ * 헤더 아래 제목 영역: 왼쪽에 큰 제목·설명, 오른쪽에 보기 전환과 ‹ 오늘 ›.
  * 아래 가로선으로 본문(사이드바 + 보드)과 나뉨
  */
-export function TitleBar({ tab, onTab, inboxCount, eyebrow, title, sub, onStep, onToday, left }: Props) {
+export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left }: Props) {
   return (
     <div className="titlebar">
       <div className="tl">
-        <p className="eyebrow">{eyebrow}</p>
         <div className="h1row">
           {left}
           <h1>{title}</h1>

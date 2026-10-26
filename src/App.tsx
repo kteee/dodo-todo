@@ -383,7 +383,6 @@ export default function App() {
   };
   const weekKeys = Array.from({ length: 7 }, (_, i) => key(addDays(weekStart, i)));
   const inboxLeft = inBucket("none").filter((t) => !t.done).length;
-  const EYEBROW = "차곡차곡 쌓이는 나의 하루";
   let title: string;
   let sub: string;
   if (inboxOpen) {
@@ -725,7 +724,6 @@ export default function App() {
             tab={inboxOpen ? "inbox" : view}
             onTab={onTab}
             inboxCount={inboxLeft}
-            eyebrow={EYEBROW}
             title={title}
             sub={sub}
             onStep={inboxOpen ? undefined : step}
