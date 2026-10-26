@@ -1101,10 +1101,6 @@ html, body, #root{height:auto}
 .logo .mark{width:26px; height:26px; border-radius:7px}
 .logo .mark svg{width:12px; height:12px; stroke-width:2.6}
 .logo .word{font-size:1.25rem; font-weight:700; letter-spacing:-.01em}
-.logo .tag{
-  font-family:var(--sans); text-transform:none; letter-spacing:0; font-size:0.75rem; color:var(--ink-3);
-  border:0; border-left:1px solid var(--line-2); border-radius:0; padding:1px 0 1px 12px; margin-left:4px; line-height:1.3;
-}
 .topnav-main{flex:1; justify-content:flex-end; gap:12px}
 .topnav .search{width:220px}
 .hdr-date{font-size:0.8125rem; color:var(--ink-2); white-space:nowrap; margin-left:4px}
@@ -1189,7 +1185,6 @@ html, body, #root{height:auto}
   .topnav{display:flex; flex-wrap:wrap; height:auto; padding:10px 16px; gap:10px; row-gap:10px}
   .topnav-main{display:contents}
   .hdr-date{display:none}
-  .logo .tag{display:none} /* 폰 헤더 한 줄: 로고 · 검색 · ＋ · ⚙ · 아바타 */
   .topnav .optbtn{width:34px; height:34px}
   .quickadd{height:36px; padding:0; width:36px; justify-content:center; border-radius:9px; margin-left:auto}
   .quickadd span{display:none}

@@ -71,7 +71,7 @@ export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => 
 }
 
 /**
- * 헤더(88px): 왼쪽 로고 "DoDo | 나의 작은 다이어리", 오른쪽 검색 · 오늘 날짜 · ＋ 할 일 추가 · 설정 · 계정
+ * 헤더(88px): 왼쪽 로고 "DoDo [TODOLIST]", 오른쪽 검색 · 오늘 날짜 · ＋ 할 일 추가 · 설정 · 계정
  */
 export function TopNav({ search, dateText, onQuickAdd, options, account, isLocal, menuOpen, setMenuOpen, onSignOut }: Props) {
   // 폰: 검색창 대신 돋보기 버튼. 누르면 아래 줄에 검색창이 열리고 바로 입력 가능
@@ -127,7 +127,7 @@ export function TopNav({ search, dateText, onQuickAdd, options, account, isLocal
           </svg>
         </span>
         <span className="word">DoDo</span>
-        <span className="tag">나의 작은 다이어리</span>
+        <span className="tag">todolist</span>
       </a>
       <div className="topnav-main">
         {searchSlot}
