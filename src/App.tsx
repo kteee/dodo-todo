@@ -383,7 +383,7 @@ export default function App() {
     const { total, done } = stats([selected]);
     const isToday = selected === todayKey;
     title = `${sd.getFullYear()}년 ${sd.getMonth() + 1}월 ${sd.getDate()}일`;
-    sub = total === 0 ? (isToday ? "오늘 할 일을 적어보세요." : "아직 적은 할 일이 없어요.") : `${isToday ? "오늘은 " : ""}${total}개의 할 일 중 ${done}개를 마쳤어요.`;
+    sub = total === 0 ? (isToday ? "오늘 할 일을 적어보세요." : "아직 적은 할 일이 없어요.") : `${total}개의 할 일 중 ${done}개를 완료했어요.`;
   } else if (view === "week") {
     const a = weekStart;
     const b = addDays(weekStart, 6);

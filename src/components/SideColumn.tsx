@@ -90,7 +90,7 @@ export function MemoBox({ scope, period, value, onSave, onDirty, bare, autoGrow 
         ref={area}
         rows={autoGrow ? 1 : undefined}
         aria-label={LABEL[scope]}
-        placeholder={bare ? "메모를 적어보세요" : PLACEHOLDER[scope]}
+        placeholder={bare ? "메모를 입력해주세요" : PLACEHOLDER[scope]}
         maxLength={5000}
         value={draft}
         onFocus={() => (focused.current = true)}
