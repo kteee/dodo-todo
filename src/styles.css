@@ -1392,6 +1392,6 @@ html, body, #root{height:auto}
   .board.v-week .col.is-today .colhead .dnum{width:28px; height:28px; font-size:1rem}
   .board.v-week .card{padding:10px 2px}
   .board.v-week .txt{font-size:0.875rem}
-  .board.v-month{overflow-x:auto}
+  .board.v-month, .board.v-month.no-inbox{overflow-x:auto; overflow-y:hidden; display:block}
   .month{min-width:640px}
 }
