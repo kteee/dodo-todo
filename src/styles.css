@@ -1416,3 +1416,15 @@ html, body, #root{height:auto}
   .board.v-week:not(.wide) > .col:nth-child(n+5){padding-top:18px}
   .board.v-week:not(.wide) > .col:last-child{padding-right:12px}
 }
+/* 주간 가로 보기(7일 한 줄): 머리는 "월 26" 한 줄(오늘 글자·개수 없음), 카테고리 칩 대신 글 끝에 색 점 */
+.board.v-week.wide .colhead{display:flex; align-items:center; gap:7px; padding:0 0 12px}
+.board.v-week.wide .colhead .dow{order:0; font-size:0.75rem}
+.board.v-week.wide .colhead .dnum{order:1; font-size:1rem; font-weight:600; line-height:1}
+.board.v-week.wide .col.is-today .colhead .dnum{width:24px; height:24px; font-size:0.8125rem}
+.board.v-week.wide .colhead .hol-name{order:2}
+.board.v-week.wide .colhead .col-tag, .board.v-week.wide .colhead .n{display:none}
+.board.v-week.wide .card{grid-template-areas:"check text"}
+.board.v-week.wide .card .chip{display:none}
+.board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::after{
+  content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--c); margin-left:6px; vertical-align:middle;
+}
