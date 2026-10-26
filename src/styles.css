@@ -1087,16 +1087,9 @@ html, body, #root{height:auto}
 .sect-head .sect-add, .inbox-sec-head .sect-add{margin-right:2px}
 .inbox-sec .grouphead{padding-right:8px}
 
-/* ══ 2026-10 디자인 교체 ① 틀: 회색 바탕 위 흰 카드, 88px 헤더, 제목 영역, 사이드바 오늘 블록 ══════════
+/* ══ 2026-10 디자인 교체 ① 틀: 88px 헤더, 제목 영역, 사이드바 오늘 블록 (바탕은 흰색 그대로, 카드 테두리 없음) ══════════
    아래 규칙은 위의 옛 규칙을 덮어쓴다 (같은 선택자는 뒤에 온 쪽이 이김). 보드(일간·주간·월간)는 ②~④에서 */
-:root{--page:#f3f3f1}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--page:#111111} }
-:root[data-theme="dark"]{--page:#111111}
-body{background:var(--page)}
-.page{
-  max-width:1440px; margin:20px auto; padding:0; min-height:calc(100vh - 40px);
-  background:var(--bg); border:1px solid var(--line); border-radius:14px; overflow:clip;
-}
+.page{max-width:1440px; margin:0 auto; padding:0; min-height:100vh; background:var(--bg)}
 
 /* 헤더 88px: 카드 안 맨 위, 아래 선 */
 .topnav{
@@ -1192,7 +1185,7 @@ body{background:var(--page)}
   .titlebar{margin:0 0 20px}
 }
 @media (max-width:820px){
-  .page{margin:0; border:0; border-radius:0; min-height:100vh; padding:0}
+  .page{margin:0; min-height:100vh; padding:0}
   .topnav{display:flex; flex-wrap:wrap; height:auto; padding:10px 16px; gap:10px; row-gap:10px}
   .topnav-main{display:contents}
   .hdr-date{display:none}
