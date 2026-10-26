@@ -1470,3 +1470,6 @@ html, body, #root{height:auto}
 .board.v-week.wide .txt{padding-right:0}
 .board.v-week.wide .del{right:0; padding:2px 4px; background:linear-gradient(to right, transparent, var(--bg) 8px)}
 .board.v-week.wide .card:hover .del{opacity:1}
+/* 주간 가로 보기: 수정 중엔 카테고리 칩(선택)을 다시 보여서 카테고리를 바꿀 수 있게 */
+.board.v-week.wide .card.is-editing{grid-template-areas:"chip chip" "check text"; align-items:start}
+.board.v-week.wide .card.is-editing .chip{display:inline-block; font-size:0.65625rem}
