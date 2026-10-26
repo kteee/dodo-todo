@@ -1272,4 +1272,4 @@ html, body, #root{height:auto}
 .dayview .composer:focus-within{border-bottom-color:var(--ink-3)}
 .dayview .composer input[type=text]{flex:1; border:0; border-radius:0; background:none; padding:15px 0 14px; font-size:0.875rem; line-height:1.5}
 .dayview .composer input[type=text]:focus-visible{border:0}
-.dayview .composer select.catsel{order:1; align-self:center; margin:0}
+.dayview .composer select.catsel{order:1; align-self:center; margin:0 24px 0 0} /* 등록된 행의 카테고리 칩과 같은 오른쪽 선(× 자리만큼 안쪽) */
