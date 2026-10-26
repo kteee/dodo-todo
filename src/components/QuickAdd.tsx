@@ -15,6 +15,8 @@ interface Props {
  * 헤더 "＋ 할 일 추가" 팝업: 할 일 / 날짜(기본 오늘, '날짜 없음' 체크 = 보관함) / 카테고리 — 세 줄. Enter/추가 → 그 날에 추가되고 닫힘.
  * body 에 포털로 그림 (ConfirmDialog 와 같은 .modal 모양). Esc·배경 클릭 = 닫기
  */
+const NODATE_HINT = "날짜 없는 할 일은 보관함에 보관돼요. 정해지면 달력으로 끌어다 놓으세요.";
+
 export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
   const [text, setText] = useState("");
   const [date, setDate] = useState(defaultDate);
@@ -66,13 +68,18 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
           onChange={(e) => setText(e.target.value)}
         />
         <div className="qa-field">
-          <span>날짜</span>
+          {/* 라벨 줄: 왼쪽 "날짜", 오른쪽 끝 "날짜 없음" 체크 + ? 툴팁(보관함 설명) */}
+          <div className="qa-lbl">
+            <span>날짜</span>
+            <label className="qa-nodate">
+              <input type="checkbox" checked={noDate} onChange={(e) => setNoDate(e.target.checked)} /> 날짜 없음
+              <span className="hint-ico" tabIndex={0} role="img" aria-label={NODATE_HINT} data-tip={NODATE_HINT}>
+                ?
+              </span>
+            </label>
+          </div>
           {/* 날짜 없음을 켜면 칸을 비워 "연도-월-일" 자리표시만 보이게 */}
           <input type="date" value={noDate ? "" : date} disabled={noDate} onChange={(e) => setDate(e.target.value)} aria-label="날짜" />
-          <label className="qa-nodate">
-            <input type="checkbox" checked={noDate} onChange={(e) => setNoDate(e.target.checked)} /> 날짜 없음
-            {noDate && <span className="qa-hint">날짜 없는 할 일은 보관함에 보관돼요.</span>}
-          </label>
         </div>
         <div className="qa-field">
           <span>카테고리</span>
