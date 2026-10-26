@@ -1159,7 +1159,7 @@ html, body, #root{height:auto}
 .tb-num{margin:0; font-size:4.5rem; font-weight:300; line-height:1; letter-spacing:-.04em; color:var(--ink); font-variant-numeric:tabular-nums}
 .tb-dow{margin:10px 0 0; font-size:0.84375rem; font-weight:500; display:flex; align-items:baseline; gap:8px; color:var(--ink)}
 .tb-dow .is{font-size:0.6875rem; font-weight:400; color:var(--ink-3)}
-.tb-rule{border:0; border-top:1px solid var(--line); margin:22px 0}
+.tb-rule{border:0; border-top:1px solid var(--line); margin:22px 0 0}
 .tb-prog{display:flex; justify-content:space-between; align-items:baseline; font-size:0.75rem; color:var(--ink-2); margin-top:22px}
 .tb-prog b{font-weight:500; color:var(--ink); font-variant-numeric:tabular-nums}
 .tb-bar{height:3px; background:var(--panel-2); border-radius:2px; margin:9px 0 0; overflow:hidden}
