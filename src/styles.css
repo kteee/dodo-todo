@@ -1151,7 +1151,7 @@ html, body, #root{height:auto}
 .main{padding-top:0}
 .side{gap:0; padding-right:0}
 .side > section + section{margin-top:26px}
-.side-top{margin:0 0 2px; justify-content:flex-end}
+.side-top{position:absolute; top:-2px; right:0; margin:0; justify-content:flex-end} /* 접기 버튼을 OCTOBER 2026 줄 오른쪽 끝에 (흐름에서 빼서 그 줄과 세로 중심 맞춤) */
 /* 오늘 블록 */
 .todayblk{margin-top:4px}
 .todayblk + .cal{margin-top:36px} /* 진행 막대와 달력 사이 */
