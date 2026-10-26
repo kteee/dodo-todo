@@ -27,6 +27,7 @@ import { TEXT_SIZES, effectiveTextSize, readTextSize, saveTextSize, type TextSiz
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const MEMO_PREF = "dodo:showMemo";
+const WIDE_PREF = "dodo:weekWide"; // 주간 가로 보기(7일 한 줄). 기본은 두 줄
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
   try {
@@ -103,6 +104,7 @@ export default function App() {
   /** 헤더 ＋ 할 일 추가 팝업 */
   const [quickOpen, setQuickOpen] = useState(false);
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
+  const [wide, setWide] = useState(() => readPref(WIDE_PREF, false));
   // 폰: 달력·카테고리는 왼쪽 서랍으로, 주간은 7일을 세로로 쌓고, 좌우로 쓸어 넘겨 날짜 이동
   const phone = usePhone();
   const [drawer, setDrawer] = useState(false);
@@ -498,7 +500,7 @@ export default function App() {
   } else {
     main = (
       <>
-        <div className={"board v-" + view + " no-inbox"}>{board}</div>
+        <div className={"board v-" + view + " no-inbox" + (view === "week" && wide ? " wide" : "")}>{board}</div>
         {view !== "day" && memoSection}
       </>
     );
@@ -634,6 +636,20 @@ export default function App() {
         <label className="togg">
           <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
         </label>
+        {/* 주간 전용: 기본은 두 줄(월~목 / 금~일), 켜면 7일을 한 줄로 */}
+        {view === "week" && !phone && (
+          <label className="togg">
+            <input
+              type="checkbox"
+              checked={wide}
+              onChange={(e) => {
+                setWide(e.target.checked);
+                writePref(WIDE_PREF, e.target.checked);
+              }}
+            />{" "}
+            가로 보기
+          </label>
+        )}
         <label className="togg">
           <input type="checkbox" checked={groupBy} onChange={(e) => setGroupBy(e.target.checked)} /> 카테고리별 보기
         </label>

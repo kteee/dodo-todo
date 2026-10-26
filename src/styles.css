@@ -1408,11 +1408,11 @@ html, body, #root{height:auto}
   .titlebar .h1row{min-width:0}
   .titlebar .row2{flex-wrap:wrap; gap:8px 14px; margin-top:10px}
 }
-/* 주간 기본은 두 줄: 월~목 / 금~일 (4열). 둘째 줄 칸은 윗선, 둘째 줄 첫 칸은 왼쪽 선 없음 */
+/* 주간 기본은 두 줄: 월~목 / 금~일 (4열). 설정 > 가로 보기(.wide)를 켜면 7일 한 줄 */
 @media (min-width:641px){
-  .board.v-week, .board.v-week.no-inbox{grid-template-columns:repeat(4, minmax(0,1fr)); grid-auto-rows:minmax(280px, auto); min-height:0}
-  .board.v-week > .col:nth-child(5){border-left:0; padding-left:2px}
-  .board.v-week > .col:nth-child(-n+4){border-bottom:1px solid var(--line); padding-bottom:18px} /* 줄 사이 선은 첫 줄 네 칸 아래로 — 둘째 줄 빈 칸까지 이어짐 */
-  .board.v-week > .col:nth-child(n+5){padding-top:18px}
-  .board.v-week > .col:last-child{padding-right:12px}
+  .board.v-week:not(.wide), .board.v-week.no-inbox:not(.wide){grid-template-columns:repeat(4, minmax(0,1fr)); grid-auto-rows:minmax(280px, auto); min-height:0}
+  .board.v-week:not(.wide) > .col:nth-child(5){border-left:0; padding-left:2px}
+  .board.v-week:not(.wide) > .col:nth-child(-n+4){border-bottom:1px solid var(--line); padding-bottom:18px} /* 줄 사이 선은 첫 줄 네 칸 아래로 — 둘째 줄 빈 칸까지 이어짐 */
+  .board.v-week:not(.wide) > .col:nth-child(n+5){padding-top:18px}
+  .board.v-week:not(.wide) > .col:last-child{padding-right:12px}
 }
