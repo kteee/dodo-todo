@@ -52,10 +52,9 @@ body{
 /* 폰에서 누를 때 파란 네모가 번쩍이지 않게 + 두 번 탭 확대 기다림(300ms) 없이 바로 반응 */
 html{-webkit-tap-highlight-color:transparent; touch-action:manipulation}
 /* 글자 크기 기준값 — 글자 크기는 전부 rem(16px 기준)이라 여기만 바꾸면 레이아웃 px 는 그대로 두고 글자만 커짐.
-   설정(<html data-size>)이 없으면 자동: 1600px 이상 큰 화면에선 110%. (src/lib/textSize.ts 의 LARGE_FROM 과 같은 값) */
+   기본은 보통(16px). 설정에서 "크게"를 고르면 110% — 화면 폭에 따라 자동으로 키우지는 않음 */
 html{font-size:16px}
 html[data-size="large"]{font-size:110%}
-@media (min-width:1600px){ html:not([data-size="normal"]){font-size:110%} }
 button,input,select,textarea{font:inherit; color:inherit}
 button{background:none; border:0; cursor:pointer}
 :focus-visible{outline:1.5px solid var(--ink-2); outline-offset:2px; border-radius:5px}
