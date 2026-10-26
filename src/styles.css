@@ -1112,7 +1112,8 @@ html, body, #root{height:auto}
 .quickadd svg{width:14px; height:14px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round}
 .quickadd:hover{filter:brightness(1.18)}
 .quickadd:active{transform:scale(.98)}
-.topnav .optbtn{width:36px; height:36px; border-radius:9px}
+.topnav .optbtn{width:36px; height:36px; border-radius:9px; color:var(--ink-2)}
+.topnav .optbtn svg{width:17px; height:17px; stroke-width:1.8} /* 톱니바퀴 선을 굵게·조금 크게 — 흐릿하던 것 */
 .topnav .acct{margin-left:2px}
 .topnav .acctbtn{padding:2px}
 .topnav .acctbtn .who, .topnav .acctbtn .caret{display:none}
@@ -1293,3 +1294,14 @@ html, body, #root{height:auto}
 .modal .acts .primary{background:var(--ink); color:var(--ink-rev); font-weight:500}
 .modal .acts .primary:disabled{opacity:.35; cursor:default}
 .modal .acts .primary:not(:disabled):hover{filter:brightness(1.15)}
+/* 헤더를 본문과 같은 2열(사이드바 240 | 본문)로 — 검색창 왼쪽 끝이 본문 왼쪽 끝과 맞음. 검색창은 조금 크게 */
+@media (min-width:821px){
+  .topnav{display:grid; grid-template-columns:240px minmax(0,1fr); column-gap:60px; align-items:center}
+  .topnav-main{justify-content:flex-start}
+  .topnav .search{width:320px}
+  .topnav .search input{height:36px; font-size:0.8125rem; padding-left:34px}
+  .topnav .quickadd{margin-left:auto}
+}
+@media (min-width:821px) and (max-width:1180px){
+  .topnav{grid-template-columns:220px minmax(0,1fr); column-gap:22px}
+}
