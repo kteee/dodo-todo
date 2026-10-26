@@ -1093,7 +1093,7 @@ html, body, #root{height:auto}
 /* 헤더 88px: 카드 안 맨 위, 아래 선 */
 .topnav{
   display:flex; align-items:center; gap:14px; flex-wrap:nowrap;
-  height:88px; padding:0 48px; margin:0; position:relative;
+  height:88px; padding:0 16px; margin:0; position:relative;
 }
 /* 헤더 밑줄은 원래대로 화면 끝에서 끝까지 (위의 .topnav::after 100vw 규칙 그대로 씀) */
 .logo{gap:10px}
@@ -1146,7 +1146,7 @@ html, body, #root{height:auto}
 .titlebar .nav .today:hover{background:var(--panel)}
 
 /* 본문: 사이드바 230px / 간격 60px (1180px↓ 220px / 22px) */
-.app{grid-template-columns:230px minmax(0,1fr); gap:60px; padding:0 48px 48px}
+.app{grid-template-columns:230px minmax(0,1fr); gap:60px; padding:0 16px 48px}
 .app.side-folded{grid-template-columns:minmax(0,1fr)}
 .main{padding-top:0}
 .side{gap:0; padding-right:0}
