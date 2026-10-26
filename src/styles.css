@@ -1258,9 +1258,6 @@ html, body, #root{height:auto}
 @media (max-width:640px){ .logo .tag{display:none} }
 /* 사이드바 '카테고리' 제목: 달력의 '2026년 10월'과 같은 글자(0.8125rem · 500 · 본문색) */
 .side .sect-head .sect-label{font-size:0.8125rem; font-weight:500; color:var(--ink); letter-spacing:-.01em}
-/* 일간: 제목 영역 아래 선 대신 날짜 스트립 아래에 선 */
-.titlebar[data-tab="day"]{border-bottom:0; padding-bottom:10px}
-.weekstrip{padding-bottom:14px; border-bottom:1px solid var(--line); margin-bottom:24px}
 /* 제목 영역을 2행 격자로: 1행 제목 | 보기 전환, 2행 설명 문구 | ‹ 오늘 › — 설명과 ‹ 오늘 ›이 같은 줄 */
 @media (min-width:821px){
   .titlebar{display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:auto auto; row-gap:14px; column-gap:24px; align-items:center}
