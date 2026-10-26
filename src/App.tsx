@@ -10,11 +10,12 @@ import { signIn, signOut, useAuth } from "./data/auth";
 import { useDodo } from "./data/useDodo";
 import { useDrag, type DragState } from "./hooks/useDrag";
 import { useToday } from "./hooks/useToday";
-import { Column, InboxSection, MonthGrid, SideTabs, type SideTab, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
+import { Column, InboxSection, MonthGrid, NOCAT_COLOR, displayOrder, type BoardCtx } from "./components/Board";
 import { SideColumn } from "./components/SideColumn";
-import { Categories, MiniCal } from "./components/Sidebar";
-import { GoogleButton, TopNav, ViewSwitch, type View } from "./components/TopNav";
+import { Categories, MiniCal, TodayBlock } from "./components/Sidebar";
+import { GoogleButton, TopNav, type View } from "./components/TopNav";
 import { OptionsMenu } from "./components/OptionsMenu";
+import { TitleBar, type Tab } from "./components/TitleBar";
 import { MyPage } from "./components/MyPage";
 import { Search } from "./components/Search";
 import { Toasts } from "./components/Toasts";
@@ -24,7 +25,6 @@ import { FONTS, readFont, saveFont, type Font } from "./lib/font";
 import { TEXT_SIZES, effectiveTextSize, readTextSize, saveTextSize, type TextSize } from "./lib/textSize";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
-const SIDE_TAB_PREF = "dodo:sideTab"; // 왼쪽 사이드바 탭: 달력 | 보관함
 const MEMO_PREF = "dodo:showMemo";
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
@@ -99,21 +99,8 @@ export default function App() {
     writePref(HIDE_DONE_PREF, v);
   };
   const showInbox = true; // 보관함은 항상 보임 (설정에서 끄는 옵션 없음)
-  const [sideTab, setSideTabState] = useState<SideTab>(() => {
-    try {
-      return localStorage.getItem(SIDE_TAB_PREF) === "inbox" ? "inbox" : "cal";
-    } catch {
-      return "cal";
-    }
-  });
-  const setSideTab = (v: SideTab) => {
-    setSideTabState(v);
-    try {
-      localStorage.setItem(SIDE_TAB_PREF, v);
-    } catch {
-      /* 저장 못 해도 이번 화면에서는 적용됨 */
-    }
-  };
+  /** 보관함(날짜 없는 할 일)을 본문에 펼친 상태 — 제목 영역의 보기 전환 4번째 탭. 보기(view)는 그대로 둔 채 겹쳐 열림 */
+  const [inboxOpen, setInboxOpen] = useState(false);
   const [showMemo, setShowMemo] = useState(() => readPref(MEMO_PREF, true));
   const [wide, setWide] = useState(() => readPref(WIDE_PREF, false));
   const twoRows = !wide;
@@ -266,6 +253,29 @@ export default function App() {
     if (v === "month") setCalMonth(firstOfMonth(parse(selected)));
     setOpenBucket(null);
   };
+  const onTab = (t: Tab) => {
+    if (t === "inbox") {
+      setInboxOpen(true);
+      return;
+    }
+    setInboxOpen(false);
+    changeView(t);
+  };
+  /** 헤더 ＋ 할 일 추가: 일간이면 보고 있는 날, 그 밖엔 오늘. 오늘이 화면에 없으면 오늘 일간으로 가서 적기 */
+  const quickAdd = () => {
+    setInboxOpen(false);
+    if (view === "day") {
+      setOpenBucket(selected);
+      return;
+    }
+    const inWeek = view === "week" && todayKey >= key(weekStart) && todayKey <= key(addDays(weekStart, 6));
+    const inMonth = view === "month" && todayKey.slice(0, 7) === key(calMonth).slice(0, 7);
+    if (!inWeek && !inMonth) {
+      pickDay(todayKey);
+      setView("day");
+    }
+    setOpenBucket(todayKey);
+  };
   const pickDay = (k: string) => {
     setSelected(k);
     setWeekStart(mondayOf(parse(k)));
@@ -293,8 +303,7 @@ export default function App() {
       setWeekStart(mondayOf(d));
       setCalMonth(firstOfMonth(d));
     } else {
-      if (folded) toggleFold(false);
-      setSideTab("inbox");
+      setInboxOpen(true); // 날짜 없는 할 일은 보관함(보기 전환 탭)에
     }
     if (t.done && hideDone) setHideDone(false); // 완료 숨기기 중이면 풀어야 보임
     setFlashId(t.id);
@@ -361,18 +370,50 @@ export default function App() {
     <SideColumn showMemo={showMemo} showInbox={inboxInBoard} memo={memoProps} ctx={ctx} />
   );
 
-  /* ── 보드 ── */
-  let label: ReactNode;
-  let board: ReactNode;
-  if (view === "week") {
+  /* ── 제목 영역 문구 ── */
+  const stats = (keys: string[]) => {
+    let total = 0;
+    let done = 0;
+    for (const k of keys) {
+      for (const t of inBucket(k)) {
+        total++;
+        if (t.done) done++;
+      }
+    }
+    return { total, done };
+  };
+  const weekKeys = Array.from({ length: 7 }, (_, i) => key(addDays(weekStart, i)));
+  const inboxLeft = inBucket("none").filter((t) => !t.done).length;
+  const EYEBROW = "차곡차곡 쌓이는 나의 하루";
+  let title: string;
+  let sub: string;
+  if (inboxOpen) {
+    title = "보관함";
+    sub = inboxLeft ? `날짜를 정하지 않은 할 일이 ${inboxLeft}개 있어요. 정해지면 달력으로 끌어다 놓으세요.` : "날짜를 정하지 않은 할 일이 없어요.";
+  } else if (view === "day") {
+    const sd = parse(selected);
+    const { total, done } = stats([selected]);
+    const isToday = selected === todayKey;
+    title = `${sd.getFullYear()}년 ${sd.getMonth() + 1}월 ${sd.getDate()}일`;
+    sub = total === 0 ? (isToday ? "오늘 할 일을 적어보세요." : "아직 적은 할 일이 없어요.") : `${isToday ? "오늘은 " : ""}${total}개의 할 일 중 ${done}개를 마쳤어요.`;
+  } else if (view === "week") {
     const a = weekStart;
     const b = addDays(weekStart, 6);
-    label = (
-      <>
-        <span className="yr">{a.getFullYear()}</span>
-        {a.getMonth() + 1}월 {a.getDate()}일 - {b.getMonth() + 1}월 {b.getDate()}일
-      </>
-    );
+    const { total, done } = stats(weekKeys);
+    const nth = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째"][Math.floor((a.getDate() - 1) / 7)];
+    title = `${a.getMonth() + 1}월 ${a.getDate()}일 – ${b.getMonth() + 1}월 ${b.getDate()}일`;
+    sub = `${a.getMonth() + 1}월 ${nth} 주 · 할 일 ${total}개, 완료 ${done}개`;
+  } else {
+    title = `${calMonth.getFullYear()}년 ${calMonth.getMonth() + 1}월`;
+    sub = `나의 ${calMonth.getMonth() + 1}월을 한눈에, 하루하루의 할 일을 모아봐요.`;
+  }
+  const sideDate = view === "day" ? selected : todayKey;
+  const sideStats = stats([sideDate]);
+  const headerDate = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${DOW[(today.getDay() + 6) % 7]}요일`;
+
+  /* ── 보드 ── */
+  let board: ReactNode;
+  if (view === "week") {
     board = (
       <>
         {Array.from({ length: 7 }, (_, i) => {
@@ -398,12 +439,6 @@ export default function App() {
   } else if (view === "day") {
     const sd = parse(selected);
     const si = (sd.getDay() + 6) % 7;
-    label = (
-      <>
-        <span className="yr">{sd.getFullYear()}</span>
-        {sd.getMonth() + 1}월 {sd.getDate()}일 {DOW[si]}요일
-      </>
-    );
     board = (
       <>
         <Column
@@ -419,12 +454,6 @@ export default function App() {
       </>
     );
   } else {
-    label = (
-      <>
-        <span className="yr">{calMonth.getFullYear()}</span>
-        {calMonth.getMonth() + 1}월
-      </>
-    );
     board = (
       <>
         {phone ? (
@@ -486,6 +515,12 @@ export default function App() {
         </div>
       </div>
     );
+  } else if (inboxOpen) {
+    main = (
+      <div className="board v-inbox">
+        <InboxSection ctx={ctx} />
+      </div>
+    );
   } else {
     main = (
       <div className={"board v-" + view + (hasSide ? "" : " no-inbox") + (weekTwoRows ? " two-rows" + (inboxInBoard ? " inbox-col" : "") : "")}>{board}</div>
@@ -535,13 +570,9 @@ export default function App() {
     );
   }
 
-  // 큰 화면 + 날짜 미정 보기 켜짐: 사이드바 위 탭으로 [달력·카테고리 | 날짜 미정] 전환
-  const sideTabs = ready && !phone && showInbox;
-  const onInboxTab = sideTabs && sideTab === "inbox";
-  const sideInner = onInboxTab ? (
-    <InboxSection ctx={ctx} />
-  ) : (
+  const sideInner = (
     <>
+      <TodayBlock dateKey={sideDate} todayKey={todayKey} total={sideStats.total} done={sideStats.done} />
       <MiniCal
         calMonth={calMonth}
         onMonth={(n) => setCalMonth(addMonths(calMonth, n))}
@@ -552,6 +583,7 @@ export default function App() {
         inBucket={inBucket}
         catOf={catOf}
         onPick={(k) => {
+          setInboxOpen(false);
           pickDay(k);
           setDrawer(false);
         }}
@@ -572,10 +604,97 @@ export default function App() {
     </>
   );
 
+  /* 설정(톱니바퀴) — 헤더 오른쪽 */
+  const options = (
+    <OptionsMenu>
+        <p className="optsec">시작 화면</p>
+        {/* 한 줄 버튼식 선택 */}
+        <div className="optseg" role="radiogroup" aria-label="시작 화면">
+          {([
+            ["day", "일간"],
+            ["week", "주간"],
+            ["month", "월간"],
+          ] as [View, string][]).map(([v, name]) => (
+            <button key={v} role="radio" aria-checked={defaultView === v} onClick={() => setDefaultView(v)}>
+              {name}
+            </button>
+          ))}
+        </div>
+        <p className="optsec">글꼴</p>
+        <div className="optseg" role="radiogroup" aria-label="글꼴">
+          {FONTS.map(([f, name]) => (
+            <button
+              key={f}
+              role="radio"
+              aria-checked={font === f}
+              data-font-preview={f}
+              onClick={() => {
+                setFontState(f);
+                saveFont(f);
+              }}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+        <p className="optsec">글자 크기</p>
+        <div className="optseg" role="radiogroup" aria-label="글자 크기">
+          {TEXT_SIZES.map(([sz, name]) => (
+            <button
+              key={sz}
+              role="radio"
+              aria-checked={effectiveTextSize(textSize) === sz}
+              onClick={() => {
+                setTextSizeState(sz);
+                saveTextSize(sz);
+              }}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+        <p className="optsec">보기 옵션</p>
+        <label className="togg">
+          <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
+        </label>
+        {/* 주간 보기 전용: 기본은 두 줄(월~목 / 금~일+메모), 켜면 7일을 한 줄로 가로로 펼침 */}
+        {view === "week" && !phone && (
+          <label className="togg">
+            <input
+              type="checkbox"
+              checked={wide}
+              onChange={(e) => {
+                setWide(e.target.checked);
+                writePref(WIDE_PREF, e.target.checked);
+              }}
+            />{" "}
+            가로 보기
+          </label>
+        )}
+        <label className="togg">
+          <input type="checkbox" checked={groupBy} onChange={(e) => setGroupBy(e.target.checked)} /> 카테고리별 보기
+        </label>
+        <label className="togg">
+          <input
+            type="checkbox"
+            checked={showMemo}
+            onChange={(e) => {
+              setShowMemo(e.target.checked);
+              writePref(MEMO_PREF, e.target.checked);
+            }}
+          />{" "}
+          메모 보기
+        </label>
+    </OptionsMenu>
+  );
+
   return (
     <div className="page">
       <TopNav
         search={ready ? <Search todos={todos} catOf={catOf} onPick={goToTodo} /> : null}
+        dateText={phone ? undefined : headerDate}
+        onQuickAdd={ready ? quickAdd : undefined}
+        options={ready ? options : undefined}
         account={account}
         isLocal={auth.mode === "local"}
         menuOpen={menuOpen}
@@ -594,8 +713,7 @@ export default function App() {
         ) : sideFolded ? null : (
           <aside className="side">
             {/* 왼쪽 영역 맨 위: [달력 | 날짜 미정] 탭 + 오른쪽 끝에 이 영역을 접는 버튼 */}
-            <div className={"side-top" + (sideTabs ? " has-tabs" : "")}>
-              {sideTabs && <SideTabs tab={sideTab} onTab={setSideTab} ctx={ctx} />}
+            <div className="side-top">
               <button className="side-tg" aria-label="달력·카테고리 접기" title="접기" onClick={() => toggleFold(true)}>
                 <svg viewBox="0 0 16 16" aria-hidden="true">
                   <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
@@ -607,121 +725,36 @@ export default function App() {
           </aside>
         )}
         <main className="main" onTouchStart={onSwipeStart} onTouchEnd={onSwipeEnd}>
-          <div className="topbar">
-            {/* 접힌 상태: 펼치기 버튼은 날짜 제목 바로 왼쪽 */}
-            {sideFolded && (
-              <button className="side-tg" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
-                  <path d="M6 2.5v11" />
-                </svg>
-              </button>
-            )}
-            {phone && (
-              <button className="side-btn" aria-label="달력과 카테고리 열기" aria-expanded={drawer} onClick={() => setDrawer(true)}>
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <rect x="2" y="3" width="12" height="11" rx="2" />
-                  <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" />
-                </svg>
-              </button>
-            )}
-            <h2 className={"range r-" + view}>{label}</h2>
-            <div className="nav">
-              <button aria-label="이전" onClick={() => step(-1)}>
-                ‹
-              </button>
-              <button className="today" onClick={goToday}>
-                오늘
-              </button>
-              <button aria-label="다음" onClick={() => step(1)}>
-                ›
-              </button>
-            </div>
-            {/* 오른쪽 끝: "어떻게 볼지" — 일간·주간·월간 + 보기 옵션(접힘, 맨 끝) */}
-            <div className="topbar-right">
-            <ViewSwitch view={view} onView={changeView} />
-            <OptionsMenu>
-              <p className="optsec">시작 화면</p>
-              {/* 한 줄 버튼식 선택 */}
-              <div className="optseg" role="radiogroup" aria-label="시작 화면">
-                {([
-                  ["day", "일간"],
-                  ["week", "주간"],
-                  ["month", "월간"],
-                ] as [View, string][]).map(([v, name]) => (
-                  <button key={v} role="radio" aria-checked={defaultView === v} onClick={() => setDefaultView(v)}>
-                    {name}
+          <TitleBar
+            tab={inboxOpen ? "inbox" : view}
+            onTab={onTab}
+            inboxCount={inboxLeft}
+            eyebrow={EYEBROW}
+            title={title}
+            sub={sub}
+            onStep={inboxOpen ? undefined : step}
+            onToday={inboxOpen ? undefined : goToday}
+            left={
+              <>
+                {sideFolded && (
+                  <button className="side-tg" aria-label="달력·카테고리 펼치기" title="펼치기" onClick={() => toggleFold(false)}>
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+                      <path d="M6 2.5v11" />
+                    </svg>
                   </button>
-                ))}
-              </div>
-              <p className="optsec">글꼴</p>
-              <div className="optseg" role="radiogroup" aria-label="글꼴">
-                {FONTS.map(([f, name]) => (
-                  <button
-                    key={f}
-                    role="radio"
-                    aria-checked={font === f}
-                    data-font-preview={f}
-                    onClick={() => {
-                      setFontState(f);
-                      saveFont(f);
-                    }}
-                  >
-                    {name}
+                )}
+                {phone && (
+                  <button className="side-btn" aria-label="달력과 카테고리 열기" aria-expanded={drawer} onClick={() => setDrawer(true)}>
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <rect x="2" y="3" width="12" height="11" rx="2" />
+                      <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" />
+                    </svg>
                   </button>
-                ))}
-              </div>
-              <p className="optsec">글자 크기</p>
-              <div className="optseg" role="radiogroup" aria-label="글자 크기">
-                {TEXT_SIZES.map(([sz, name]) => (
-                  <button
-                    key={sz}
-                    role="radio"
-                    aria-checked={effectiveTextSize(textSize) === sz}
-                    onClick={() => {
-                      setTextSizeState(sz);
-                      saveTextSize(sz);
-                    }}
-                  >
-                    {name}
-                  </button>
-                ))}
-              </div>
-              <p className="optsec">보기 옵션</p>
-              <label className="togg">
-                <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
-              </label>
-              {/* 주간 보기 전용: 기본은 두 줄(월~목 / 금~일+메모), 켜면 7일을 한 줄로 가로로 펼침 */}
-              {view === "week" && !phone && (
-                <label className="togg">
-                  <input
-                    type="checkbox"
-                    checked={wide}
-                    onChange={(e) => {
-                      setWide(e.target.checked);
-                      writePref(WIDE_PREF, e.target.checked);
-                    }}
-                  />{" "}
-                  가로 보기
-                </label>
-              )}
-              <label className="togg">
-                <input type="checkbox" checked={groupBy} onChange={(e) => setGroupBy(e.target.checked)} /> 카테고리별 보기
-              </label>
-              <label className="togg">
-                <input
-                  type="checkbox"
-                  checked={showMemo}
-                  onChange={(e) => {
-                    setShowMemo(e.target.checked);
-                    writePref(MEMO_PREF, e.target.checked);
-                  }}
-                />{" "}
-                메모 보기
-              </label>
-            </OptionsMenu>
-            </div>
-          </div>
+                )}
+              </>
+            }
+          />
           {main}
         </main>
       </div>

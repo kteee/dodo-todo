@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
 import type { Category, Todo } from "../lib/types";
 import { NO_CAT, PALETTE } from "../lib/types";
-import { DOW, addDays, key, mondayOf } from "../lib/date";
+import { DOW, addDays, key, mondayOf, parse } from "../lib/date";
 import { NOCAT_COLOR, cvar } from "./Board";
 import { holidayName } from "../lib/holidays";
 
@@ -489,6 +489,58 @@ export function Categories(p: CategoriesProps) {
           </div>
         </li>
       </ul>
+    </section>
+  );
+}
+
+const MONTHS_EN = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+interface TodayBlockProps {
+  /** 보여줄 날 (일간이면 고른 날, 그 밖엔 오늘) */
+  dateKey: string;
+  todayKey: string;
+  total: number;
+  done: number;
+}
+
+/**
+ * 사이드바 맨 위: "OCTOBER 2026 / 26 / 월요일 · 오늘" + 그날의 기록(마친 수/전체) 진행 막대 + 한 줄 격려
+ */
+export function TodayBlock({ dateKey, todayKey, total, done }: TodayBlockProps) {
+  const d = parse(dateKey);
+  const isToday = dateKey === todayKey;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const note =
+    total === 0
+      ? isToday
+        ? "오늘 할 일을 적어보세요."
+        : "아직 적은 할 일이 없어요."
+      : done === total
+        ? "할 일을 모두 마쳤어요!"
+        : done === 0
+          ? "하나씩 차근차근 해봐요."
+          : `${done}가지를 마쳤어요. 차근차근 해봐요.`;
+  return (
+    <section className="todayblk" aria-label="오늘의 기록">
+      <p className="tb-month">
+        {MONTHS_EN[d.getMonth()]} {d.getFullYear()}
+      </p>
+      <p className="tb-num">{d.getDate()}</p>
+      <p className="tb-dow">
+        {DOW[(d.getDay() + 6) % 7]}요일{isToday && <span className="is">오늘</span>}
+      </p>
+      <hr className="tb-rule" />
+      <div className="tb-prog">
+        <span>{isToday ? "오늘의 기록" : "이 날의 기록"}</span>
+        <b>
+          {done} / {total}
+        </b>
+      </div>
+      <div className="tb-bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
+        <i style={{ width: pct + "%" }} />
+      </div>
+      <p className="tb-note">{note}</p>
+      <hr className="tb-rule" />
     </section>
   );
 }

@@ -108,7 +108,7 @@ Sentry 프로젝트 설정에서 **Security & Privacy → Prevent Storing of IP 
 
 ## 글꼴
 
-설정 > 글꼴: 기본(IBM Plex Sans KR, 구글 폰트) · 고딕(맑은 고딕, 시스템) · 명조.
+설정 > 글꼴: 기본(Noto Sans KR, 구글 폰트) · 고딕(맑은 고딕, 시스템) · 명조.
 
 - 명조는 **본명조(Noto Serif KR, 구글 폰트)** — 모든 기기 같은 모양
 - 본명조는 500·600·700 만 받음 → 본문도 500 으로 그려져 가는 획이 흐려 보이지 않음

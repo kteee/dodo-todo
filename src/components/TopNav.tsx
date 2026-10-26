@@ -12,8 +12,14 @@ const VIEWS: [View, string][] = [
 ];
 
 interface Props {
-  /** 로고 오른쪽(보드 열)에 들어갈 검색창 */
+  /** 헤더 오른쪽 검색창 */
   search?: ReactNode;
+  /** 오른쪽 날짜 글자 (예: 2026년 10월 26일 월요일) */
+  dateText?: string;
+  /** 검정 "＋ 할 일 추가" — 보고 있는 날(없으면 오늘)에 바로 적기 */
+  onQuickAdd?: () => void;
+  /** 설정(톱니바퀴) 메뉴 */
+  options?: ReactNode;
   account: Account | null;
   isLocal: boolean;
   menuOpen: boolean;
@@ -44,7 +50,7 @@ export function GoogleButton({ onClick, size = "md" }: { onClick: () => void; si
   );
 }
 
-/** 일간·주간·월간 전환 — 날짜 줄 오른쪽 끝에 둠 */
+/** 일간·주간·월간 전환 (예전 날짜 줄용 — 지금은 TitleBar 의 보기 전환을 씀) */
 export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => void }) {
   return (
     <div
@@ -64,8 +70,11 @@ export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => 
   );
 }
 
-export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSignOut }: Props) {
-  // 폰: 검색창 대신 돋보기 버튼(프로필 왼쪽). 누르면 아래 줄에 검색창이 열리고 바로 입력 가능
+/**
+ * 헤더(88px): 왼쪽 로고 "DoDo | 나의 작은 다이어리", 오른쪽 검색 · 오늘 날짜 · ＋ 할 일 추가 · 설정 · 계정
+ */
+export function TopNav({ search, dateText, onQuickAdd, options, account, isLocal, menuOpen, setMenuOpen, onSignOut }: Props) {
+  // 폰: 검색창 대신 돋보기 버튼. 누르면 아래 줄에 검색창이 열리고 바로 입력 가능
   const phone = usePhone();
   const [searchOpen, setSearchOpen] = useState(false);
   const row = useRef<HTMLDivElement>(null);
@@ -118,53 +127,62 @@ export function TopNav({ search, account, isLocal, menuOpen, setMenuOpen, onSign
           </svg>
         </span>
         <span className="word">DoDo</span>
-        <span className="tag">todolist</span>
+        <span className="tag">나의 작은 다이어리</span>
       </a>
-      {/* 로고 오른쪽 영역은 아래 할 일 보드와 같은 열에서 시작 — 검색창 왼쪽 끝이 보드 왼쪽 끝과 맞음 */}
       <div className="topnav-main">
-      {searchSlot}
-      <div className="acct">
-        {/* 로그아웃 상태에선 헤더에 로그인 버튼을 두지 않음 — 화면 가운데 버튼 하나로 */}
-        {!account ? null : (
-          <>
-            <button className="acctbtn" aria-expanded={menuOpen} aria-label={account.name + " 계정 메뉴"} onClick={() => setMenuOpen(!menuOpen)}>
-              <Avatar a={account} />
-              <span className="who">{account.name}</span>
-              <span className="caret" aria-hidden="true">
-                ▾
-              </span>
-            </button>
-            {menuOpen && (
-              <div className="acctmenu">
-                <div className="me">
-                  <Avatar a={account} />
-                  <span className="txt2">
-                    <div className="nm2">{account.name}</div>
-                    <div className="em">{account.email}</div>
-                  </span>
-                </div>
-                {isLocal && <div className="note">Supabase를 연결하면 구글 로그인과 기기 간 동기화가 켜져요.</div>}
-                <div className="rule" />
-                {/* 데이터 내보내기·처리방침·탈퇴는 마이페이지 안으로 */}
-                <a className="mi" href="/my">
-                  마이페이지
-                </a>
-                {!isLocal && (
-                  <button
-                    className="mi out"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      onSignOut();
-                    }}
-                  >
-                    로그아웃
-                  </button>
-                )}
-              </div>
-            )}
-          </>
+        {searchSlot}
+        {dateText && <span className="hdr-date">{dateText}</span>}
+        {onQuickAdd && (
+          <button className="quickadd" onClick={onQuickAdd} title="할 일 추가">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M8 3v10M3 8h10" />
+            </svg>
+            <span>할 일 추가</span>
+          </button>
         )}
-      </div>
+        {options}
+        <div className="acct">
+          {/* 로그아웃 상태에선 헤더에 로그인 버튼을 두지 않음 — 화면 가운데 버튼 하나로 */}
+          {!account ? null : (
+            <>
+              <button className="acctbtn" aria-expanded={menuOpen} aria-label={account.name + " 계정 메뉴"} onClick={() => setMenuOpen(!menuOpen)}>
+                <Avatar a={account} />
+                <span className="who">{account.name}</span>
+                <span className="caret" aria-hidden="true">
+                  ▾
+                </span>
+              </button>
+              {menuOpen && (
+                <div className="acctmenu">
+                  <div className="me">
+                    <Avatar a={account} />
+                    <span className="txt2">
+                      <div className="nm2">{account.name}</div>
+                      <div className="em">{account.email}</div>
+                    </span>
+                  </div>
+                  {isLocal && <div className="note">Supabase를 연결하면 구글 로그인과 기기 간 동기화가 켜져요.</div>}
+                  <div className="rule" />
+                  {/* 데이터 내보내기·처리방침·탈퇴는 마이페이지 안으로 */}
+                  <a className="mi" href="/my">
+                    마이페이지
+                  </a>
+                  {!isLocal && (
+                    <button
+                      className="mi out"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        onSignOut();
+                      }}
+                    >
+                      로그아웃
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
