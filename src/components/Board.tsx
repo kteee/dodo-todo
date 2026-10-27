@@ -517,14 +517,10 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
   const open = items.filter((t) => !t.done);
   const done = items.filter((t) => t.done);
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
-  const hint = "날짜가 정해지면 원하는 날로 끌어다 놓으세요.";
   return (
     <section className={"dayview inbox-sec" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
       <div className="dv-head">
-        할 일<span className="n">{open.length}</span>
-        <span className="hint-ico" tabIndex={0} role="img" aria-label={hint} data-tip={hint}>
-          ?
-        </span>
+        날짜 없는 할 일<span className="n">{open.length}</span>
       </div>
       <CardList bucket="none" items={[...open, ...done]} ctx={ctx} />
       <Composer bucket="none" ctx={ctx} label="＋ 새로운 할 일 추가" />
