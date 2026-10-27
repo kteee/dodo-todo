@@ -3,6 +3,14 @@ import type { View } from "./TopNav";
 
 /** 보기 전환: 일간·주간·월간 + 보관함(날짜 없는 할 일). 보관함은 보기와 별개 토글이라 따로 받음 */
 export type Tab = View | "inbox";
+/** 주간 배치: 두 줄(월~목/금~일) · 가로(7일 한 줄) · 세로(7일을 위에서 아래로) */
+export type WeekLayout = "rows" | "wide" | "vert";
+
+const LAYOUTS: [WeekLayout, string, string][] = [
+  ["rows", "2줄", "월~목 / 금~일 두 줄"],
+  ["wide", "가로", "7일을 한 줄로"],
+  ["vert", "세로", "7일을 위에서 아래로"],
+];
 
 interface Props {
   /** 지금 보고 있는 것 (보관함이 열려 있으면 "inbox") */
@@ -18,6 +26,9 @@ interface Props {
   onToday?: () => void;
   /** 제목 왼쪽에 붙는 버튼(사이드바 펼치기, 폰 서랍 열기) */
   left?: ReactNode;
+  /** 주간 배치 전환 — 주간 보기에서만 넘김. ‹ 오늘 › 줄 오른쪽 끝 */
+  layout?: WeekLayout;
+  onLayout?: (l: WeekLayout) => void;
 }
 
 const TABS: [Tab, string][] = [
@@ -31,7 +42,7 @@ const TABS: [Tab, string][] = [
  * 헤더 아래 제목 영역: 왼쪽에 큰 제목, 둘째 줄에 ‹ 오늘 › + 설명. 오른쪽에 보기 전환.
  * 아래 가로선으로 본문(사이드바 + 보드)과 나뉨
  */
-export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left }: Props) {
+export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left, layout, onLayout }: Props) {
   return (
     <div className="titlebar" data-tab={tab}>
       <div className="tl">
@@ -57,6 +68,15 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
           {sub && <p className="sub">{sub}</p>}
         </div>
       </div>
+      {layout && onLayout && (
+        <div className="lswitch" role="radiogroup" aria-label="주간 배치">
+          {LAYOUTS.map(([l, name, tip]) => (
+            <button key={l} role="radio" aria-checked={layout === l} title={tip} onClick={() => onLayout(l)}>
+              {name}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="tr">
         <div className="vswitch" role="tablist" aria-label="보기 전환">
           {TABS.map(([t, name]) => (

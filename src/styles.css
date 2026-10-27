@@ -1409,11 +1409,11 @@ html, body, #root{height:auto}
 }
 /* 주간 기본은 두 줄: 월~목 / 금~일 (4열). 설정 > 가로 보기(.wide)를 켜면 7일 한 줄 */
 @media (min-width:641px){
-  .board.v-week:not(.wide), .board.v-week.no-inbox:not(.wide){grid-template-columns:repeat(4, minmax(0,1fr)); grid-auto-rows:minmax(280px, auto); min-height:0}
-  .board.v-week:not(.wide) > .col:nth-child(5){border-left:0; padding-left:2px}
-  .board.v-week:not(.wide) > .col:nth-child(-n+4){border-bottom:1px solid var(--line); padding-bottom:18px} /* 줄 사이 선은 첫 줄 네 칸 아래로 — 둘째 줄 빈 칸까지 이어짐 */
-  .board.v-week:not(.wide) > .col:nth-child(n+5){padding-top:18px}
-  .board.v-week:not(.wide) > .col:last-child{padding-right:12px}
+  .board.v-week:not(.wide):not(.vert), .board.v-week.no-inbox:not(.wide){grid-template-columns:repeat(4, minmax(0,1fr)); grid-auto-rows:minmax(280px, auto); min-height:0}
+  .board.v-week:not(.wide):not(.vert) > .col:nth-child(5){border-left:0; padding-left:2px}
+  .board.v-week:not(.wide):not(.vert) > .col:nth-child(-n+4){border-bottom:1px solid var(--line); padding-bottom:18px} /* 줄 사이 선은 첫 줄 네 칸 아래로 — 둘째 줄 빈 칸까지 이어짐 */
+  .board.v-week:not(.wide):not(.vert) > .col:nth-child(n+5){padding-top:18px}
+  .board.v-week:not(.wide):not(.vert) > .col:last-child{padding-right:12px}
 }
 /* 주간 가로 보기(7일 한 줄): 머리는 "월 26" 한 줄(오늘 글자·개수 없음), 카테고리 칩 대신 글 끝에 색 점 */
 .board.v-week.wide .colhead{display:flex; align-items:center; gap:7px}
@@ -1435,10 +1435,10 @@ html, body, #root{height:auto}
 .board.v-week.wide > .col{padding-top:0} /* 머리 상자가 보드 윗선에 바로 붙어 글자 위아래 여백이 같게 */
 .board.v-week.wide .colhead{height:44px; padding-top:0; padding-bottom:0; margin-bottom:6px}
 /* 두 줄 보기 머리: 날짜 줄 높이 32px 고정 — 오늘 동그라미 유무와 상관없이 밑선 높이 같게 */
-.board.v-week:not(.wide) .colhead{grid-template-rows:auto 32px}
+.board.v-week:not(.wide):not(.vert) .colhead{grid-template-rows:auto 32px}
 @media (min-width:641px){
-  .board.v-week:not(.wide) > .col:nth-child(5) .colhead{margin-left:-2px; padding-left:2px}
-  .board.v-week:not(.wide) > .col:last-child .colhead{margin-right:-12px; padding-right:12px}
+  .board.v-week:not(.wide):not(.vert) > .col:nth-child(5) .colhead{margin-left:-2px; padding-left:2px}
+  .board.v-week:not(.wide):not(.vert) > .col:last-child .colhead{margin-right:-12px; padding-right:12px}
 }
 /* 주간 가로 보기: 세로를 화면 높이에 맞추지 않고 내용만큼(최소 360px), 아래에도 밑선 */
 @media (min-width:641px){
@@ -1536,4 +1536,15 @@ html, body, #root{height:auto}
   .board.v-week.vert .card .txt-edit{font-size:0.875rem}
   .board.v-week.vert .add{padding:10px 2px; font-size:0.8125rem}
   .board.v-week.vert .composer input[type=text]{padding:9px 12px; border-radius:8px; font-size:0.875rem}
+}
+/* 주간 배치 전환 (2줄 · 가로 · 세로): ‹ 오늘 › 줄 오른쪽 끝, 보기 전환보다 작게 */
+.lswitch{display:inline-flex; gap:2px; padding:2px; background:var(--panel); border-radius:8px}
+.lswitch button{padding:4px 10px; border-radius:6px; font-size:0.71875rem; color:var(--ink-3); line-height:1.4; transition:background .12s ease, color .12s ease}
+.lswitch button:hover{color:var(--ink)}
+.lswitch button[aria-checked="true"]{background:var(--bg); color:var(--ink); font-weight:600; box-shadow:0 1px 2px rgba(0,0,0,.06)}
+@media (min-width:821px){
+  .titlebar .lswitch{grid-column:2; grid-row:2; justify-self:end; align-self:center; margin-top:14px} /* 둘째 줄(.row2) 윗여백만큼 같이 내려 ‹ 오늘 › 과 같은 높이 */
+}
+@media (max-width:820px){
+  .titlebar .lswitch{display:none}
 }
