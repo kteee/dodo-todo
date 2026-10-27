@@ -1921,3 +1921,17 @@ html[data-cat="none"] .board.v-week.wide .card:not(.nocat):not(.is-editing) .txt
   .board.v-week.vert .card .txt{grid-area:text}
 }
 html[data-cat="dot"] .board.v-week.vert .card, html[data-cat="none"] .board.v-week.vert .card{grid-template-areas:"check text"; row-gap:0}
+/* 일간·보관함·주간 세로 (이름 표시): 한 줄 — 체크 · 칩 · 제목. 칩 폭은 이름 길이대로(제목 시작선 들쭉날쭉 허용) */
+.dayview .card{grid-template-columns:auto auto minmax(0,1fr); grid-template-areas:"check chip text"; gap:0 10px; align-items:center}
+.dayview .card.nocat{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
+.dayview .card .chip{align-self:center; justify-self:start; margin:0}
+@media (min-width:641px){
+  .board.v-week.vert .card{grid-template-columns:auto auto minmax(0,1fr); grid-template-areas:"check chip text"; gap:0 10px}
+  .board.v-week.vert .card.nocat{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
+  .board.v-week.vert .card .chip{align-self:center}
+}
+/* 색상·숨김은 칩이 없으니 체크 · 제목 두 칸 */
+html[data-cat="dot"] .dayview .card, html[data-cat="none"] .dayview .card,
+html[data-cat="dot"] .board.v-week.vert .card, html[data-cat="none"] .board.v-week.vert .card{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
+/* 카테고리별 보기는 칩을 숨기니 두 칸 */
+.dayview .list.grouped .card, .board.v-week.vert .list.grouped .card{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
