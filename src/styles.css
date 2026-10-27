@@ -1668,3 +1668,8 @@ html, body, #root{height:auto}
 @media (min-width:641px){ .board.v-week.vert .colhead{position:static} }
 /* 주간 세로 보기: 첫 날(월) 날짜 칸이 2px 밀리던 옛 규칙 무효화 → 구분선 x 위치 통일 */
 @media (min-width:641px){ .board.v-week.vert > .col .colhead, .board.v-week.vert > .col:first-child .colhead, .board.v-week.vert > .col:nth-child(5) .colhead, .board.v-week.vert > .col:last-child .colhead{margin:0; padding-left:0; padding-right:0} }
+/* 일간 할 일 항목: 테두리·선 없이 간격만, 호버/수정 중엔 연한 배경 */
+.dayview .list{gap:4px}
+.dayview .card{border:0; border-radius:8px; padding:10px 12px; background:none}
+.dayview .card:hover{background:var(--panel); border-color:transparent}
+.dayview .card.is-editing{background:var(--panel); border-color:transparent}
