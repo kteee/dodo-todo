@@ -1715,3 +1715,8 @@ html, body, #root{height:auto}
 .ws-day:hover .ws-num{background:var(--panel)}
 /* 일간 카드 체크박스: 글자 중앙과 1px 어긋나던 것 보정 */
 .dayview .check{margin-top:1px}
+/* 일간 카드: 체크박스는 칩+글자 두 줄에 걸쳐 카드 세로 가운데 */
+.dayview .card{grid-template-areas:"check chip" "check text"; align-items:center}
+.dayview .check{grid-area:check; align-self:center; margin-top:0}
+.dayview .card .chip{align-self:end}
+.dayview .txt{align-self:start}
