@@ -1664,3 +1664,5 @@ html, body, #root{height:auto}
   .board.v-week.vert > .col, .board.v-week.vert > .col:first-child, .board.v-week.vert > .col:last-child, .board.v-week.vert > .col:nth-child(5), .board.v-week.vert > .col:nth-child(-n+4), .board.v-week.vert > .col:nth-child(n+5){padding-top:0; padding-bottom:0}
   .board.v-week.vert .colhead{align-self:flex-start; align-content:flex-start}
 }
+/* 주간 세로 보기 날짜 칸: 스크롤 따라오기 없음 */
+@media (min-width:641px){ .board.v-week.vert .colhead{position:static} }
