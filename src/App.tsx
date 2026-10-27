@@ -40,6 +40,13 @@ function readView(): View {
   return isPhone() ? "day" : "week";
 }
 const HIDE_DONE_PREF = "dodo:hideDone";
+const CAT_SHOW_PREF = "dodo:catShow"; // 할 일의 카테고리 표시: chip(기본) · dot · none
+type CatShow = "chip" | "dot" | "none";
+const CAT_SHOWS: [CatShow, string][] = [
+  ["chip", "칩"],
+  ["dot", "점"],
+  ["none", "숨김"],
+];
 const GROUP_PREF = "dodo:groupBy";
 const FOLD_PREF = "dodo:sideFolded"; // 왼쪽 달력·카테고리 접기 (날짜 줄 왼쪽 버튼)
 function readPref(k: string, fallback: boolean) {
@@ -95,6 +102,26 @@ export default function App() {
   const [weekStart, setWeekStart] = useState(() => mondayOf(today));
   const [calMonth, setCalMonth] = useState(() => firstOfMonth(today));
   const [hideDone, setHideDoneState] = useState(() => readPref(HIDE_DONE_PREF, false));
+  const [catShow, setCatShowState] = useState<CatShow>(() => {
+    try {
+      const v = localStorage.getItem(CAT_SHOW_PREF);
+      return v === "dot" || v === "none" ? v : "chip";
+    } catch {
+      return "chip";
+    }
+  });
+  const setCatShow = (v: CatShow) => {
+    setCatShowState(v);
+    try {
+      localStorage.setItem(CAT_SHOW_PREF, v);
+    } catch {
+      /* 저장 못 해도 이번 화면에서는 적용됨 */
+    }
+  };
+  // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식)
+  useEffect(() => {
+    document.documentElement.dataset.cat = catShow;
+  }, [catShow]);
   const setHideDone = (v: boolean) => {
     setHideDoneState(v);
     writePref(HIDE_DONE_PREF, v);
@@ -619,6 +646,14 @@ export default function App() {
           </div>
         </>
       )}
+        <p className="optsec">카테고리 표시</p>
+        <div className="optseg" role="radiogroup" aria-label="카테고리 표시">
+          {CAT_SHOWS.map(([v, name]) => (
+            <button key={v} role="radio" aria-checked={catShow === v} onClick={() => setCatShow(v)}>
+              {name}
+            </button>
+          ))}
+        </div>
         <p className="optsec">보기 옵션</p>
         <label className="togg">
           <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기

@@ -1888,3 +1888,15 @@ html, body, #root{height:auto}
   .board.v-week.vert .card .del{margin-left:auto}
 }
 @media (min-width:641px){ .board.v-week.vert .card .chip, .board.v-week.vert .card .txt, .board.v-week.vert .card .check{align-self:center} }
+/* ══ 카테고리 표시 옵션 (html[data-cat]): chip = 지금 그대로 · dot = 칩 대신 제목 앞 색 점 · none = 안 보임 ══ */
+/* 점·숨김: 칩 줄을 없애 카드는 한 줄(체크 · 제목) */
+html[data-cat="dot"] .card .chip, html[data-cat="none"] .card .chip{display:none}
+html[data-cat="dot"] .board .card, html[data-cat="dot"] .dayview .card,
+html[data-cat="none"] .board .card, html[data-cat="none"] .dayview .card{grid-template-areas:"check text"; row-gap:0}
+/* 점: 제목 앞 색 점 (카테고리 없는 할 일은 점 없음) */
+html[data-cat="dot"] .card:not(.nocat):not(.mini) .txt::before{
+  content:""; display:inline-block; width:7px; height:7px; border-radius:50%;
+  background:var(--c); margin-right:8px; vertical-align:0.12em;
+}
+/* 숨김: 원래 점을 쓰던 곳(월간·주간 가로)도 점 없음 */
+html[data-cat="none"] .card .txt::before{display:none}
