@@ -130,14 +130,6 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
           />
         </div>
         <div className="qa-quick">
-          <button type="button" className={"qa-chip" + (!hasDate ? " on" : "")} aria-pressed={!hasDate} onClick={() => setNoDate(true)}>
-            {!hasDate && (
-              <svg viewBox="0 0 12 12" aria-hidden="true">
-                <polyline points="2,6.3 4.7,9 10,3.2" />
-              </svg>
-            )}
-            날짜 없음
-          </button>
           <button
             type="button"
             className={"qa-chip" + (hasDate && date === today ? " on" : "")}
@@ -153,6 +145,14 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
               </svg>
             )}
             오늘 {shortDate(today)}
+          </button>
+          <button type="button" className={"qa-chip" + (!hasDate ? " on" : "")} aria-pressed={!hasDate} onClick={() => setNoDate(true)}>
+            {!hasDate && (
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <polyline points="2,6.3 4.7,9 10,3.2" />
+              </svg>
+            )}
+            날짜 없음
           </button>
         </div>
         <p className="qa-help">날짜를 정하지 않으면 보관함에 저장돼요.</p>
