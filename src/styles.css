@@ -1658,3 +1658,9 @@ html, body, #root{height:auto}
 }
 /* 주간 가로 보기 할 일 영역 세로 크기: 360 → 480px */
 @media (min-width:641px){ .board.v-week.wide, .board.v-week.wide.no-inbox{grid-auto-rows:minmax(480px, auto)} }
+/* 주간 세로 보기 구분선: 할 일 영역을 하루 높이만큼 늘려 선이 끊기지 않게 */
+@media (min-width:641px){ .board.v-week.vert > .col{align-items:stretch} .board.v-week.vert .colbody{margin:0} }
+@media (min-width:641px){
+  .board.v-week.vert > .col, .board.v-week.vert > .col:first-child, .board.v-week.vert > .col:last-child, .board.v-week.vert > .col:nth-child(5), .board.v-week.vert > .col:nth-child(-n+4), .board.v-week.vert > .col:nth-child(n+5){padding-top:0; padding-bottom:0}
+  .board.v-week.vert .colhead{align-self:flex-start; align-content:flex-start}
+}
