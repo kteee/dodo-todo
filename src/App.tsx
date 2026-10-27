@@ -592,18 +592,7 @@ export default function App() {
 
   /* 보기 옵션 — 제목 줄 ‹ 오늘 › 오른쪽 끝 (주간이면 배치 전환도) */
   const viewOptions = ready && !inboxOpen ? (
-    <OptionsMenu
-      label="보기 옵션"
-      className="viewopt"
-      icon={
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" />
-          <circle cx="6" cy="4.5" r="1.6" fill="var(--bg)" />
-          <circle cx="10.5" cy="8" r="1.6" fill="var(--bg)" />
-          <circle cx="5" cy="11.5" r="1.6" fill="var(--bg)" />
-        </svg>
-      }
-    >
+    <OptionsMenu label="보기 옵션" className="viewopt">
       {view === "week" && !phone && (
         <>
           <p className="optsec">주간 배치</p>
