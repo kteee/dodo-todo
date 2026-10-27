@@ -1793,3 +1793,5 @@ html, body, #root{height:auto}
 .dayview .dv-done{margin-top:36px}
 /* 주간 2줄 보기 기본 세로 크기: 300 → 340px */
 @media (min-width:641px){ .board.v-week:not(.wide):not(.vert), .board.v-week:not(.wide):not(.vert).no-inbox{grid-auto-rows:minmax(340px, auto)} }
+/* 일간 "＋ 새로운 할 일 추가": 카드 바로 아래로 조금 올림 */
+.dayview .add{margin-top:0; padding-top:10px}
