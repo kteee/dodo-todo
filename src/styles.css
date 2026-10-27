@@ -1904,3 +1904,6 @@ html, body, #root{height:auto}
 .dayview .list.grouped .card .txt{margin-left:0}
 /* 카테고리별 보기는 그룹 머리가 카테고리를 보여 주니 칸 접음 */
 .dayview .list.grouped .card, .dayview .list.grouped .card.nocat{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
+/* 일간·보관함: 카테고리 없는 카드는 칩 자리 없이 체크 바로 옆에서 제목 시작 */
+.dayview .card.nocat{grid-template-columns:auto 0 minmax(0,1fr)}
+.dayview .card.nocat .txt{margin-left:0}
