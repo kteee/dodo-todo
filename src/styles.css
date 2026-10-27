@@ -1748,3 +1748,4 @@ html, body, #root{height:auto}
 .ws-day.today.sat .ws-num, .ws-day.today.sun .ws-num{color:var(--ink-rev)}
 /* 월간 요일 줄: 칸 사이 세로선 없음 (위·아래·왼쪽 테두리는 유지) */
 .mdow span{border-right:0}
+.mdow{border-right:1px solid var(--line)}
