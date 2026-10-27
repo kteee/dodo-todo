@@ -1646,3 +1646,5 @@ html, body, #root{height:auto}
 /* 주간 2줄·가로 보기 머리도 "27 화" 순서 (숫자 먼저, 요일 뒤) */
 .board.v-week.wide .colhead .dnum, .board.v-week:not(.wide):not(.vert) .colhead .dnum{order:0}
 .board.v-week.wide .colhead .dow, .board.v-week:not(.wide):not(.vert) .colhead .dow{order:1}
+/* 주간 2줄 보기 요일 칸 높이: 가로 보기(44px)와 동일 */
+@media (min-width:641px){ .board.v-week:not(.wide):not(.vert) .colhead{height:44px} }
