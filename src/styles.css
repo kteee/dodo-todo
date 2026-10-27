@@ -1865,3 +1865,5 @@ html, body, #root{height:auto}
 }
 /* 일간·보관함 카테고리별 보기: 첫 카테고리 머리는 윗여백 없이 (다음 그룹부터 16px) */
 .dayview .list.grouped > .grouphead:first-child{padding-top:0}
+/* 일간·보관함 카테고리별 보기: 그룹 사이 간격 줄임 (16 → 8px + 목록 간격) */
+.dayview .list.grouped > .grouphead:not(:first-child){padding-top:8px}
