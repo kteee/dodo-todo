@@ -1786,3 +1786,6 @@ html, body, #root{height:auto}
 .dayview .dv-done{border-top:0; padding-top:0; margin-top:16px}
 /* 일간: 할 일 라벨은 아래 선만 */
 .dayview .dv-head{border-top:0; padding-top:0}
+/* 일간 등록 칸: 입력 위, 카테고리 아래 (주간과 동일). 입력칸은 카드와 같은 왼쪽 선 */
+.dayview .composer{flex-direction:column; align-items:stretch; gap:6px; padding:6px 0 0}
+.dayview .composer select.catsel{order:1; align-self:flex-start; margin:0 0 0 2px}
