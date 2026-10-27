@@ -1666,3 +1666,5 @@ html, body, #root{height:auto}
 }
 /* 주간 세로 보기 날짜 칸: 스크롤 따라오기 없음 */
 @media (min-width:641px){ .board.v-week.vert .colhead{position:static} }
+/* 주간 세로 보기: 첫 날(월) 날짜 칸이 2px 밀리던 옛 규칙 무효화 → 구분선 x 위치 통일 */
+@media (min-width:641px){ .board.v-week.vert > .col .colhead, .board.v-week.vert > .col:first-child .colhead, .board.v-week.vert > .col:nth-child(5) .colhead, .board.v-week.vert > .col:last-child .colhead{margin:0; padding-left:0; padding-right:0} }
