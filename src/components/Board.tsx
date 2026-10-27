@@ -38,6 +38,8 @@ export interface BoardCtx {
   onEdit: (id: string, patch: { text: string; categoryId: string | null }) => void;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  /** 월간 칸의 ＋: 칸이 좁아 그 자리 입력 대신 할 일 추가 모달을 그 날짜로 엶 */
+  onQuickAdd?: (date: string) => void;
 }
 
 function Card({ t, mini, ctx }: { t: Todo; mini?: boolean; ctx: BoardCtx }) {
@@ -583,7 +585,7 @@ export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKe
                     {shortHoliday(hol)}
                   </span>
                 )}
-                <button className="plus" aria-label="할 일 추가" onClick={() => ctx.setOpenBucket(k)}>
+                <button className="plus" aria-label="할 일 추가" onClick={() => (ctx.onQuickAdd ? ctx.onQuickAdd(k) : ctx.setOpenBucket(k))}>
                   ＋
                 </button>
                 {k === todayKey ? (

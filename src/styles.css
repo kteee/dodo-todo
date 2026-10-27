@@ -1961,3 +1961,6 @@ html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped
 /* 할 일 모달: 카테고리 → 날짜 순서. 카테고리 칸 아래 간격, 날짜 빠른 선택 줄은 맨 아래라 아래 간격 없음 */
 .quickadd-modal .qa-selbox{margin-bottom:24px}
 .quickadd-modal .qa-quick{margin-bottom:0}
+/* 할 일 상세 모달의 삭제 (카테고리 상세와 같은 모양: 왼쪽 끝, 글자 버튼) */
+.quickadd-modal .acts .cm-del{margin-right:auto; border:0; color:var(--ink-3); padding:0 6px}
+.quickadd-modal .acts .cm-del:hover{color:var(--sun); background:var(--panel)}

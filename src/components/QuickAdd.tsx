@@ -12,6 +12,10 @@ interface Props {
   onClose: () => void;
   /** 넘기면 "할 일 상세" — 이 할 일의 이름·날짜·카테고리로 채워서 열고, 저장하면 onAdd 로 바뀐 값을 돌려줌 */
   todo?: Todo;
+  /** 새로 추가할 때 처음 골라 둘 날 (월간 칸의 ＋). 없으면 오늘 */
+  initialDate?: string;
+  /** 할 일 상세에서만: 삭제 (카드의 × 와 같음 — 되돌리기 알림이 뜸) */
+  onDelete?: () => void;
 }
 
 const DOW = ["일", "월", "화", "수", "목", "금", "토"];
@@ -30,10 +34,10 @@ const shortDate = (k: string) => {
  * 제목 줄 "＋ 할 일 추가" 팝업: 할 일 / 날짜(선택 — 날짜 없음·오늘 빠른 선택, 안 정하면 보관함) / 카테고리.
  * Enter·저장 → 그 날(또는 보관함)에 추가되고 닫힘. body 에 포털로 그림. Esc·배경 클릭·× = 닫기
  */
-export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo }: Props) {
+export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo, initialDate, onDelete }: Props) {
   const today = defaultDate;
   const [text, setText] = useState(todo?.text ?? "");
-  const [date, setDate] = useState(todo ? (todo.date ?? "") : defaultDate);
+  const [date, setDate] = useState(todo ? (todo.date ?? "") : (initialDate ?? defaultDate));
   /** 날짜 없음 = 보관함으로 */
   const [noDate, setNoDate] = useState(todo ? !todo.date : false);
   const [cat, setCat] = useState(todo?.categoryId ?? "");
@@ -178,6 +182,18 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo }: Props) {
         </div>
 
         <div className="acts">
+          {todo && onDelete && (
+            <button
+              type="button"
+              className="cm-del"
+              onClick={() => {
+                onDelete();
+                onClose();
+              }}
+            >
+              삭제
+            </button>
+          )}
           <button type="button" className="cancel" onClick={onClose}>
             취소
           </button>

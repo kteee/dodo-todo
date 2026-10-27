@@ -274,6 +274,10 @@ export default function App() {
     editingChip: false,
     setEditingId,
     onEdit: (id, patch) => actions?.editTodo(id, patch),
+    onQuickAdd: (date) => {
+      setQuickDate(date);
+      setQuickOpen(true);
+    },
     flashId,
     newId,
     poppedId,
@@ -316,7 +320,12 @@ export default function App() {
     changeView(t);
   };
   /** 헤더 ＋ 할 일 추가: 팝업으로 할 일·날짜·카테고리를 받아 추가 */
-  const quickAdd = () => setQuickOpen(true);
+  /** 할 일 추가 모달의 처음 날짜 (월간 칸 ＋ 로 열면 그 날) */
+  const [quickDate, setQuickDate] = useState<string | null>(null);
+  const quickAdd = () => {
+    setQuickDate(null);
+    setQuickOpen(true);
+  };
   const pickDay = (k: string) => {
     setSelected(k);
     setWeekStart(mondayOf(parse(k)));
@@ -854,6 +863,7 @@ export default function App() {
               actions.moveTodo(t.id, b, there[there.length - 1]?.id ?? null);
             }
           }}
+          onDelete={() => actions?.deleteTodo(detailTodo.id)}
           onClose={() => setDetailId(null)}
         />
       )}
@@ -861,6 +871,7 @@ export default function App() {
         <QuickAdd
           cats={cats}
           defaultDate={todayKey}
+          initialDate={quickDate ?? undefined}
           onAdd={(b, text, catId) => {
             ctx.onAdd(b, text, catId);
             // 적은 날이 화면에 없으면 그 날 일간으로 가서 보여줌. 보관함이면 보관함 탭으로
