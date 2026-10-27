@@ -1581,3 +1581,5 @@ html, body, #root{height:auto}
   .titlebar{row-gap:20px}
   .titlebar .row2, .titlebar .viewopts{margin-top:0}
 }
+/* 주간·월간: 제목 영역 아래 구분선 없이, 그만큼 보드를 위로 (보드 자체 윗선이 경계 역할) */
+.titlebar[data-tab="week"], .titlebar[data-tab="month"]{border-bottom:0; padding-bottom:6px; margin-bottom:12px}
