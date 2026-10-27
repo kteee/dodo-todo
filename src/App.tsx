@@ -135,12 +135,10 @@ export default function App() {
   };
   const [openBucket, setOpenBucket] = useState<Bucket | null>(null);
   const [editCat, setEditCat] = useState<string | null>(null);
-  const [editing, setEditing] = useState<{ id: string; caret: number | null; chip: boolean } | null>(null);
-  const editingId = editing?.id ?? null;
-  const setEditingId = useCallback(
-    (id: string | null, caret: number | null = null, chip = false) => setEditing(id ? { id, caret, chip } : null),
-    [],
-  );
+  // 카드를 누르면 그 자리 수정 대신 "할 일 상세" 모달 — 이름·날짜·카테고리를 한곳에서 바꿈
+  const editingId: string | null = null;
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const setEditingId = useCallback((id: string | null) => setDetailId(id), []);
   const [menuOpen, setMenuOpen] = useState(false);
   const [flashId, setFlashId] = useState<string | null>(null); // 검색으로 찾아간 카드
   const [newId, setNewId] = useState<string | null>(null); // 방금 추가한 카드
@@ -162,6 +160,7 @@ export default function App() {
   // 카테고리 없음, 또는 지워진 카테고리를 가리키면 null
   const catOf = useCallback((id: string | null) => (id ? (catMap.get(id) ?? null) : null), [catMap]);
   const inBucket = useCallback((b: Bucket) => byBucket.get(b) ?? [], [byBucket]);
+  const detailTodo = detailId ? (todos.find((t) => t.id === detailId) ?? null) : null;
   const shown = useCallback(
     (b: Bucket) => {
       // 완료한 할 일은 칸 맨 아래로 (남은 일끼리·완료끼리는 직접 정한 순서 유지)
@@ -232,8 +231,8 @@ export default function App() {
     },
     onDelete: (id) => actions?.deleteTodo(id),
     editingId,
-    editingCaret: editing?.caret ?? null,
-    editingChip: editing?.chip ?? false,
+    editingCaret: null,
+    editingChip: false,
     setEditingId,
     onEdit: (id, patch) => actions?.editTodo(id, patch),
     flashId,
@@ -775,6 +774,25 @@ export default function App() {
         <div className="netbar" role="status">
           연결이 끊겼어요. 저장 대기 중 {store.net.waiting}건 — 연결되면 자동으로 저장돼요.
         </div>
+      )}
+      {detailTodo && ready && (
+        <QuickAdd
+          key={detailTodo.id}
+          todo={detailTodo}
+          cats={cats}
+          defaultDate={todayKey}
+          onAdd={(b, text, catId) => {
+            if (!actions) return;
+            const t = detailTodo;
+            actions.editTodo(t.id, { text, categoryId: catId });
+            // 날짜가 바뀌면 그 날 맨 아래로
+            if (b !== bucketOf(t)) {
+              const there = inBucket(b).filter((x) => x.id !== t.id);
+              actions.moveTodo(t.id, b, there[there.length - 1]?.id ?? null);
+            }
+          }}
+          onClose={() => setDetailId(null)}
+        />
       )}
       {quickOpen && ready && (
         <QuickAdd

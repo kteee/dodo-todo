@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { Bucket, Category } from "../lib/types";
+import type { Bucket, Category, Todo } from "../lib/types";
 import { NONE } from "../lib/types";
 
 interface Props {
   cats: Category[];
   /** 처음 골라져 있는 날 (오늘) — YYYY-MM-DD */
   defaultDate: string;
+  /** 저장: 새로 추가할 때와 수정할 때 같은 모양으로 넘김 */
   onAdd: (bucket: Bucket, text: string, catId: string | null) => void;
   onClose: () => void;
+  /** 넘기면 "할 일 상세" — 이 할 일의 이름·날짜·카테고리로 채워서 열고, 저장하면 onAdd 로 바뀐 값을 돌려줌 */
+  todo?: Todo;
 }
 
 const DOW = ["일", "월", "화", "수", "목", "금", "토"];
@@ -27,13 +30,13 @@ const shortDate = (k: string) => {
  * 제목 줄 "＋ 할 일 추가" 팝업: 할 일 / 날짜(선택 — 날짜 없음·오늘 빠른 선택, 안 정하면 보관함) / 카테고리.
  * Enter·저장 → 그 날(또는 보관함)에 추가되고 닫힘. body 에 포털로 그림. Esc·배경 클릭·× = 닫기
  */
-export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
+export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo }: Props) {
   const today = defaultDate;
-  const [text, setText] = useState("");
-  const [date, setDate] = useState(defaultDate);
+  const [text, setText] = useState(todo?.text ?? "");
+  const [date, setDate] = useState(todo ? (todo.date ?? "") : defaultDate);
   /** 날짜 없음 = 보관함으로 */
-  const [noDate, setNoDate] = useState(false);
-  const [cat, setCat] = useState("");
+  const [noDate, setNoDate] = useState(todo ? !todo.date : false);
+  const [cat, setCat] = useState(todo?.categoryId ?? "");
   const input = useRef<HTMLInputElement>(null);
   const picker = useRef<HTMLInputElement>(null);
   useEffect(() => input.current?.focus(), []);
@@ -78,7 +81,7 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
         }}
       >
         <div className="qa-head">
-          <h4 id="qa-title">새로운 할 일</h4>
+          <h4 id="qa-title">{todo ? "할 일 상세" : "새로운 할 일"}</h4>
           <button type="button" className="qa-close" aria-label="닫기" onClick={onClose}>
             <svg viewBox="0 0 16 16" aria-hidden="true">
               <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
@@ -154,8 +157,8 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose }: Props) {
             )}
             날짜 없음
           </button>
+          <span className="qa-help">날짜를 정하지 않으면 보관함에 저장돼요.</span>
         </div>
-        <p className="qa-help">날짜를 정하지 않으면 보관함에 저장돼요.</p>
 
         <label className="qa-label" htmlFor="qa-cat">
           카테고리 <span className="opt">(선택)</span>

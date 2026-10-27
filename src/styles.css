@@ -1848,3 +1848,8 @@ html, body, #root{height:auto}
 .quickadd-modal .acts{margin:28px 0 0; padding:0; border-top:0}
 .qa-chip.on{background:var(--ink); border-color:var(--ink); color:var(--ink-rev); font-weight:600}
 @media (max-width:640px){ .quickadd-modal .acts{margin:24px 0 0; padding:0} }
+/* 할 일 모달: 보관함 안내는 "날짜 없음" 칩 바로 옆 */
+.qa-quick{align-items:center; margin-bottom:24px}
+.qa-quick .qa-help{margin:0 0 0 4px !important; font-size:0.78125rem !important; color:var(--ink-3) !important}
+/* 오늘 표시: 검정 동그라미 → 둥근 네모 (미니 달력·주간 머리·월간 칸 공통) */
+.side .d.today, .board.v-week .col.is-today .colhead .dnum, .mcell.is-today .mnum{border-radius:6px}
