@@ -1593,3 +1593,19 @@ html, body, #root{height:auto}
 .board.v-week.wide .card:not(.done):hover .txt{color:var(--ink)}
 .board.v-week.wide .card:hover .check{border-color:var(--ink-3)}
 .board.v-week.wide .card.is-editing{border:0; background:var(--panel)}
+/* 주간 두 줄 보기 머리: 가로 보기처럼 "월 26" 한 줄로 작게. 오른쪽엔 오늘·개수 */
+@media (min-width:641px){
+  .board.v-week:not(.wide):not(.vert) .colhead{
+    display:flex; align-items:center; gap:7px; grid-template-rows:none; height:38px; padding-top:0; padding-bottom:0; margin-bottom:6px;
+  }
+  .board.v-week:not(.wide):not(.vert) .colhead .dow{order:0; font-size:0.75rem}
+  .board.v-week:not(.wide):not(.vert) .colhead .dnum{order:1; font-size:1rem; font-weight:600; line-height:1}
+  .board.v-week:not(.wide):not(.vert) .col.is-today .colhead .dnum{width:24px; height:24px; font-size:0.8125rem}
+  .board.v-week:not(.wide):not(.vert) .colhead .hol-name{order:2}
+  .board.v-week:not(.wide):not(.vert) .colhead .col-tag{order:3; margin-left:auto; font-size:0.6875rem}
+  .board.v-week:not(.wide):not(.vert) .colhead .n{order:4; font-size:0.6875rem}
+  .board.v-week:not(.wide):not(.vert) .colhead .col-tag + .n{margin-left:0}
+  .board.v-week:not(.wide):not(.vert) .colhead .n:first-of-type{margin-left:auto}
+  .board.v-week:not(.wide):not(.vert) > .col{padding-top:0}
+  .board.v-week:not(.wide):not(.vert) > .col:nth-child(n+5){padding-top:4px}
+}
