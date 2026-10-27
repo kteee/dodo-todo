@@ -1609,3 +1609,7 @@ html, body, #root{height:auto}
   .board.v-week:not(.wide):not(.vert) > .col{padding-top:0}
   .board.v-week:not(.wide):not(.vert) > .col:nth-child(n+5){padding-top:4px}
 }
+/* 주간 두 줄 보기: 보드 아래에도 밑선 (세로 길이는 내용만큼) */
+@media (min-width:641px){
+  .board.v-week:not(.wide):not(.vert), .board.v-week:not(.wide):not(.vert).no-inbox{border-bottom:1px solid var(--line); min-height:0; grid-auto-rows:minmax(300px, auto)}
+}
