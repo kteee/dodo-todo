@@ -1873,3 +1873,5 @@ html, body, #root{height:auto}
 .board.v-week.wide .list.grouped > .grouphead:first-child{padding-top:4px}
 /* 주간 2줄·세로: 날짜 머리의 "오늘" 글자 없음 (숫자의 검정 네모로 충분) — "11월" 같은 달 표시는 유지 */
 .board.v-week:not(.wide) .col.is-today .colhead .col-tag{display:none}
+/* 주간 세로 보기: 구분선 → 할 일 카드 24 → 14px */
+@media (min-width:641px){ .board.v-week.vert .colbody{padding-left:14px} }
