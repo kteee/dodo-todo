@@ -1888,3 +1888,8 @@ html, body, #root{height:auto}
   .board.v-week.vert .card .del{margin-left:auto}
 }
 @media (min-width:641px){ .board.v-week.vert .card .chip, .board.v-week.vert .card .txt, .board.v-week.vert .card .check{align-self:center} }
+/* 일간·보관함 카드: 한 줄 — 체크 · 글자 · 칩(오른쪽 끝, × 자리만큼 안쪽) */
+.dayview .card, .dayview .card.nocat{grid-template-columns:auto minmax(0,1fr) auto; grid-template-areas:"check text chip"; gap:0 10px; align-items:center}
+.dayview .card .chip{grid-area:chip; align-self:center; justify-self:end; margin:0 26px 0 0}
+.dayview .txt{align-self:center; padding-right:0}
+.dayview .check{align-self:center; margin-top:0}
