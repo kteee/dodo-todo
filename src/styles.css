@@ -1801,3 +1801,9 @@ html, body, #root{height:auto}
 .inbox-sec.drop{background:none; box-shadow:inset 0 0 0 1.5px var(--ink-2)}
 .inbox-sec .dv-head{margin-top:8px}
 .inbox-sec .dv-head .hint-ico{margin-left:2px}
+/* 일간·보관함 카드: 한 줄 — 체크 · 글자 · 칩(오른쪽 끝, × 자리만큼 안쪽). 주간은 칩 위 그대로 */
+.dayview .card{grid-template-columns:auto minmax(0,1fr) auto; grid-template-areas:"check text chip"; gap:0 10px; align-items:center}
+.dayview .card.nocat{grid-template-areas:"check text chip"}
+.dayview .card .chip{grid-area:chip; align-self:center; justify-self:end; margin:0 26px 0 0}
+.dayview .txt{align-self:center; padding-right:0}
+.dayview .check{align-self:center; margin-top:0}
