@@ -1871,3 +1871,5 @@ html, body, #root{height:auto}
 .dayview .list.grouped > .grouphead:first-child{padding-top:2px}
 /* 주간 가로 보기 카테고리별: 첫 카테고리 윗여백 10 → 4px */
 .board.v-week.wide .list.grouped > .grouphead:first-child{padding-top:4px}
+/* 주간 2줄·세로: 날짜 머리의 "오늘" 글자 없음 (숫자의 검정 네모로 충분) — "11월" 같은 달 표시는 유지 */
+.board.v-week:not(.wide) .col.is-today .colhead .col-tag{display:none}
