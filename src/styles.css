@@ -1619,3 +1619,18 @@ html, body, #root{height:auto}
 .daymemo textarea{min-height:112px}
 /* 주간 2줄 보기: 머리의 "N개의 할 일" 숨김 (가로 보기와 동일) */
 .board.v-week:not(.wide):not(.vert) .colhead .n{display:none}
+/* 주간 세로 보기: 날짜는 왼쪽 칸, 할 일은 오른쪽 */
+@media (min-width:641px){
+  .board.v-week.vert > .col{flex-direction:row; align-items:flex-start; gap:24px}
+  .board.v-week.vert .colhead{
+    flex:0 0 120px; flex-direction:column; align-items:flex-start; gap:4px; margin:0; padding:2px 0 0;
+    position:sticky; top:96px;
+  }
+  .board.v-week.vert .colhead .dow{order:0; font-size:0.75rem; color:var(--ink-2)}
+  .board.v-week.vert .colhead .dnum{order:1; font-size:1.5rem}
+  .board.v-week.vert .col.is-today .colhead .dnum{width:32px; height:32px; font-size:1rem}
+  .board.v-week.vert .colhead .hol-name{order:2}
+  .board.v-week.vert .colhead .col-tag{order:3; margin-top:2px}
+  .board.v-week.vert .colhead .n{display:none}
+  .board.v-week.vert .colbody{flex:1; min-width:0}
+}
