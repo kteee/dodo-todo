@@ -25,9 +25,9 @@ interface Props {
   onToday?: () => void;
   /** 제목 왼쪽에 붙는 버튼(사이드바 펼치기, 폰 서랍 열기) */
   left?: ReactNode;
-  /** 둘째 줄 오른쪽 끝: 보기 옵션 버튼(팝업) */
+  /** 둘째 줄 오른쪽: 보기 전환 옆 보기 옵션 버튼(팝업) */
   options?: ReactNode;
-  /** 보기 옵션 왼쪽의 주 행동 버튼 (＋ 할 일 추가) */
+  /** 첫째 줄 오른쪽: 주 행동 버튼 (＋ 할 일 추가) */
   action?: ReactNode;
 }
 
@@ -39,7 +39,7 @@ const TABS: [Tab, string][] = [
 ];
 
 /**
- * 헤더 아래 제목 영역: 왼쪽에 큰 제목, 둘째 줄에 ‹ 오늘 › + 설명. 오른쪽에 보기 전환.
+ * 헤더 아래 제목 영역: 1줄 = 제목 | ＋ 할 일 추가, 2줄 = ‹ 오늘 › + 설명 | 보기 전환 + 보기 옵션.
  * 아래 가로선으로 본문(사이드바 + 보드)과 나뉨
  */
 export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left, options, action }: Props) {
@@ -69,28 +69,25 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
         </div>
       </div>
       <div className="tr">
-        <div className="tr-top">
+        {/* 1줄 오른쪽: 주 행동 (＋ 할 일 추가) */}
+        {action && <div className="tr-top">{action}</div>}
+        {/* 2줄 오른쪽: 보기 전환(일간·주간·월간·보관함) + 보기 옵션(조절 슬라이더) */}
+        <div className="viewopts">
           <div className="vswitch" role="tablist" aria-label="보기 전환">
-          {TABS.map(([t, name]) => (
-            <button key={t} role="tab" aria-selected={tab === t} onClick={() => onTab(t)}>
-              {t === "inbox" && (
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <path d="M2 9.5V12a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 14 12V9.5M2 9.5 3.6 3.8A1.2 1.2 0 0 1 4.75 3h6.5a1.2 1.2 0 0 1 1.15.8L14 9.5M2 9.5h3.2l1 1.8h3.6l1-1.8H14" />
-                </svg>
-              )}
-              {name}
-              {t === "inbox" && inboxCount > 0 && <span className="cnt">{inboxCount}</span>}
-            </button>
-          ))}
+            {TABS.map(([t, name]) => (
+              <button key={t} role="tab" aria-selected={tab === t} onClick={() => onTab(t)}>
+                {t === "inbox" && (
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M2 9.5V12a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 14 12V9.5M2 9.5 3.6 3.8A1.2 1.2 0 0 1 4.75 3h6.5a1.2 1.2 0 0 1 1.15.8L14 9.5M2 9.5h3.2l1 1.8h3.6l1-1.8H14" />
+                  </svg>
+                )}
+                {name}
+                {t === "inbox" && inboxCount > 0 && <span className="cnt">{inboxCount}</span>}
+              </button>
+            ))}
           </div>
+          {options}
         </div>
-        {/* ‹ 오늘 › 줄 오른쪽 끝: ＋ 할 일 추가 · 보기 옵션(조절 슬라이더) */}
-        {(action || options) && (
-          <div className="viewopts">
-            {action}
-            {options}
-          </div>
-        )}
       </div>
     </div>
   );
