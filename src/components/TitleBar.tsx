@@ -25,8 +25,10 @@ interface Props {
   onToday?: () => void;
   /** 제목 왼쪽에 붙는 버튼(사이드바 펼치기, 폰 서랍 열기) */
   left?: ReactNode;
-  /** 보기 전환 오른쪽의 보기 옵션 버튼(팝업) */
+  /** 둘째 줄 오른쪽 끝: 보기 옵션 버튼(팝업) */
   options?: ReactNode;
+  /** 보기 옵션 왼쪽의 주 행동 버튼 (＋ 할 일 추가) */
+  action?: ReactNode;
 }
 
 const TABS: [Tab, string][] = [
@@ -40,7 +42,7 @@ const TABS: [Tab, string][] = [
  * 헤더 아래 제목 영역: 왼쪽에 큰 제목, 둘째 줄에 ‹ 오늘 › + 설명. 오른쪽에 보기 전환.
  * 아래 가로선으로 본문(사이드바 + 보드)과 나뉨
  */
-export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left, options }: Props) {
+export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, left, options, action }: Props) {
   return (
     <div className="titlebar" data-tab={tab}>
       <div className="tl">
@@ -82,8 +84,13 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
           ))}
           </div>
         </div>
-        {/* 보기 옵션(조절 슬라이더) — ‹ 오늘 › 줄 오른쪽 끝 */}
-        {options && <div className="viewopts">{options}</div>}
+        {/* ‹ 오늘 › 줄 오른쪽 끝: ＋ 할 일 추가 · 보기 옵션(조절 슬라이더) */}
+        {(action || options) && (
+          <div className="viewopts">
+            {action}
+            {options}
+          </div>
+        )}
       </div>
     </div>
   );

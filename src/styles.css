@@ -1563,3 +1563,11 @@ html, body, #root{height:auto}
   .titlebar .tr{flex-wrap:wrap}
   .titlebar .viewopts{margin-left:auto}
 }
+/* 제목 둘째 줄 오른쪽: ＋ 할 일 추가(32px, 헤더용보다 작게) + 보기 옵션 */
+.viewopts{gap:10px}
+.titlebar .quickadd{height:32px; padding:0 13px 0 10px; border-radius:8px; font-size:0.8125rem}
+.titlebar .quickadd svg{width:13px; height:13px}
+@media (max-width:820px){
+  .titlebar .quickadd{height:32px; width:auto; padding:0 12px 0 9px; margin-left:0}
+  .titlebar .quickadd span{display:inline}
+}

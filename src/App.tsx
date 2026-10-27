@@ -693,7 +693,6 @@ export default function App() {
     <div className="page">
       <TopNav
         search={ready ? <Search todos={todos} catOf={catOf} onPick={goToTodo} /> : null}
-        onQuickAdd={ready ? quickAdd : undefined}
         options={ready ? options : undefined}
         account={account}
         isLocal={auth.mode === "local"}
@@ -734,6 +733,16 @@ export default function App() {
             onStep={inboxOpen ? undefined : step}
             onToday={inboxOpen ? undefined : goToday}
             options={viewOptions}
+            action={
+              ready && !inboxOpen ? (
+                <button className="quickadd" onClick={quickAdd} title="할 일 추가">
+                  <svg viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M8 3v10M3 8h10" />
+                  </svg>
+                  <span>할 일 추가</span>
+                </button>
+              ) : null
+            }
             left={
               <>
                 {sideFolded && (
