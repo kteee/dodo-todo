@@ -1948,3 +1948,13 @@ html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped
 .catmodal .acts .cm-del:hover{color:var(--sun); background:var(--panel)}
 /* 모달 라벨(할 일·날짜·카테고리·이름·색상) 모양 통일 — p 태그 라벨이 .modal p 기본 모양을 받지 않게 */
 .modal .qa-label{margin:0 0 8px; font-size:0.8125rem; font-weight:600; line-height:normal; color:var(--ink)}
+/* 할 일이 여러 줄이면 체크박스(·왼쪽 칩)는 첫 줄 가운데에 — 줄 높이(글자×1.5)와 체크 크기로 맞춤, 글자 크기 설정 따라감 */
+.dayview .card .check{align-self:start; margin-top:calc((0.875rem * 1.5 - 18px) / 2)}
+.board.v-week:not(.wide):not(.vert) .card .check{align-self:start; margin-top:calc((0.8125rem * 1.5 - 16px) / 2)}
+@media (min-width:641px){
+  .board.v-week.vert .card .check{align-self:start; margin-top:calc((0.875rem * 1.5 - 16px) / 2)}
+}
+.dayview .card .chip{align-self:start; margin-top:calc((0.875rem * 1.5 - 1.25rem) / 2)}
+@media (min-width:641px){ .board.v-week.vert .card .chip{align-self:start} }
+.dayview .card .txt, .board.v-week .card .txt{align-self:start}
+@media (min-width:641px){ .board.v-week.vert .card .chip{margin-top:3px} }
