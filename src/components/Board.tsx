@@ -509,67 +509,25 @@ export function InboxColumn({ ctx }: { ctx: BoardCtx }) {
 }
 
 /**
- * 보관함 (큰 화면): 왼쪽 사이드바의 "보관함" 탭 내용. 달력·카테고리처럼 테두리 없는 사이드바 섹션.
- * 제목 줄 오른쪽 ＋(카테고리와 같은 모양) → 제목 아래 입력칸, Enter 로 맨 위에 쌓이고 입력칸은 그대로(연달아 적기).
- * 할 일은 요일 칸과 같은 카드. 정해지면 달력으로 끌어다 놓음
+ * 보관함: 날짜 없는 할 일. 일간 보기와 같은 구성 — "할 일 N" 라벨(아래 선) → 테두리 카드(완료는 맨 아래) → ＋ 새로운 할 일 추가.
+ * 날짜 선택 줄·메모만 없음. 정해지면 달력으로 끌어다 놓음
  */
 export function InboxSection({ ctx }: { ctx: BoardCtx }) {
   const items = ctx.shown("none");
+  const open = items.filter((t) => !t.done);
+  const done = items.filter((t) => t.done);
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
-  const [adding, setAdding] = useState(false);
-  const [text, setText] = useState("");
-  const commit = () => {
-    const v = text.trim();
-    if (v) ctx.onAdd("none", v.slice(0, 500), null, true);
-    setText("");
-  };
+  const hint = "날짜가 정해지면 원하는 날로 끌어다 놓으세요.";
   return (
-    <section className={"inbox-sec" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
-      <div className="inbox-sec-head">
-        <p className="sect-label">보관함</p>
-        <span className="hint-ico" tabIndex={0} role="img" aria-label="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요." data-tip="아직 날짜를 정하지 않은 할 일이에요. 날짜가 정해지면 원하는 날로 끌어다 놓으세요.">
+    <section className={"dayview inbox-sec" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
+      <div className="dv-head">
+        할 일<span className="n">{open.length}</span>
+        <span className="hint-ico" tabIndex={0} role="img" aria-label={hint} data-tip={hint}>
           ?
         </span>
-        {/* 개수는 위 탭 버튼(보관함 N)에 이미 있어서 여기선 뺌 */}
-        <button className="sect-add" aria-label="보관함에 할 일 추가" title="할 일 추가" onClick={() => setAdding(true)}>
-          <svg viewBox="0 0 12 12" aria-hidden="true">
-            <path d="M6 2.2v7.6M2.2 6h7.6" />
-          </svg>
-        </button>
       </div>
-      {adding && (
-        <form
-          className="catform"
-          onSubmit={(e) => {
-            e.preventDefault();
-            commit();
-          }}
-        >
-          <input
-            type="text"
-            placeholder="할 일"
-            aria-label="보관함에 할 일 적기"
-            maxLength={500}
-            autoComplete="off"
-            autoFocus
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onBlur={() => {
-              // 바깥을 누르면: 쓴 게 있으면 추가하고 닫음 (카테고리 추가와 같은 규칙)
-              if (!document.hasFocus()) return;
-              commit();
-              setAdding(false);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") {
-                setText("");
-                setAdding(false);
-              }
-            }}
-          />
-        </form>
-      )}
-      <CardList bucket="none" items={items} ctx={ctx} />
+      <CardList bucket="none" items={[...open, ...done]} ctx={ctx} />
+      <Composer bucket="none" ctx={ctx} label="＋ 새로운 할 일 추가" />
     </section>
   );
 }

@@ -376,8 +376,9 @@ export default function App() {
   // 일·주·월 공통 부제: 할 일이 없으면 한 문장, 있으면 진행 상황
   const progress = (total: number, done: number) => (total === 0 ? "할 일이 없습니다." : `${total}개의 할 일 중 ${done}개를 완료했어요.`);
   if (inboxOpen) {
+    const { total, done } = stats(["none"]);
     title = "보관함";
-    sub = inboxLeft ? `날짜를 정하지 않은 할 일이 ${inboxLeft}개 있어요. 정해지면 달력으로 끌어다 놓으세요.` : "날짜를 정하지 않은 할 일이 없어요.";
+    sub = progress(total, done);
   } else if (view === "day") {
     const sd = parse(selected);
     const { total, done } = stats([selected]);
