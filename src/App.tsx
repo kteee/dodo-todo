@@ -15,7 +15,7 @@ import { MemoBox } from "./components/SideColumn";
 import { Categories, MiniCal, TodayBlock } from "./components/Sidebar";
 import { GoogleButton, TopNav, type View } from "./components/TopNav";
 import { OptionsMenu } from "./components/OptionsMenu";
-import { TitleBar, type Tab, type WeekLayout } from "./components/TitleBar";
+import { TitleBar, WEEK_LAYOUTS, type Tab, type WeekLayout } from "./components/TitleBar";
 import { QuickAdd } from "./components/QuickAdd";
 import { MyPage } from "./components/MyPage";
 import { Search } from "./components/Search";
@@ -590,7 +590,54 @@ export default function App() {
     </>
   );
 
-  /* 설정(톱니바퀴) — 헤더 오른쪽 */
+  /* 보기 옵션 — 제목 줄 ‹ 오늘 › 오른쪽 끝 (주간이면 배치 전환도) */
+  const viewOptions = ready && !inboxOpen ? (
+    <OptionsMenu
+      label="보기 옵션"
+      className="viewopt"
+      icon={
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" />
+          <circle cx="6" cy="4.5" r="1.6" fill="var(--bg)" />
+          <circle cx="10.5" cy="8" r="1.6" fill="var(--bg)" />
+          <circle cx="5" cy="11.5" r="1.6" fill="var(--bg)" />
+        </svg>
+      }
+    >
+      {view === "week" && !phone && (
+        <>
+          <p className="optsec">주간 배치</p>
+          <div className="optseg" role="radiogroup" aria-label="주간 배치">
+            {WEEK_LAYOUTS.map(([l, name]) => (
+              <button key={l} role="radio" aria-checked={weekLayout === l} onClick={() => setWeekLayout(l)}>
+                {name}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+        <p className="optsec">보기 옵션</p>
+        <label className="togg">
+          <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
+        </label>
+        <label className="togg">
+          <input type="checkbox" checked={groupBy} onChange={(e) => setGroupBy(e.target.checked)} /> 카테고리별 보기
+        </label>
+        <label className="togg">
+          <input
+            type="checkbox"
+            checked={showMemo}
+            onChange={(e) => {
+              setShowMemo(e.target.checked);
+              writePref(MEMO_PREF, e.target.checked);
+            }}
+          />{" "}
+          메모 보기
+        </label>
+    </OptionsMenu>
+  ) : null;
+
+  /* 설정(톱니바퀴) — 헤더 오른쪽: 시작 화면·글꼴·글자 크기 */
   const options = (
     <OptionsMenu>
         <p className="optsec">시작 화면</p>
@@ -639,24 +686,6 @@ export default function App() {
             </button>
           ))}
         </div>
-        <p className="optsec">보기 옵션</p>
-        <label className="togg">
-          <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} /> 완료 숨기기
-        </label>
-        <label className="togg">
-          <input type="checkbox" checked={groupBy} onChange={(e) => setGroupBy(e.target.checked)} /> 카테고리별 보기
-        </label>
-        <label className="togg">
-          <input
-            type="checkbox"
-            checked={showMemo}
-            onChange={(e) => {
-              setShowMemo(e.target.checked);
-              writePref(MEMO_PREF, e.target.checked);
-            }}
-          />{" "}
-          메모 보기
-        </label>
     </OptionsMenu>
   );
 
@@ -704,8 +733,7 @@ export default function App() {
             sub={sub}
             onStep={inboxOpen ? undefined : step}
             onToday={inboxOpen ? undefined : goToday}
-            layout={!inboxOpen && view === "week" && !phone ? weekLayout : undefined}
-            onLayout={setWeekLayout}
+            options={viewOptions}
             left={
               <>
                 {sideFolded && (
