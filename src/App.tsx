@@ -43,8 +43,8 @@ const HIDE_DONE_PREF = "dodo:hideDone";
 const CAT_SHOW_PREF = "dodo:catShow"; // 할 일의 카테고리 표시: chip(기본) · dot · none
 type CatShow = "chip" | "dot" | "none";
 const CAT_SHOWS: [CatShow, string][] = [
-  ["chip", "칩"],
-  ["dot", "점"],
+  ["chip", "이름"],
+  ["dot", "색"],
   ["none", "숨김"],
 ];
 const GROUP_PREF = "dodo:groupBy";
