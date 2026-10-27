@@ -1863,3 +1863,5 @@ html, body, #root{height:auto}
   .board.v-week:not(.vert) .colhead, .board.v-week:not(.wide):not(.vert) .colhead{height:42px}
   .board.v-week:not(.vert) .colhead .dnum, .board.v-week:not(.wide):not(.vert) .colhead .dnum, .board.v-week:not(.vert) .col.is-today .colhead .dnum, .board.v-week:not(.wide):not(.vert) .col.is-today .colhead .dnum{font-size:0.9375rem}
 }
+/* 일간·보관함 카테고리별 보기: 첫 카테고리 머리는 윗여백 없이 (다음 그룹부터 16px) */
+.dayview .list.grouped > .grouphead:first-child{padding-top:0}
