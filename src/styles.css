@@ -1902,3 +1902,9 @@ html[data-cat="dot"] .card:not(.nocat):not(.mini) .txt::before{
 html[data-cat="none"] .card .txt::before{display:none}
 /* 선택 버튼 줄: 버튼 개수만큼 꽉 채움 (월간 카테고리 표시는 2개) */
 .optseg{grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:1fr}
+/* 주간 세로 보기 할 일: 테두리 상자 다시 (한 줄 · 제목 옆 라벨 배치는 그대로) */
+@media (min-width:641px){
+  .board.v-week.vert .list{gap:6px}
+  .board.v-week.vert .card, .board.v-week.vert .card.nocat{border:1px solid var(--line-2); border-radius:8px; padding:9px 12px; background:var(--bg)}
+  .board.v-week.vert .card:hover{background:var(--bg); border-color:var(--line-2)}
+}
