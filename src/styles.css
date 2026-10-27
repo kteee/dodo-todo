@@ -1551,7 +1551,7 @@ html, body, #root{height:auto}
 /* 제목 줄 오른쪽 끝 보기 옵션 버튼 (헤더 ⚙와 같은 팝업 모양) */
 .viewopts{display:flex; align-items:center}
 .viewopt .optbtn{width:32px; height:32px; border-radius:8px; color:var(--ink-2)}
-.viewopt .optbtn svg{width:16px; height:16px; stroke-width:1.6} /* 톱니바퀴 (헤더 설정과 같은 아이콘) */
+.viewopt .optbtn svg{width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linejoin:round; stroke-linecap:round} /* 깔때기 — 헤더 ⚙와 구분 */
 .viewopt .optpop{right:0; left:auto}
 @media (min-width:821px){
   .titlebar .viewopts{grid-column:2; grid-row:2; justify-self:end; align-self:center; margin-top:14px}
