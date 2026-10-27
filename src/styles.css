@@ -1613,3 +1613,7 @@ html, body, #root{height:auto}
 @media (min-width:641px){
   .board.v-week:not(.wide):not(.vert), .board.v-week:not(.wide):not(.vert).no-inbox{border-bottom:1px solid var(--line); min-height:0; grid-auto-rows:minmax(300px, auto)}
 }
+/* 주간 두 줄 보기: 둘째 줄 마지막(일요일) 칸 오른쪽 선 — 그 옆이 빈 칸이라 선이 없던 것 */
+@media (min-width:641px){
+  .board.v-week:not(.wide):not(.vert) > .col:nth-child(7){border-right:1px solid var(--line)}
+}
