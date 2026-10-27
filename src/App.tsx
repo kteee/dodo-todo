@@ -692,13 +692,13 @@ export default function App() {
         <label className="togg">
           <input
             type="checkbox"
-            checked={showMemo}
+            checked={!showMemo}
             onChange={(e) => {
-              setShowMemo(e.target.checked);
-              writePref(MEMO_PREF, e.target.checked);
+              setShowMemo(!e.target.checked);
+              writePref(MEMO_PREF, !e.target.checked);
             }}
           />{" "}
-          메모 보기
+          메모 숨기기
         </label>
     </OptionsMenu>
   ) : null;
