@@ -1946,3 +1946,5 @@ html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped
 .cm-swatches .sw.on{box-shadow:0 0 0 2px var(--bg), 0 0 0 3.5px var(--ink)}
 .catmodal .acts .cm-del{margin-right:auto; border:0; color:var(--ink-3); padding:0 6px}
 .catmodal .acts .cm-del:hover{color:var(--sun); background:var(--panel)}
+/* 모달 라벨(할 일·날짜·카테고리·이름·색상) 모양 통일 — p 태그 라벨이 .modal p 기본 모양을 받지 않게 */
+.modal .qa-label{margin:0 0 8px; font-size:0.8125rem; font-weight:600; line-height:normal; color:var(--ink)}
