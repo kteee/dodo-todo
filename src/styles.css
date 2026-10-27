@@ -1749,3 +1749,18 @@ html, body, #root{height:auto}
 /* 월간 요일 줄: 칸 사이 세로선 없음 (위·아래·왼쪽 테두리는 유지) */
 .mdow span{border-right:0}
 .mdow{border-right:1px solid var(--line)}
+/* ══ 일간 날짜 줄 = 주간 2줄 머리 규칙: 44px, "26 월", 아래 선, 오늘 24px 검정 원, 선택은 칸 전체 회색(모서리 없음) ══ */
+.weekstrip{gap:0; border-top:0; border-bottom:1px solid var(--line); margin:0 0 20px}
+.ws-day{height:44px; gap:7px; padding:0 12px; justify-content:flex-start; border-radius:0}
+.ws-day .ws-num{width:auto; height:auto; border-radius:0; font-size:1rem; font-weight:600; line-height:1; color:var(--ink)}
+.ws-day .ws-dow{font-size:0.75rem; color:var(--ink-2)}
+.ws-day.sat .ws-num{color:var(--sat)} .ws-day.sun .ws-num{color:var(--sun)}
+.ws-day:hover .ws-num{background:none}
+.ws-day:hover{background:var(--panel)}
+.ws-day.today .ws-num, .ws-day.today:hover .ws-num, .ws-day.sel.today .ws-num{
+  width:24px; height:24px; border-radius:50%; display:grid; place-items:center; font-size:0.8125rem;
+  background:var(--ink); color:var(--ink-rev); box-shadow:none;
+}
+.ws-day.today .ws-dow{color:var(--ink-2); font-weight:400}
+.ws-day.sel{background:var(--panel)}
+.ws-day.sel .ws-num{font-weight:600}
