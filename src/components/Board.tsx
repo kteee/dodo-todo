@@ -457,6 +457,8 @@ export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoT
             <button key={k} role="tab" aria-selected={k === dateKey} className={cls} title={hol ?? undefined} onClick={() => onPick(k)}>
               <span className="ws-dow">{DOW[i]}</span>
               <span className="ws-num">{d.getDate()}</span>
+              {/* 그 날 남은 할 일이 있으면 점 */}
+              <i className={"ws-dot" + (ctx.shown(k).some((t) => !t.done) ? " on" : "")} aria-hidden="true" />
             </button>
           );
         })}

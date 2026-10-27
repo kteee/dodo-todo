@@ -1764,3 +1764,17 @@ html, body, #root{height:auto}
 .ws-day.today .ws-dow{color:var(--ink-2); font-weight:400}
 .ws-day.sel{background:var(--panel)}
 .ws-day.sel .ws-num{font-weight:600}
+/* ══ 일간 날짜 선택(참고 시안): 칸마다 요일 위·숫자 아래·할 일 있으면 점, 선택한 날은 둥근 회색 카드 ══ */
+.weekstrip{gap:8px; border:0; margin:0 0 20px}
+.ws-day{flex-direction:column; justify-content:center; align-items:center; gap:4px; height:auto; padding:10px 0 8px; border-radius:10px; background:none; border:0}
+.ws-day:hover{background:var(--panel)}
+.ws-day .ws-dow{order:0; font-size:0.75rem; color:var(--ink-3)}
+.ws-day .ws-num{order:1; width:auto; height:auto; border-radius:0; font-size:1.0625rem; font-weight:600; line-height:1.2; color:var(--ink); background:none}
+.ws-day .ws-dot{order:2; width:4px; height:4px; border-radius:50%; background:transparent}
+.ws-day .ws-dot.on{background:var(--ink-3)}
+.ws-day.sat .ws-num{color:var(--sat)} .ws-day.sun .ws-num{color:var(--sun)}
+.ws-day.today .ws-num, .ws-day.today:hover .ws-num, .ws-day.sel.today .ws-num{width:auto; height:auto; border-radius:0; background:none; color:var(--ink); font-size:1.0625rem; display:inline; box-shadow:none}
+.ws-day.today.sat .ws-num{color:var(--sat)} .ws-day.today.sun .ws-num{color:var(--sun)}
+.ws-day.today .ws-dow{color:var(--ink); font-weight:600}
+.ws-day.sel, .ws-day.sel:hover{background:var(--panel-2)}
+.ws-day.sel .ws-dot.on{background:var(--ink)}
