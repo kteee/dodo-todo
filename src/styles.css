@@ -1690,3 +1690,6 @@ html, body, #root{height:auto}
 .ws-day.sel{background:none}
 .ws-day.sel .ws-num, .ws-day.sel:hover .ws-num{background:var(--ink); color:var(--ink-rev); font-weight:600; box-shadow:none}
 .ws-day.sel.sat .ws-num, .ws-day.sel.sun .ws-num{color:var(--ink-rev)}
+/* 일간 등록 칸: 카테고리 선택을 입력 글자 왼쪽에 (행의 칩 자리와 같은 x) */
+.dayview .composer{padding:0 12px 0 40px; gap:10px}
+.dayview .composer select.catsel{order:0; margin:0}
