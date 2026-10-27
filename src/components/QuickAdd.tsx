@@ -157,7 +157,7 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo }: Props) {
             )}
             날짜 없음
           </button>
-          <span className="qa-help">날짜를 정하지 않으면 보관함에 저장돼요.</span>
+          <span className="qa-help">날짜를 정하지 않으면 보관함에 저장됩니다.</span>
         </div>
 
         <label className="qa-label" htmlFor="qa-cat">
