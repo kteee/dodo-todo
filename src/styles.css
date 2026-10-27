@@ -1857,3 +1857,4 @@ html, body, #root{height:auto}
 @media (min-width:641px){ .board.v-week:not(.wide):not(.vert) .colhead{margin-bottom:10px} }
 /* 주간 2줄·가로: 오늘 숫자도 다른 날과 같은 16px (둥근 네모는 26px) */
 .board.v-week:not(.vert) .col.is-today .colhead .dnum{width:26px; height:26px; font-size:1rem}
+@media (min-width:641px){ .board.v-week:not(.wide):not(.vert) .col.is-today .colhead .dnum{width:26px; height:26px; font-size:1rem} }
