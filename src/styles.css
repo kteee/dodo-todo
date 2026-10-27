@@ -1720,3 +1720,8 @@ html, body, #root{height:auto}
 .dayview .check{grid-area:check; align-self:center; margin-top:0}
 .dayview .card .chip{align-self:end}
 .dayview .txt{align-self:start}
+/* 일간 카드: 체크박스는 글자 줄의 세로 가운데 (칩 줄 제외) */
+.dayview .card{grid-template-areas:"chip chip" "check text"; align-items:center}
+.dayview .check{align-self:center; margin-top:0}
+.dayview .card .chip{align-self:start}
+.dayview .txt{align-self:center}
