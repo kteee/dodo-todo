@@ -373,25 +373,29 @@ export default function App() {
   const inboxLeft = inBucket("none").filter((t) => !t.done).length;
   let title: string;
   let sub: string;
+  // 일·주·월 공통 부제: 할 일이 없으면 한 문장, 있으면 진행 상황
+  const progress = (total: number, done: number) => (total === 0 ? "할 일이 없습니다." : `${total}개의 할 일 중 ${done}개를 완료했어요.`);
   if (inboxOpen) {
     title = "보관함";
     sub = inboxLeft ? `날짜를 정하지 않은 할 일이 ${inboxLeft}개 있어요. 정해지면 달력으로 끌어다 놓으세요.` : "날짜를 정하지 않은 할 일이 없어요.";
   } else if (view === "day") {
     const sd = parse(selected);
     const { total, done } = stats([selected]);
-    const isToday = selected === todayKey;
     title = `${sd.getFullYear()}년 ${sd.getMonth() + 1}월 ${sd.getDate()}일`;
-    sub = total === 0 ? (isToday ? "오늘 할 일을 추가해보세요." : "이 날 할 일을 추가해보세요.") : `${total}개의 할 일 중 ${done}개를 완료했어요.`;
+    sub = progress(total, done);
   } else if (view === "week") {
     const a = weekStart;
     const b = addDays(weekStart, 6);
     const { total, done } = stats(weekKeys);
-    const nth = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째"][Math.floor((a.getDate() - 1) / 7)];
     title = `${a.getMonth() + 1}월 ${a.getDate()}일 – ${b.getMonth() + 1}월 ${b.getDate()}일`;
-    sub = `${a.getMonth() + 1}월 ${nth} 주 · 할 일 ${total}개, 완료 ${done}개`;
+    sub = progress(total, done);
   } else {
-    title = `${calMonth.getFullYear()}년 ${calMonth.getMonth() + 1}월`;
-    sub = "";
+    const y = calMonth.getFullYear();
+    const m = calMonth.getMonth();
+    const days = new Date(y, m + 1, 0).getDate();
+    const { total, done } = stats(Array.from({ length: days }, (_, i) => key(new Date(y, m, i + 1))));
+    title = `${y}년 ${m + 1}월`;
+    sub = progress(total, done);
   }
   const sideDate = view === "day" ? selected : todayKey;
   const sideStats = stats([sideDate]);
