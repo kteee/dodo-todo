@@ -118,10 +118,22 @@ export default function App() {
       /* 저장 못 해도 이번 화면에서는 적용됨 */
     }
   };
-  // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식)
-  useEffect(() => {
-    document.documentElement.dataset.cat = catShow;
-  }, [catShow]);
+  // 월간은 칸이 작아 원래 색 점만 씀 → 색 · 숨김 둘만, 따로 저장
+  const [monthCatShow, setMonthCatShowState] = useState<"dot" | "none">(() => {
+    try {
+      return localStorage.getItem(CAT_SHOW_PREF + ":month") === "none" ? "none" : "dot";
+    } catch {
+      return "dot";
+    }
+  });
+  const setMonthCatShow = (v: "dot" | "none") => {
+    setMonthCatShowState(v);
+    try {
+      localStorage.setItem(CAT_SHOW_PREF + ":month", v);
+    } catch {
+      /* 저장 못 해도 이번 화면에서는 적용됨 */
+    }
+  };
   const setHideDone = (v: boolean) => {
     setHideDoneState(v);
     writePref(HIDE_DONE_PREF, v);
@@ -621,6 +633,12 @@ export default function App() {
   );
 
   /* 보기 옵션 — 제목 줄 ‹ 오늘 › 오른쪽 끝 (주간이면 배치 전환도) */
+  // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식). 월간 "색" = 원래 점 그대로(chip)
+  const monthNow = view === "month" && !inboxOpen;
+  useEffect(() => {
+    document.documentElement.dataset.cat = monthNow ? (monthCatShow === "none" ? "none" : "chip") : catShow;
+  }, [catShow, monthCatShow, monthNow]);
+
   const viewOptions = ready ? (
     <OptionsMenu
       label="보기 옵션"
@@ -648,11 +666,20 @@ export default function App() {
       )}
         <p className="optsec">카테고리 표시</p>
         <div className="optseg" role="radiogroup" aria-label="카테고리 표시">
-          {CAT_SHOWS.map(([v, name]) => (
-            <button key={v} role="radio" aria-checked={catShow === v} onClick={() => setCatShow(v)}>
-              {name}
-            </button>
-          ))}
+          {monthNow
+            ? ([
+                ["dot", "색"],
+                ["none", "숨김"],
+              ] as const).map(([v, name]) => (
+                <button key={v} role="radio" aria-checked={monthCatShow === v} onClick={() => setMonthCatShow(v)}>
+                  {name}
+                </button>
+              ))
+            : CAT_SHOWS.map(([v, name]) => (
+                <button key={v} role="radio" aria-checked={catShow === v} onClick={() => setCatShow(v)}>
+                  {name}
+                </button>
+              ))}
         </div>
         <p className="optsec">보기 옵션</p>
         <label className="togg">
