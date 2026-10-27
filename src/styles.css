@@ -1893,22 +1893,3 @@ html, body, #root{height:auto}
 .dayview .card .chip{grid-area:chip; align-self:center; justify-self:end; margin:0 26px 0 0}
 .dayview .txt{align-self:center; padding-right:0}
 .dayview .check{align-self:center; margin-top:0}
-/* ══ 일간·보관함 목록 (시안): 바깥 상자 하나 + 줄 구분선. 체크 · 카테고리 칸(목록별 폭) · 제목 ══ */
-.dayview .list:not(:empty){gap:0; border:1px solid var(--line-2); border-radius:12px; overflow:hidden; background:var(--bg)}
-.dayview .card, .dayview .card.nocat{
-  grid-template-columns:18px var(--catw, 0px) minmax(0,1fr); grid-template-areas:"check chip text";
-  column-gap:var(--catgap, 0px); align-items:center;
-  padding:14px 16px; border:0; border-bottom:1px solid var(--line); border-radius:0; background:var(--bg); box-shadow:none;
-}
-.dayview .list > .card:last-child{border-bottom:0}
-.dayview .card:hover{background:var(--panel); border-color:var(--line)}
-.dayview .card .chip{grid-area:chip; justify-self:start; align-self:center; max-width:100%; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.dayview .card .txt{grid-area:text; align-self:center; padding-right:28px}
-.dayview .card .check{grid-area:check; align-self:center; margin:0}
-/* 카테고리별 보기: 그룹 머리도 상자 안의 한 줄 */
-.dayview .list.grouped > .grouphead, .dayview .list.grouped > .grouphead:first-child, .dayview .list.grouped > .grouphead:not(:first-child){padding:10px 16px 8px; border-bottom:1px solid var(--line); background:var(--panel)}
-.dayview .list.grouped > .grouphead:not(:first-child){border-top:1px solid var(--line)}
-/* 끌어서 옮길 때 자리 표시 */
-.dayview .list > .ph{border-bottom:1px solid var(--line); background:var(--panel)}
-/* 일간·보관함 카테고리별 보기: 그룹 머리가 카테고리를 말해 주니 카테고리 칸은 접음 — 제목 시작선 통일 */
-.dayview .list.grouped .card, .dayview .list.grouped .card.nocat{grid-template-columns:18px minmax(0,1fr); grid-template-areas:"check text"; column-gap:12px}

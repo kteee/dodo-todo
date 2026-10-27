@@ -454,27 +454,13 @@ interface DayViewProps {
  * 접을 수 있는 "완료한 일 N", 맨 아래 메모. 칸 테두리 없이 행마다 밑줄만.
  * 드롭은 이 영역 어디에 놓아도 이 날짜로 (data-drop)
  */
-/**
- * 일간·보관함 목록의 카테고리 칸 폭: 이 목록에서 가장 긴 카테고리 이름에 맞춤(최대 80px, 넘으면 말줄임).
- * 카테고리가 하나도 없으면 칸과 간격을 0으로 — 제목이 체크박스 바로 옆에서 시작
- */
-function catColumn(items: Todo[], ctx: BoardCtx): CSSProperties {
-  let longest = 0;
-  for (const t of items) {
-    const c = ctx.catOf(t.categoryId);
-    if (c) longest = Math.max(longest, [...c.name].length);
-  }
-  const w = longest ? Math.min(80, Math.ceil(longest * 11.5 + 14)) : 0;
-  return { "--catw": w + "px", "--catgap": (w ? 12 : 0) + "px" } as CSSProperties;
-}
-
 export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoText = "" }: DayViewProps) {
   const items = ctx.shown(dateKey);
   const open = items.filter((t) => !t.done);
   const done = items.filter((t) => t.done);
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === dateKey;
   return (
-    <section className={"dayview" + (dropHere ? " drop" : "")} data-drop={"date:" + dateKey} style={catColumn(items, ctx)}>
+    <section className={"dayview" + (dropHere ? " drop" : "")} data-drop={"date:" + dateKey}>
       <div className="weekstrip" role="tablist" aria-label="이 주의 날짜">
         {Array.from({ length: 7 }, (_, i) => {
           const d = addDays(weekStart, i);
@@ -532,7 +518,7 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
   const done = items.filter((t) => t.done);
   const dropHere = !!ctx.drag && !ctx.drag.catTarget && ctx.drag.zone === "none";
   return (
-    <section className={"dayview inbox-sec" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함" style={catColumn(items, ctx)}>
+    <section className={"dayview inbox-sec" + (dropHere ? " drop" : "")} data-drop="date:none" aria-label="보관함">
       <div className="dv-head">
         날짜 없는 할 일<span className="n">{open.length}</span>
       </div>
