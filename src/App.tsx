@@ -634,7 +634,8 @@ export default function App() {
 
   /* 보기 옵션 — 제목 줄 ‹ 오늘 › 오른쪽 끝 (주간이면 배치 전환도) */
   // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식). 월간 "색" = 원래 점 그대로(chip)
-  const monthNow = view === "month" && !inboxOpen;
+  // 월간·주간 가로는 칸이 작아 원래 색 점만 씀 → "색상 · 숨김" 둘만 (둘이 같은 설정을 씀)
+  const monthNow = !inboxOpen && (view === "month" || (view === "week" && weekLayout === "wide" && !phone));
   useEffect(() => {
     document.documentElement.dataset.cat = monthNow ? (monthCatShow === "none" ? "none" : "chip") : catShow;
   }, [catShow, monthCatShow, monthNow]);

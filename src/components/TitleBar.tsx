@@ -7,8 +7,8 @@ export type Tab = View | "inbox";
 export type WeekLayout = "rows" | "wide" | "vert";
 export const WEEK_LAYOUTS: [WeekLayout, string][] = [
   ["rows", "2줄"],
-  ["wide", "가로"],
   ["vert", "세로"],
+  ["wide", "가로"],
 ];
 
 interface Props {
