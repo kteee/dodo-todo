@@ -1576,8 +1576,8 @@ html, body, #root{height:auto}
   .titlebar .quickadd{height:34px; width:auto; padding:0 12px 0 9px; margin-left:0}
   .titlebar .quickadd span{display:inline}
 }
-/* 제목 영역 1줄↔2줄 간격 18px */
+/* 제목 영역 1줄↔2줄 간격 20px */
 @media (min-width:821px){
-  .titlebar{row-gap:18px}
+  .titlebar{row-gap:20px}
   .titlebar .row2, .titlebar .viewopts{margin-top:0}
 }
