@@ -1643,3 +1643,6 @@ html, body, #root{height:auto}
   .board.v-week.vert .colhead .col-tag{order:3; flex-basis:100%; margin-top:4px}
   .board.v-week.vert .col.is-today .colhead .dnum{width:34px; height:34px; font-size:1.25rem; margin:-5px 0}
 }
+/* 주간 2줄·가로 보기 머리도 "27 화" 순서 (숫자 먼저, 요일 뒤) */
+.board.v-week.wide .colhead .dnum, .board.v-week:not(.wide):not(.vert) .colhead .dnum{order:0}
+.board.v-week.wide .colhead .dow, .board.v-week:not(.wide):not(.vert) .colhead .dow{order:1}
