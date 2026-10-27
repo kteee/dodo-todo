@@ -1958,3 +1958,6 @@ html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped
 @media (min-width:641px){ .board.v-week.vert .card .chip{align-self:start} }
 .dayview .card .txt, .board.v-week .card .txt{align-self:start}
 @media (min-width:641px){ .board.v-week.vert .card .chip{margin-top:3px} }
+/* 할 일 모달: 카테고리 → 날짜 순서. 카테고리 칸 아래 간격, 날짜 빠른 선택 줄은 맨 아래라 아래 간격 없음 */
+.quickadd-modal .qa-selbox{margin-bottom:24px}
+.quickadd-modal .qa-quick{margin-bottom:0}

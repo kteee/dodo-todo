@@ -104,6 +104,23 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo }: Props) {
           onChange={(e) => setText(e.target.value)}
         />
 
+        <label className="qa-label" htmlFor="qa-cat">
+          카테고리 <span className="opt">(선택)</span>
+        </label>
+        <div className="qa-selbox">
+          <select id="qa-cat" value={cat} onChange={(e) => setCat(e.target.value)}>
+            <option value="">카테고리 없음</option>
+            {cats.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <svg className="chev" viewBox="0 0 12 12" aria-hidden="true">
+            <polyline points="2.5,4.5 6,8 9.5,4.5" />
+          </svg>
+        </div>
+
         <p className="qa-label">
           날짜 <span className="opt">(선택)</span>
         </p>
@@ -158,23 +175,6 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo }: Props) {
             날짜 없음
           </button>
           <span className="qa-help">날짜를 정하지 않으면 보관함에 저장됩니다.</span>
-        </div>
-
-        <label className="qa-label" htmlFor="qa-cat">
-          카테고리 <span className="opt">(선택)</span>
-        </label>
-        <div className="qa-selbox">
-          <select id="qa-cat" value={cat} onChange={(e) => setCat(e.target.value)}>
-            <option value="">카테고리 없음</option>
-            {cats.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-          <svg className="chev" viewBox="0 0 12 12" aria-hidden="true">
-            <polyline points="2.5,4.5 6,8 9.5,4.5" />
-          </svg>
         </div>
 
         <div className="acts">
