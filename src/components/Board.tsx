@@ -401,8 +401,26 @@ export function Column({ bucket, label, dnum, cls = "", empty, hint, holiday, to
  * 접이식 메모 섹션 (일간·주간·월간 맨 아래): "▾ 메모" 제목, 접으면 첫 줄 미리보기.
  * memo = <MemoBox bare autoGrow …/>
  */
+const MEMO_OPEN_PREF = "dodo:memoOpen"; // 메모 섹션 펼침 여부 — 일·주·월 공통, 새로고침해도 유지
+
 export function MemoSection({ memo, memoText = "", label = "메모" }: { memo: ReactNode; memoText?: string; label?: string }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpenState] = useState(() => {
+    try {
+      return localStorage.getItem(MEMO_OPEN_PREF) !== "0";
+    } catch {
+      return true;
+    }
+  });
+  const setOpen = (fn: (o: boolean) => boolean) =>
+    setOpenState((o) => {
+      const v = fn(o);
+      try {
+        localStorage.setItem(MEMO_OPEN_PREF, v ? "1" : "0");
+      } catch {
+        /* 저장 못 해도 이번 화면에서는 적용됨 */
+      }
+      return v;
+    });
   const preview = memoText.trim().split("\n")[0]?.slice(0, 40) ?? "";
   return (
     <div className={"dv-done dv-memo" + (open ? "" : " closed")}>
