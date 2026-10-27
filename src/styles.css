@@ -1888,7 +1888,3 @@ html, body, #root{height:auto}
   .board.v-week.vert .card .del{margin-left:auto}
 }
 @media (min-width:641px){ .board.v-week.vert .card .chip, .board.v-week.vert .card .txt, .board.v-week.vert .card .check{align-self:center} }
-/* 일간·보관함 카드: 두 줄 — 체크+제목 위, 칩은 제목 아래(제목 시작선에 맞춤) */
-.dayview .card{grid-template-areas:"check text" ". chip"}
-.dayview .card.nocat{grid-template-areas:"check text"}
-.dayview .card .chip{align-self:start; justify-self:start}
