@@ -1648,3 +1648,11 @@ html, body, #root{height:auto}
 .board.v-week.wide .colhead .dow, .board.v-week:not(.wide):not(.vert) .colhead .dow{order:1}
 /* 주간 2줄 보기 요일 칸 높이: 가로 보기(44px)와 동일 */
 @media (min-width:641px){ .board.v-week:not(.wide):not(.vert) .colhead{height:44px} }
+/* 주간 세로 보기: 날짜 칸과 할 일 영역 사이 세로 구분선, 하루 최소 높이 */
+@media (min-width:641px){
+  .board.v-week.vert > .col{gap:0; min-height:140px; padding-top:0; padding-bottom:0}
+  .board.v-week.vert > .col:nth-child(-n+4){padding-bottom:0}
+  .board.v-week.vert > .col:nth-child(n+5){padding-top:0}
+  .board.v-week.vert .colhead{padding:14px 0 0}
+  .board.v-week.vert .colbody{border-left:1px solid var(--line); padding:14px 0 16px 24px}
+}
