@@ -1617,3 +1617,5 @@ html, body, #root{height:auto}
 .daymemo textarea:focus{border-top-color:var(--ink-3); border-bottom-color:var(--ink-3)}
 /* 메모 입력칸 기본 높이: 비어 있어도 4줄 정도 (내용이 넘치면 자동 확장) */
 .daymemo textarea{min-height:112px}
+/* 주간 2줄 보기: 머리의 "N개의 할 일" 숨김 (가로 보기와 동일) */
+.board.v-week:not(.wide):not(.vert) .colhead .n{display:none}
