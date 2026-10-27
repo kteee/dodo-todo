@@ -1656,3 +1656,5 @@ html, body, #root{height:auto}
   .board.v-week.vert .colhead{padding:14px 0 0}
   .board.v-week.vert .colbody{border-left:1px solid var(--line); padding:14px 0 16px 24px}
 }
+/* 주간 가로 보기 할 일 영역 세로 크기: 360 → 480px */
+@media (min-width:641px){ .board.v-week.wide, .board.v-week.wide.no-inbox{grid-auto-rows:minmax(480px, auto)} }
