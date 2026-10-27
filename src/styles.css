@@ -1893,3 +1893,14 @@ html, body, #root{height:auto}
 .dayview .card .chip{grid-area:chip; align-self:center; justify-self:end; margin:0 26px 0 0}
 .dayview .txt{align-self:center; padding-right:0}
 .dayview .check{align-self:center; margin-top:0}
+/* 일간·보관함 카드(테두리 상자 그대로): 체크 · 카테고리 칸(목록별 폭) · 제목. 칩 없는 카드도 같은 제목 시작선 */
+.dayview .card, .dayview .card.nocat{grid-template-columns:auto var(--catw, 0px) minmax(0,1fr); grid-template-areas:"check chip text"; column-gap:10px; align-items:center}
+.dayview .card .chip{grid-area:chip; justify-self:start; align-self:center; max-width:100%; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.dayview .card .txt{grid-area:text; padding-right:28px}
+/* 간격은 체크 뒤 10px + (카테고리 칸이 있을 때만) 칸 뒤 10px */
+.dayview .card, .dayview .card.nocat{column-gap:0}
+.dayview .card .check{margin-right:10px}
+.dayview .card .txt{margin-left:var(--catgap, 0px)}
+.dayview .list.grouped .card .txt{margin-left:0}
+/* 카테고리별 보기는 그룹 머리가 카테고리를 보여 주니 칸 접음 */
+.dayview .list.grouped .card, .dayview .list.grouped .card.nocat{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
