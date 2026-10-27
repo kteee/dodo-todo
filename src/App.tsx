@@ -596,7 +596,7 @@ export default function App() {
   );
 
   /* 보기 옵션 — 제목 줄 ‹ 오늘 › 오른쪽 끝 (주간이면 배치 전환도) */
-  const viewOptions = ready && !inboxOpen ? (
+  const viewOptions = ready ? (
     <OptionsMenu
       label="보기 옵션"
       className="viewopt"
@@ -609,7 +609,7 @@ export default function App() {
         </svg>
       }
     >
-      {view === "week" && !phone && (
+      {view === "week" && !inboxOpen && !phone && (
         <>
           <p className="optsec">주간 보기</p>
           <div className="optseg" role="radiogroup" aria-label="주간 보기">
@@ -739,7 +739,7 @@ export default function App() {
             onToday={inboxOpen ? undefined : goToday}
             options={viewOptions}
             action={
-              ready && !inboxOpen ? (
+              ready ? (
                 <button className="quickadd" onClick={quickAdd} title="할 일 추가">
                   <svg viewBox="0 0 16 16" aria-hidden="true">
                     <path d="M8 3v10M3 8h10" />
