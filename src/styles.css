@@ -1936,4 +1936,5 @@ html[data-cat="dot"] .board.v-week.vert .card, html[data-cat="none"] .board.v-we
 /* 카테고리별 보기는 칩을 숨기니 두 칸 */
 .dayview .list.grouped .card, .board.v-week.vert .list.grouped .card{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
 /* 칩 → 제목 간격 10 → 9px (체크 → 칩은 10px 그대로) */
-.dayview .card .chip, .board.v-week.vert .card .chip{margin-right:-1px}
+.dayview .card:not(.nocat) .txt, .board.v-week.vert .card:not(.nocat) .txt{margin-left:-1px}
+html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped .card .txt{margin-left:0}
