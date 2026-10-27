@@ -81,9 +81,9 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
             </button>
           ))}
           </div>
-          {/* 보기 옵션(조절 슬라이더) — 보관함 탭 바로 오른쪽 */}
-          {options && <div className="viewopts">{options}</div>}
         </div>
+        {/* 보기 옵션(조절 슬라이더) — ‹ 오늘 › 줄 오른쪽 끝 */}
+        {options && <div className="viewopts">{options}</div>}
       </div>
     </div>
   );
