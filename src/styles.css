@@ -1784,3 +1784,5 @@ html, body, #root{height:auto}
 .dayview .composer, .dayview .add{margin-bottom:14px}
 /* 일간: 등록 줄 아래 선은 없음 (메모 섹션 간격은 유지) */
 .dayview .dv-done{border-top:0; padding-top:0; margin-top:16px}
+/* 일간: 할 일 라벨은 아래 선만 */
+.dayview .dv-head{border-top:0; padding-top:0}
