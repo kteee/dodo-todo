@@ -455,7 +455,7 @@ interface DayViewProps {
  * 드롭은 이 영역 어디에 놓아도 이 날짜로 (data-drop)
  */
 /**
- * 일간·보관함 카드의 카테고리 칸 폭: 이 목록에서 가장 긴 카테고리 이름에 맞춤(최대 55px, 넘으면 말줄임).
+ * 일간·보관함 카드의 카테고리 칸 폭: 이 목록에서 가장 긴 카테고리 이름에 맞춤(최대 58px, 넘으면 말줄임).
  * 칩이 없는 카드도 같은 칸을 비워 둬서 제목 시작선이 맞음. 카테고리가 하나도 없으면 칸·간격 0
  */
 function catColumn(items: Todo[], ctx: BoardCtx): CSSProperties {
@@ -464,7 +464,7 @@ function catColumn(items: Todo[], ctx: BoardCtx): CSSProperties {
     const c = ctx.catOf(t.categoryId);
     if (c) longest = Math.max(longest, [...c.name].length);
   }
-  const w = longest ? Math.min(55, Math.ceil(longest * 11.5 + 14)) : 0;
+  const w = longest ? Math.min(58, Math.ceil(longest * 11.5 + 14)) : 0;
   return { "--catw": w + "px", "--catgap": (w ? 10 : 0) + "px" } as CSSProperties;
 }
 
