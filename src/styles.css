@@ -1713,3 +1713,5 @@ html, body, #root{height:auto}
 .ws-day .ws-dow{order:1; font-size:0.75rem}
 .ws-day .ws-num{order:0; width:26px; height:26px; font-size:0.8125rem}
 .ws-day:hover .ws-num{background:var(--panel)}
+/* 일간 카드 체크박스: 글자 중앙과 1px 어긋나던 것 보정 */
+.dayview .check{margin-top:1px}
