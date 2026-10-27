@@ -1921,3 +1921,5 @@ html[data-cat="none"] .board.v-week.wide .card:not(.nocat):not(.is-editing) .txt
   .board.v-week.vert .card .txt{grid-area:text}
 }
 html[data-cat="dot"] .board.v-week.vert .card, html[data-cat="none"] .board.v-week.vert .card{grid-template-areas:"check text"; row-gap:0}
+/* 주간 세로 보기 (이름 표시): 칩은 제목 아래 줄, 제목 시작선에 맞춤 */
+@media (min-width:641px){ .board.v-week.vert .card{grid-template-areas:"check text" ". chip"} .board.v-week.vert .card.nocat{grid-template-areas:"check text"} }
