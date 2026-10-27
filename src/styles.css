@@ -1692,4 +1692,4 @@ html, body, #root{height:auto}
 .ws-day.sel.sat .ws-num, .ws-day.sel.sun .ws-num{color:var(--ink-rev)}
 /* 일간 등록 칸: 카테고리 선택을 입력 글자 왼쪽에 (행의 칩 자리와 같은 x) */
 .dayview .composer{padding:0 12px 0 40px; gap:10px}
-.dayview .composer select.catsel{order:0; margin:0}
+.dayview .composer select.catsel{order:-1; margin:0}
