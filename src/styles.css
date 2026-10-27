@@ -1742,3 +1742,7 @@ html, body, #root{height:auto}
 .weekstrip{border-top:0; border-bottom:0; gap:4px}
 .ws-day{border-radius:8px}
 .ws-day.sel{background:var(--panel)}
+/* 일간 날짜 줄: 윗선 하나, 오늘은 검정 원 숫자 */
+.weekstrip{border-top:1px solid var(--line)}
+.ws-day.today .ws-num, .ws-day.sel.today .ws-num, .ws-day.today:hover .ws-num{background:var(--ink); color:var(--ink-rev); font-weight:600; box-shadow:none}
+.ws-day.today.sat .ws-num, .ws-day.today.sun .ws-num{color:var(--ink-rev)}
