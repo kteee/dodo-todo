@@ -3,7 +3,7 @@ import type { View } from "./TopNav";
 
 /** 보기 전환: 일간·주간·월간 + 보관함(날짜 없는 할 일). 보관함은 보기와 별개 토글이라 따로 받음 */
 export type Tab = View | "inbox";
-/** 주간 배치: 두 줄(월~목/금~일) · 가로(7일 한 줄) · 세로(7일을 위에서 아래로) */
+/** 주간 보기: 두 줄(월~목/금~일) · 가로(7일 한 줄) · 세로(7일을 위에서 아래로) */
 export type WeekLayout = "rows" | "wide" | "vert";
 export const WEEK_LAYOUTS: [WeekLayout, string][] = [
   ["rows", "2줄"],

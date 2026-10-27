@@ -27,7 +27,7 @@ import { TEXT_SIZES, effectiveTextSize, readTextSize, saveTextSize, type TextSiz
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const MEMO_PREF = "dodo:showMemo";
-const WEEK_LAYOUT_PREF = "dodo:weekLayout"; // 주간 배치: rows(두 줄, 기본) · wide(가로 한 줄) · vert(세로)
+const WEEK_LAYOUT_PREF = "dodo:weekLayout"; // 주간 보기: rows(두 줄, 기본) · wide(가로 한 줄) · vert(세로)
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
   try {
@@ -610,8 +610,8 @@ export default function App() {
     >
       {view === "week" && !phone && (
         <>
-          <p className="optsec">주간 배치</p>
-          <div className="optseg" role="radiogroup" aria-label="주간 배치">
+          <p className="optsec">주간 보기</p>
+          <div className="optseg" role="radiogroup" aria-label="주간 보기">
             {WEEK_LAYOUTS.map(([l, name]) => (
               <button key={l} role="radio" aria-checked={weekLayout === l} onClick={() => setWeekLayout(l)}>
                 {name}
