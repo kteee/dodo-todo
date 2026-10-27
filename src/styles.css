@@ -1791,3 +1791,5 @@ html, body, #root{height:auto}
 .dayview .composer select.catsel{order:1; align-self:flex-start; margin:0 0 0 2px}
 /* 일간: 할 일 영역과 메모 사이 간격 */
 .dayview .dv-done{margin-top:36px}
+/* 주간 2줄 보기 기본 세로 크기: 300 → 340px */
+@media (min-width:641px){ .board.v-week:not(.wide):not(.vert), .board.v-week:not(.wide):not(.vert).no-inbox{grid-auto-rows:minmax(340px, auto)} }
