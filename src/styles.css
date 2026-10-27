@@ -1725,3 +1725,8 @@ html, body, #root{height:auto}
 .dayview .check{align-self:center; margin-top:0}
 .dayview .card .chip{align-self:start}
 .dayview .txt{align-self:center}
+/* 주간 카드(2줄·가로·세로 공통): 체크박스를 글자 줄 세로 가운데에 */
+.board.v-week .card{align-items:center}
+.board.v-week .check{align-self:center; margin-top:0}
+.board.v-week .card .chip{align-self:start}
+.board.v-week .txt{align-self:center}
