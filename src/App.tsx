@@ -44,7 +44,7 @@ const CAT_SHOW_PREF = "dodo:catShow"; // 할 일의 카테고리 표시: chip(�
 type CatShow = "chip" | "dot" | "none";
 const CAT_SHOWS: [CatShow, string][] = [
   ["chip", "이름"],
-  ["dot", "색"],
+  ["dot", "색상"],
   ["none", "숨김"],
 ];
 const GROUP_PREF = "dodo:groupBy";
@@ -668,7 +668,7 @@ export default function App() {
         <div className="optseg" role="radiogroup" aria-label="카테고리 표시">
           {monthNow
             ? ([
-                ["dot", "색"],
+                ["dot", "색상"],
                 ["none", "숨김"],
               ] as const).map(([v, name]) => (
                 <button key={v} role="radio" aria-checked={monthCatShow === v} onClick={() => setMonthCatShow(v)}>
