@@ -437,7 +437,6 @@ interface DayViewProps {
  * 드롭은 이 영역 어디에 놓아도 이 날짜로 (data-drop)
  */
 export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoText = "" }: DayViewProps) {
-  const [doneOpen, setDoneOpen] = useState(true);
   const items = ctx.shown(dateKey);
   const open = items.filter((t) => !t.done);
   const done = items.filter((t) => t.done);
@@ -465,25 +464,9 @@ export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoT
       <div className="dv-head">
         할 일<span className="n">{open.length}</span>
       </div>
-      <CardList bucket={dateKey} items={open} ctx={ctx} />
+      {/* 완료한 항목은 따로 접지 않고 목록 맨 아래로 */}
+      <CardList bucket={dateKey} items={[...open, ...done]} ctx={ctx} />
       <Composer bucket={dateKey} ctx={ctx} label="＋ 새로운 할 일 추가" />
-      {done.length > 0 && (
-        <div className={"dv-done" + (doneOpen ? "" : " closed")}>
-          <button className="dv-tg" aria-expanded={doneOpen} onClick={() => setDoneOpen((o) => !o)}>
-            <svg viewBox="0 0 12 12" aria-hidden="true">
-              <polyline points="2.5,4.5 6,8 9.5,4.5" />
-            </svg>
-            완료한 일<span className="n">{done.length}</span>
-          </button>
-          {doneOpen && (
-            <ul className="list">
-              {done.map((t) => (
-                <Card key={t.id} t={t} ctx={ctx} />
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
       {memo && <MemoSection memo={memo} memoText={memoText} label="일간 메모" />}
     </section>
   );
