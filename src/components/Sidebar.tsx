@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { Category, Todo } from "../lib/types";
-import { NO_CAT, PALETTE } from "../lib/types";
+import { NO_CAT, PALETTE, nextColor } from "../lib/types";
 import { DOW, addDays, key, mondayOf, parse } from "../lib/date";
 import { NOCAT_COLOR, cvar } from "./Board";
 import { holidayName } from "../lib/holidays";
@@ -81,97 +81,121 @@ export function MiniCal({ calMonth, onMonth, weekStart, showWeek, selected, toda
   );
 }
 
-interface CatEditorProps {
-  c: Category;
-  /** 이 카테고리에 남은(모든) 할 일 수 — 삭제 확인 문구용 */
+interface CatModalProps {
+  /** 넘기면 "카테고리 상세"(수정·삭제), 없으면 새로 만들기 */
+  cat?: Category;
+  /** 이 카테고리의 할 일 수(완료 포함) — 삭제 확인 문구용 */
   count: number;
-  onRename: (name: string) => void;
-  onRecolor: (color: string) => void;
-  onDelete: () => void;
+  /** 지금 쓰이는 색들 — 새 카테고리 기본 색을 겹치지 않게 고름 */
+  usedColors: string[];
+  onSave: (name: string, color: string) => void;
+  onDelete?: () => void;
   onClose: () => void;
 }
 
-function CatEditor({ c, count, onRename, onRecolor, onDelete, onClose }: CatEditorProps) {
-  const [name, setName] = useState(c.name);
+/**
+ * 카테고리 만들기·상세 모달 (할 일 모달과 같은 모양): 이름 / 색상 / [삭제] … 취소 · 저장.
+ * Enter = 저장, Esc·배경·× = 닫기. 삭제는 확인 팝업을 거침
+ */
+function CatModal({ cat, count, usedColors, onSave, onDelete, onClose }: CatModalProps) {
+  const [name, setName] = useState(cat?.name ?? "");
+  const [color, setColor] = useState(cat?.color ?? nextColor(usedColors));
   const [confirming, setConfirming] = useState(false);
-  const latest = useRef({ name, onRename });
-  latest.current = { name, onRename };
   const input = useRef<HTMLInputElement>(null);
-
-  // 패널이 어떤 식으로 닫히든(Esc, 다른 곳 클릭) 입력한 이름은 저장
-  useEffect(
-    () => () => {
-      const v = latest.current.name.trim();
-      if (v) latest.current.onRename(v);
-    },
-    [],
-  );
-  useEffect(() => {
-    const el = input.current;
-    if (el) {
-      el.focus();
-      el.setSelectionRange(el.value.length, el.value.length);
-    }
-  }, []);
-
-  const commit = () => {
+  useEffect(() => input.current?.focus(), []);
+  const save = () => {
     const v = name.trim();
-    if (v) onRename(v);
+    if (!v) return;
+    onSave(v.slice(0, 14), color);
+    onClose();
   };
-  // 버튼을 눌러도 입력칸 포커스를 뺏지 않게
-  const keep = (e: PointerEvent) => e.preventDefault();
-
-  return (
-    <div className="cated">
-      <input
-        ref={input}
-        type="text"
-        className="cated-name"
-        maxLength={14}
-        aria-label="카테고리 이름"
-        autoComplete="off"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        onBlur={commit}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            onClose();
-          }
+  return createPortal(
+    <div
+      className="modal-back"
+      onPointerDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== "Escape" || confirming) return;
+        e.nativeEvent.stopPropagation();
+        onClose();
+      }}
+    >
+      <form
+        className="modal quickadd-modal catmodal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cm-title"
+        onSubmit={(e) => {
+          e.preventDefault();
+          save();
         }}
-      />
-      <div className="swatches">
-        {PALETTE.map((p) => (
-          <button
-            key={p}
-            className={"sw" + (c.color === p ? " on" : "")}
-            style={cvar(p)}
-            aria-label={"색 " + p.slice(6)}
-            onPointerDown={keep}
-            onClick={() => onRecolor(p)}
-          />
-        ))}
-      </div>
-      {/* 저장은 Enter나 바깥 클릭으로. 삭제는 확인 팝업을 거침 */}
-      <div className="cated-foot">
-        <button className="cdel" onPointerDown={keep} onClick={() => setConfirming(true)}>
-          삭제
-        </button>
-      </div>
-      {confirming && (
+      >
+        <div className="qa-head">
+          <h4 id="cm-title">{cat ? "카테고리 상세" : "새 카테고리"}</h4>
+          <button type="button" className="qa-close" aria-label="닫기" onClick={onClose}>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />
+            </svg>
+          </button>
+        </div>
+        <label className="qa-label" htmlFor="cm-name">
+          이름
+        </label>
+        <input
+          id="cm-name"
+          ref={input}
+          type="text"
+          className="qa-text"
+          placeholder="카테고리 이름"
+          maxLength={14}
+          autoComplete="off"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <p className="qa-label">색상</p>
+        <div className="cm-swatches" role="radiogroup" aria-label="색상">
+          {PALETTE.map((p) => (
+            <button
+              key={p}
+              type="button"
+              role="radio"
+              aria-checked={color === p}
+              className={"sw" + (color === p ? " on" : "")}
+              style={cvar(p)}
+              aria-label={"색 " + p.slice(6)}
+              onClick={() => setColor(p)}
+            />
+          ))}
+        </div>
+        <div className="acts">
+          {cat && onDelete && (
+            <button type="button" className="cm-del" onClick={() => setConfirming(true)}>
+              삭제
+            </button>
+          )}
+          <button type="button" className="cancel" onClick={onClose}>
+            취소
+          </button>
+          <button type="submit" className="primary" disabled={!name.trim()}>
+            저장
+          </button>
+        </div>
+      </form>
+      {confirming && cat && onDelete && (
         <ConfirmDialog
-          title={`[${c.name}] 카테고리를 삭제할까요?`}
-          body={
-            count
-              ? "해당 카테고리의 하위 할 일은 [카테고리 없음]으로 이동합니다."
-              : "해당 카테고리에 등록된 할 일이 없습니다."
-          }
+          title={`[${cat.name}] 카테고리를 삭제할까요?`}
+          body={count ? "해당 카테고리의 하위 할 일은 [카테고리 없음]으로 이동합니다." : "해당 카테고리에 등록된 할 일이 없습니다."}
           confirmLabel="삭제"
-          onConfirm={onDelete}
+          onConfirm={() => {
+            onDelete();
+            onClose();
+          }}
           onCancel={() => setConfirming(false)}
         />
       )}
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -226,7 +250,7 @@ interface CategoriesProps {
   editCat: string | null;
   setEditCat: (id: string | null) => void;
   dropCat: string | null;
-  onAdd: (name: string) => void;
+  onAdd: (name: string, color?: string) => void;
   onUpdate: (id: string, patch: Partial<Pick<Category, "name" | "color">>) => void;
   /** 드래그로 순서 바꾸기: prevId 바로 뒤로 (null = 맨 앞) */
   onMove: (id: string, prevId: string | null) => void;
@@ -359,92 +383,33 @@ function useCatReorder(listRef: React.RefObject<HTMLUListElement>, onMove: (id: 
 }
 
 export function Categories(p: CategoriesProps) {
+  /** 새 카테고리 모달 */
   const [adding, setAdding] = useState(false);
-  const openRef = useRef<HTMLLIElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const catDrag = useCatReorder(listRef, p.onMove);
   const { editCat, setEditCat } = p;
-
-  // 수정 패널 바깥을 누르면 닫힘 → 패널이 닫힐 때 이름이 자동 저장됨 (색은 고를 때 바로 저장)
-  useEffect(() => {
-    if (!editCat) return;
-    const onDown = (e: globalThis.PointerEvent) => {
-      const t = e.target as Element;
-      if (t.closest?.(".modal-back")) return; // 삭제 확인 팝업(body 에 포털)은 패널의 일부
-      if (!openRef.current?.contains(t)) setEditCat(null);
-    };
-    document.addEventListener("pointerdown", onDown);
-    return () => document.removeEventListener("pointerdown", onDown);
-  }, [editCat, setEditCat]);
-  const [newName, setNewName] = useState("");
-  const committed = useRef(false); // Enter 직후 따라오는 blur로 두 번 추가되지 않게
-  const commitNew = () => {
-    if (committed.current) return;
-    committed.current = true;
-    const v = newName.trim();
-    if (v) p.onAdd(v);
-    setNewName("");
-    setAdding(false);
-  };
+  const editing = editCat ? (p.cats.find((c) => c.id === editCat) ?? null) : null;
 
   const totals = new Map<string, number>(); // 완료 포함 — 삭제 확인 문구용
   for (const t of p.todos) if (t.categoryId) totals.set(t.categoryId, (totals.get(t.categoryId) ?? 0) + 1);
+  const used = p.cats.map((c) => c.color);
 
   return (
     <section>
-      {/* 제목 줄 오른쪽 끝 ＋ 로 추가 (보관함과 같은 모양). 입력칸은 제목 바로 아래 */}
+      {/* 제목 줄 오른쪽 끝 ＋ → 새 카테고리 모달 */}
       <div className="sect-head">
         <p className="sect-label">카테고리</p>
-        <button
-          className="sect-add"
-          aria-label="카테고리 추가"
-          title="카테고리 추가"
-          onClick={() => {
-            committed.current = false;
-            setAdding(true);
-          }}
-        >
+        <button className="sect-add" aria-label="카테고리 추가" title="카테고리 추가" onClick={() => setAdding(true)}>
           <svg viewBox="0 0 12 12" aria-hidden="true">
             <path d="M6 2.2v7.6M2.2 6h7.6" />
           </svg>
         </button>
       </div>
-      {adding && (
-        <form
-          className="catform"
-          onSubmit={(e) => {
-            e.preventDefault();
-            commitNew(); // Enter는 창 포커스와 상관없이 바로 추가
-          }}
-        >
-          <input
-            type="text"
-            placeholder="카테고리 이름"
-            maxLength={14}
-            autoComplete="off"
-            autoFocus
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onBlur={() => {
-              // 바깥을 누르면: 쓴 게 있으면 추가하고 닫음, 비어 있으면 그냥 닫음 (할 일 입력과 같은 규칙)
-              if (!document.hasFocus()) return; // 다른 창으로 전환한 경우엔 그대로 둠
-              commitNew();
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") {
-                setNewName("");
-                setAdding(false);
-              }
-            }}
-          />
-        </form>
-      )}
       <ul className="cats" ref={listRef}>
         {p.cats.map((c, i) => (
           <li
             key={c.id}
             data-cat={c.id}
-            ref={p.editCat === c.id ? openRef : undefined}
             className={catDrag?.id === c.id ? "ghosted" : ""}
             // 끌고 있는 항목을 뺀 순서에서 at 번째 앞에 자리표시 → 그 자리를 비워 둠
             style={
@@ -454,31 +419,17 @@ export function Categories(p: CategoriesProps) {
             }
             data-i={i}
           >
-            {/* 항목을 누르면 바로 수정 패널이 열리고, 다시 누르면 닫힘 */}
+            {/* 누르면 카테고리 상세 모달 (이름·색 수정, 삭제) */}
             <button
-              className={"cat" + (p.editCat === c.id ? " on" : "") + (p.dropCat === c.id ? " drop" : "")}
+              className={"cat" + (editCat === c.id ? " on" : "") + (p.dropCat === c.id ? " drop" : "")}
               data-drop={"cat:" + c.id}
-              aria-expanded={p.editCat === c.id}
-              aria-label={c.name + " 카테고리 수정"}
-              onClick={() => p.setEditCat(p.editCat === c.id ? null : c.id)}
+              aria-haspopup="dialog"
+              aria-label={c.name + " 카테고리 상세"}
+              onClick={() => setEditCat(c.id)}
             >
               <span className="dot" style={cvar(c.color)} />
               <span className="nm">{c.name}</span>
             </button>
-            {p.editCat === c.id && (
-              <CatEditor
-                key={c.id}
-                c={c}
-                count={totals.get(c.id) ?? 0}
-                onRename={(name) => p.onUpdate(c.id, { name })}
-                onRecolor={(color) => p.onUpdate(c.id, { color })}
-                onDelete={() => {
-                  p.setEditCat(null);
-                  p.onDelete(c.id);
-                }}
-                onClose={() => p.setEditCat(null)}
-              />
-            )}
           </li>
         ))}
         {/* 카테고리 없는 할 일: 카드를 끌어다 놓으면 카테고리가 떼어짐 (수정할 건 없음) */}
@@ -489,6 +440,18 @@ export function Categories(p: CategoriesProps) {
           </div>
         </li>
       </ul>
+      {adding && <CatModal count={0} usedColors={used} onSave={(name, color) => p.onAdd(name, color)} onClose={() => setAdding(false)} />}
+      {editing && (
+        <CatModal
+          key={editing.id}
+          cat={editing}
+          count={totals.get(editing.id) ?? 0}
+          usedColors={used}
+          onSave={(name, color) => p.onUpdate(editing.id, { name, color })}
+          onDelete={() => p.onDelete(editing.id)}
+          onClose={() => setEditCat(null)}
+        />
+      )}
     </section>
   );
 }

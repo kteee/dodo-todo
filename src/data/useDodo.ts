@@ -256,9 +256,9 @@ export function useDodo(repo: Repo | null) {
           },
         });
       },
-      addCategory(name: string) {
+      addCategory(name: string, color?: string) {
         const list = catsRef.current;
-        const c: Category = { id: uuid(), name, color: nextColor(list.map((x) => x.color)), rank: rankLast(list) };
+        const c: Category = { id: uuid(), name, color: color ?? nextColor(list.map((x) => x.color)), rank: rankLast(list) };
         setCats([...list, c]);
         save(() => repo.insertCategory(c));
       },

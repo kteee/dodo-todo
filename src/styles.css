@@ -1938,3 +1938,11 @@ html[data-cat="dot"] .board.v-week.vert .card, html[data-cat="none"] .board.v-we
 /* 칩 → 제목 간격 10 → 9px (체크 → 칩은 10px 그대로) */
 .dayview .card:not(.nocat) .txt, .board.v-week.vert .card:not(.nocat) .txt{margin-left:-1px}
 html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped .card .txt{margin-left:0}
+/* 카테고리 만들기·상세 모달 (할 일 모달 모양 그대로) */
+.catmodal{width:min(440px, 100%)}
+.catmodal .qa-text{margin-bottom:22px}
+.cm-swatches{display:grid; grid-template-columns:repeat(8, 1fr); gap:10px; margin:2px 0 4px}
+.cm-swatches .sw{width:100%; aspect-ratio:1/1; border-radius:50%; background:var(--c)}
+.cm-swatches .sw.on{box-shadow:0 0 0 2px var(--bg), 0 0 0 3.5px var(--ink)}
+.catmodal .acts .cm-del{margin-right:auto; border:0; color:var(--ink-3); padding:0 6px}
+.catmodal .acts .cm-del:hover{color:var(--sun); background:var(--panel)}
