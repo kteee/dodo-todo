@@ -564,6 +564,14 @@ export default function App() {
     );
   }
 
+  // ※ 훅이라 아래 조기 return(로그아웃·마이페이지)보다 위에 둬야 함 — 아니면 로그인 직후 React 오류 #300
+  // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식). 월간 "색" = 원래 점 그대로(chip)
+  // 월간·주간 가로는 칸이 작아 원래 색 점만 씀 → "색상 · 숨김" 둘만 (둘이 같은 설정을 씀)
+  const monthNow = !inboxOpen && (view === "month" || (view === "week" && weekLayout === "wide" && !phone));
+  useEffect(() => {
+    document.documentElement.dataset.cat = monthNow ? (monthCatShow === "none" ? "none" : "chip") : catShow;
+  }, [catShow, monthCatShow, monthNow]);
+
   // 로그아웃 상태: 헤더만 두고, 달력·보드 없이 깨끗한 화면에 로그인 안내만
   if (auth.status === "out") {
     return (
@@ -642,12 +650,6 @@ export default function App() {
   );
 
   /* 보기 옵션 — 제목 줄 ‹ 오늘 › 오른쪽 끝 (주간이면 배치 전환도) */
-  // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식). 월간 "색" = 원래 점 그대로(chip)
-  // 월간·주간 가로는 칸이 작아 원래 색 점만 씀 → "색상 · 숨김" 둘만 (둘이 같은 설정을 씀)
-  const monthNow = !inboxOpen && (view === "month" || (view === "week" && weekLayout === "wide" && !phone));
-  useEffect(() => {
-    document.documentElement.dataset.cat = monthNow ? (monthCatShow === "none" ? "none" : "chip") : catShow;
-  }, [catShow, monthCatShow, monthNow]);
 
   const viewOptions = ready ? (
     <OptionsMenu

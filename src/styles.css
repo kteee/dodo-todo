@@ -1964,3 +1964,8 @@ html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped
 /* 할 일 상세 모달의 삭제 (카테고리 상세와 같은 모양: 왼쪽 끝, 글자 버튼) */
 .quickadd-modal .acts .cm-del{margin-right:auto; border:0; color:var(--ink-3); padding:0 6px}
 .quickadd-modal .acts .cm-del:hover{color:var(--sun); background:var(--panel)}
+/* 사이드바 240px / 간격 50px — 헤더도 같은 2열이라 검색창이 보드 왼쪽 끝 위에 맞음 */
+@media (min-width:1181px){
+  .app{grid-template-columns:240px minmax(0,1fr); gap:50px}
+  .topnav{grid-template-columns:240px minmax(0,1fr); column-gap:50px}
+}
