@@ -1693,3 +1693,16 @@ html, body, #root{height:auto}
 /* 일간 등록 칸: 카테고리 선택을 입력 글자 왼쪽에 (행의 칩 자리와 같은 x) */
 .dayview .composer{padding:0 12px 0 40px; gap:10px}
 .dayview .composer select.catsel{order:-1; margin:0}
+/* 일간 카드: 다시 테두리 상자. 카테고리 칩 위, 체크+글자 아래 (주간 카드와 같은 구성) */
+.dayview .list{gap:6px}
+.dayview .card{
+  grid-template-columns:auto minmax(0,1fr); grid-template-areas:"chip chip" "check text"; gap:3px 10px; align-items:start;
+  border:1px solid var(--line-2); border-radius:8px; padding:10px 12px; background:var(--bg);
+}
+.dayview .card:hover{background:var(--bg); border-color:var(--line-2)}
+.dayview .card.is-editing{background:var(--bg); border-color:var(--ink-3)}
+.dayview .card .chip{grid-area:chip; justify-self:start; margin:0}
+.dayview .check{margin-top:2px}
+.dayview .txt{padding-right:28px}
+/* 등록 칸: 칩 자리 들여쓰기 없이 카드와 같은 왼쪽 선 */
+.dayview .composer{padding:6px 0 0}
