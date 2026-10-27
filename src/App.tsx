@@ -596,9 +596,11 @@ export default function App() {
       label="보기 옵션"
       className="viewopt"
       icon={
-        /* 깔때기(필터) 아이콘 */
+        /* 조절 슬라이더 아이콘: 가로 선 두 개 + 손잡이 */
         <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path d="M2 3h12l-4.6 5.4V12.5L6.6 14V8.4z" />
+          <path d="M2 5h12M2 11h12" />
+          <circle cx="10" cy="5" r="1.9" fill="var(--bg)" />
+          <circle cx="6" cy="11" r="1.9" fill="var(--bg)" />
         </svg>
       }
     >
