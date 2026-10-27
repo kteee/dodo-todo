@@ -1855,3 +1855,5 @@ html, body, #root{height:auto}
 .side .d.today, .board.v-week .col.is-today .colhead .dnum, .mcell.is-today .mnum{border-radius:6px}
 /* 주간 2줄 보기: 요일 머리 선과 첫 할 일 사이 6 → 10px */
 @media (min-width:641px){ .board.v-week:not(.wide):not(.vert) .colhead{margin-bottom:10px} }
+/* 주간 2줄·가로: 오늘 숫자도 다른 날과 같은 16px (둥근 네모는 26px) */
+.board.v-week:not(.vert) .col.is-today .colhead .dnum{width:26px; height:26px; font-size:1rem}
