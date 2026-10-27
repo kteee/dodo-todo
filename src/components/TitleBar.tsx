@@ -25,7 +25,7 @@ interface Props {
   onToday?: () => void;
   /** 제목 왼쪽에 붙는 버튼(사이드바 펼치기, 폰 서랍 열기) */
   left?: ReactNode;
-  /** ‹ 오늘 › 줄 오른쪽 끝의 보기 옵션 버튼(팝업) */
+  /** 보기 전환 오른쪽의 보기 옵션 버튼(팝업) */
   options?: ReactNode;
 }
 
@@ -66,9 +66,9 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
           {sub && <p className="sub">{sub}</p>}
         </div>
       </div>
-      {options && <div className="viewopts">{options}</div>}
       <div className="tr">
-        <div className="vswitch" role="tablist" aria-label="보기 전환">
+        <div className="tr-top">
+          <div className="vswitch" role="tablist" aria-label="보기 전환">
           {TABS.map(([t, name]) => (
             <button key={t} role="tab" aria-selected={tab === t} onClick={() => onTab(t)}>
               {t === "inbox" && (
@@ -80,6 +80,9 @@ export function TitleBar({ tab, onTab, inboxCount, title, sub, onStep, onToday, 
               {t === "inbox" && inboxCount > 0 && <span className="cnt">{inboxCount}</span>}
             </button>
           ))}
+          </div>
+          {/* 보기 옵션(조절 슬라이더) — 보관함 탭 바로 오른쪽 */}
+          {options && <div className="viewopts">{options}</div>}
         </div>
       </div>
     </div>

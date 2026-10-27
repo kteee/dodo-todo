@@ -1267,7 +1267,7 @@ html, body, #root{height:auto}
   .titlebar{display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:auto auto; row-gap:14px; column-gap:24px; align-items:center}
   .titlebar .tl, .titlebar .tr{display:contents}
   .titlebar .h1row{grid-column:1; grid-row:1}
-  .titlebar .vswitch{grid-column:2; grid-row:1; justify-self:end}
+  .titlebar .tr-top{grid-column:2; grid-row:1; justify-self:end; display:flex; align-items:center; gap:8px}
   .titlebar .row2{grid-column:1; grid-row:2}
 }
 .titlebar .row2{display:flex; align-items:center; gap:14px; margin-top:14px}
@@ -1554,9 +1554,9 @@ html, body, #root{height:auto}
 .viewopt .optbtn svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linejoin:round; stroke-linecap:round} /* 조절 슬라이더 — 헤더 ⚙와 구분 */
 .viewopt .optpop{right:0; left:auto}
 @media (min-width:821px){
-  .titlebar .viewopts{grid-column:2; grid-row:2; justify-self:end; align-self:center; margin-top:14px}
   .titlebar .lswitch{display:none}
 }
 @media (max-width:820px){
-  .titlebar .viewopts{margin-left:auto}
+  .titlebar .tr-top{display:flex; align-items:center; gap:8px; width:100%}
+  .titlebar .tr-top .vswitch{flex:1}
 }
