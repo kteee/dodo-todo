@@ -1908,3 +1908,5 @@ html[data-cat="none"] .card .txt::before{display:none}
   .board.v-week.vert .card, .board.v-week.vert .card.nocat{border:1px solid var(--line-2); border-radius:8px; padding:9px 12px; background:var(--bg)}
   .board.v-week.vert .card:hover{background:var(--bg); border-color:var(--line-2)}
 }
+/* 일간·보관함: 카테고리 없는 카드는 어느 표시 방식이든 한 줄 (빈 칩 줄 + 간격 4px 없음) */
+.dayview .card.nocat{grid-template-areas:"check text"; row-gap:0}
