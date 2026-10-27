@@ -1778,3 +1778,7 @@ html, body, #root{height:auto}
 .ws-day.today .ws-dow{color:var(--ink); font-weight:600}
 .ws-day.sel, .ws-day.sel:hover{background:var(--panel-2)}
 .ws-day.sel .ws-dot.on{background:var(--ink)}
+/* 일간: "할 일 N" 라벨 위·아래 선, 내용(목록+등록) 아래에도 선 */
+.dayview .dv-head{margin:0 0 10px; padding:10px 4px; border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+.dayview .dv-done{margin-top:0; padding-top:14px; border-top:1px solid var(--line)}
+.dayview .composer, .dayview .add{margin-bottom:14px}
