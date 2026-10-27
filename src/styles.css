@@ -1912,3 +1912,12 @@ html[data-cat="none"] .card .txt::before{display:none}
 .dayview .card.nocat{grid-template-areas:"check text"; row-gap:0}
 /* 숨김: 주간 가로·월간의 원래 점 규칙보다 우선 */
 html[data-cat="none"] .board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::before, html[data-cat="none"] .card.mini .txt::before{display:none}
+/* 주간 세로 보기 (카테고리 표시 "이름"): 칩은 제목 위 — 다른 보기 카드와 같은 두 줄 구성 */
+@media (min-width:641px){
+  .board.v-week.vert .card{display:grid; grid-template-columns:auto minmax(0,1fr); grid-template-areas:"chip chip" "check text"; gap:4px 10px; align-items:center}
+  .board.v-week.vert .card.nocat{grid-template-areas:"check text"; row-gap:0}
+  .board.v-week.vert .card .chip{grid-area:chip; justify-self:start; align-self:start}
+  .board.v-week.vert .card .check{grid-area:check}
+  .board.v-week.vert .card .txt{grid-area:text}
+}
+html[data-cat="dot"] .board.v-week.vert .card, html[data-cat="none"] .board.v-week.vert .card{grid-template-areas:"check text"; row-gap:0}
