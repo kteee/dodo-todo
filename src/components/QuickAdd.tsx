@@ -109,7 +109,7 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo, initialDate,
         />
 
         <label className="qa-label" htmlFor="qa-cat">
-          카테고리 <span className="opt">(선택)</span>
+          카테고리
         </label>
         <div className="qa-selbox">
           <select id="qa-cat" value={cat} onChange={(e) => setCat(e.target.value)}>
@@ -126,7 +126,7 @@ export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo, initialDate,
         </div>
 
         <p className="qa-label">
-          날짜 <span className="opt">(선택)</span>
+          날짜
         </p>
         {/* 날짜 칸: 누르면 브라우저 달력. 실제 입력은 칸 아래에 숨겨 두고 달력 위치만 잡음 */}
         <div className="qa-datebox">
