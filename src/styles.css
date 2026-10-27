@@ -1869,3 +1869,5 @@ html, body, #root{height:auto}
 .dayview .list.grouped > .grouphead:not(:first-child){padding-top:8px}
 /* 일간·보관함 카테고리별 보기: "할 일" 라벨 → 첫 카테고리 12px */
 .dayview .list.grouped > .grouphead:first-child{padding-top:2px}
+/* 주간 가로 보기 카테고리별: 첫 카테고리 윗여백 10 → 4px */
+.board.v-week.wide .list.grouped > .grouphead:first-child{padding-top:4px}
