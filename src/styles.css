@@ -1596,7 +1596,7 @@ html, body, #root{height:auto}
 /* 주간 두 줄 보기 머리: 가로 보기처럼 "월 26" 한 줄로 작게. 오른쪽엔 오늘·개수 */
 @media (min-width:641px){
   .board.v-week:not(.wide):not(.vert) .colhead{
-    display:flex; align-items:center; gap:7px; grid-template-rows:none; height:38px; padding-top:0; padding-bottom:0; margin-bottom:6px;
+    display:flex; align-items:center; gap:7px; grid-template-rows:none; height:42px; padding-top:0; padding-bottom:0; margin-bottom:6px;
   }
   .board.v-week:not(.wide):not(.vert) .colhead .dow{order:0; font-size:0.75rem}
   .board.v-week:not(.wide):not(.vert) .colhead .dnum{order:1; font-size:1rem; font-weight:600; line-height:1}
