@@ -1617,3 +1617,6 @@ html, body, #root{height:auto}
 @media (min-width:641px){
   .board.v-week:not(.wide):not(.vert) > .col:nth-child(7){border-right:1px solid var(--line)}
 }
+/* 메모 입력칸: 위·아래 선 (좌우는 없음) */
+.daymemo textarea{border-top:1px solid var(--line); border-bottom:1px solid var(--line); border-radius:0; padding:10px 4px; margin-top:6px}
+.daymemo textarea:focus{border-top-color:var(--ink-3); border-bottom-color:var(--ink-3)}
