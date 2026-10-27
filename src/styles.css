@@ -1910,3 +1910,5 @@ html[data-cat="none"] .card .txt::before{display:none}
 }
 /* 일간·보관함: 카테고리 없는 카드는 어느 표시 방식이든 한 줄 (빈 칩 줄 + 간격 4px 없음) */
 .dayview .card.nocat{grid-template-areas:"check text"; row-gap:0}
+/* 숨김: 주간 가로·월간의 원래 점 규칙보다 우선 */
+html[data-cat="none"] .board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::before, html[data-cat="none"] .card.mini .txt::before{display:none}
