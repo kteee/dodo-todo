@@ -1910,3 +1910,5 @@ html, body, #root{height:auto}
 .dayview .list.grouped > .grouphead:not(:first-child){border-top:1px solid var(--line)}
 /* 끌어서 옮길 때 자리 표시 */
 .dayview .list > .ph{border-bottom:1px solid var(--line); background:var(--panel)}
+/* 일간·보관함 카테고리별 보기: 그룹 머리가 카테고리를 말해 주니 카테고리 칸은 접음 — 제목 시작선 통일 */
+.dayview .list.grouped .card, .dayview .list.grouped .card.nocat{grid-template-columns:18px minmax(0,1fr); grid-template-areas:"check text"; column-gap:12px}
