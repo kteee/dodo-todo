@@ -1382,11 +1382,6 @@ html, body, #root{height:auto}
 .mcell .card.mini .del{right:0; font-size:0.75rem}
 .mmore{align-self:flex-start; padding:2px 0; font-size:0.6875rem; color:var(--ink-3)}
 .mmore:hover{color:var(--ink)}
-.mlegend{display:flex; align-items:center; gap:18px; padding:14px 2px 0; font-size:0.71875rem; color:var(--ink-2)}
-.mlegend > span{display:inline-flex; align-items:center; gap:6px}
-.mlegend .lg-today{width:8px; height:8px; border-radius:50%; background:var(--ink)}
-.mlegend .lg-check{width:11px; height:11px; fill:none; stroke:var(--ink-2); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
-.mlegend .r{margin-left:auto; color:var(--ink-3)}
 /* 폰: 주간은 7일 세로 쌓기(기존대로), 칸은 둥근 테두리 카드. 월간 격자는 가로 스크롤 */
 @media (max-width:640px){
   .board.v-week, .board.v-week.no-inbox{display:flex; flex-direction:column; gap:14px; border-top:0; min-height:0}
@@ -1620,3 +1615,5 @@ html, body, #root{height:auto}
 /* 메모 입력칸: 위·아래 선 (좌우는 없음) */
 .daymemo textarea{border-top:1px solid var(--line); border-bottom:1px solid var(--line); border-radius:0; padding:10px 4px; margin-top:6px}
 .daymemo textarea:focus{border-top-color:var(--ink-3); border-bottom-color:var(--ink-3)}
+/* 메모 입력칸 기본 높이: 비어 있어도 4줄 정도 (내용이 넘치면 자동 확장) */
+.daymemo textarea{min-height:112px}

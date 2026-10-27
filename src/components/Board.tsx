@@ -641,19 +641,6 @@ export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKe
           );
         })}
       </div>
-      <div className="mlegend">
-        <span>
-          <i className="lg-today" aria-hidden="true" />
-          오늘
-        </span>
-        <span>
-          <svg className="lg-check" viewBox="0 0 12 12" aria-hidden="true">
-            <polyline points="2,6.3 4.7,9 10,3.2" />
-          </svg>
-          완료한 일
-        </span>
-        <span className="r">날짜 없는 할 일은 보관함에 있어요.</span>
-      </div>
     </div>
   );
 }
