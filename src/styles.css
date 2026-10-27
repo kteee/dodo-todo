@@ -1853,3 +1853,5 @@ html, body, #root{height:auto}
 .qa-quick .qa-help{margin:0 0 0 4px !important; font-size:0.78125rem !important; color:var(--ink-3) !important}
 /* 오늘 표시: 검정 동그라미 → 둥근 네모 (미니 달력·주간 머리·월간 칸 공통) */
 .side .d.today, .board.v-week .col.is-today .colhead .dnum, .mcell.is-today .mnum{border-radius:6px}
+/* 주간 2줄 보기: 요일 머리 선과 첫 할 일 사이 6 → 10px */
+@media (min-width:641px){ .board.v-week:not(.wide):not(.vert) .colhead{margin-bottom:10px} }
