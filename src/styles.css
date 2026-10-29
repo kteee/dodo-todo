@@ -1973,5 +1973,6 @@ html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped
 .daymemo textarea, .daymemo textarea:focus{border:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); border-radius:0; background:var(--bg); padding:12px 4px; box-shadow:none}
 /* 일간: 할 일 영역과 메모 사이 36 → 52px */
 .dayview .dv-done.dv-memo{margin-top:52px}
-/* 로고 글자: 얇은 Outfit (글꼴 설정과 상관없이 항상 같음) */
-.topnav .logo .word, :root[data-font] .topnav .logo .word{font-family:"Outfit", var(--sans); font-weight:300; font-size:1.25rem; letter-spacing:-.03em}
+/* 로고: 둥근 Varela Round + 옆에 테두리 없는 회색 대문자 TODOLIST (글꼴 설정과 상관없이 항상 같음) */
+.topnav .logo .word, :root[data-font] .topnav .logo .word{font-family:"Varela Round", "Noto Sans KR", sans-serif; font-weight:400; font-size:1.25rem; letter-spacing:-.01em}
+.topnav .logo .tag, :root[data-font] .topnav .logo .tag{font-family:"Noto Sans KR", sans-serif; font-size:0.6875rem; font-weight:400; letter-spacing:.06em; color:var(--ink-3); border:0; padding:0; margin-left:-2px; position:relative; top:1.8px}
