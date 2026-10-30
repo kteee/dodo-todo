@@ -1,5 +1,6 @@
 /* Layout: 상단 헤더(로고 · 뷰 전환) + 좌측 사이드(달력 · 카테고리) + 보드(일/주/월, 맨 오른쪽 언젠가 할 일 칸) */
 :root{
+  /* 어두운 화면(아래 두 곳)은 눈부심 줄이게: 완전 검정·흰색 대신 살짝 띄운 바탕(#1e1f21)과 부드러운 글자(#cfd0d2) */
   --bg:#ffffff;
   --panel:#f9f9f9;
   --panel-2:#f1f1f1;
@@ -27,16 +28,16 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#191919; --panel:#1f1f1f; --panel-2:#2a2a2a; --line:#2e2e2e; --line-2:#3d3d3d;
-    --ink:#e8e8e8; --ink-2:#a1a1a1; --ink-3:#858585; --ink-rev:#1a1a1a;
+    --bg:#1e1f21; --panel:#242527; --panel-2:#2c2d30; --line:#323336; --line-2:#3f4044;
+    --ink:#cfd0d2; --ink-2:#9b9c9f; --ink-3:#7d7e82; --ink-rev:#1e1f21;
     --sat:#86aaf0; --sun:#ea8277;
     --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#191919; --panel:#1f1f1f; --panel-2:#2a2a2a; --line:#2e2e2e; --line-2:#3d3d3d;
-  --ink:#e8e8e8; --ink-2:#a1a1a1; --ink-3:#858585; --ink-rev:#1a1a1a;
+  --bg:#1e1f21; --panel:#242527; --panel-2:#2c2d30; --line:#323336; --line-2:#3f4044;
+  --ink:#cfd0d2; --ink-2:#9b9c9f; --ink-3:#7d7e82; --ink-rev:#1e1f21;
   --sat:#86aaf0; --sun:#ea8277;
   --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.4);
   color-scheme:dark;
@@ -1969,10 +1970,50 @@ html[data-cat="dot"] .card .txt, html[data-cat="none"] .card .txt, .list.grouped
   .app{grid-template-columns:240px minmax(0,1fr); gap:50px}
   .topnav{grid-template-columns:240px minmax(0,1fr); column-gap:50px}
 }
-/* 메모칸: 흰 바탕 + 위아래 선 (주간·월간 칸 선과 같은 색) */
-.daymemo textarea, .daymemo textarea:focus{border:0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); border-radius:0; background:var(--bg); padding:12px 4px; box-shadow:none}
+/* 메모칸: 흰 바탕 + 네모 테두리 네 변 (주간·월간 칸 선과 같은 색, 모서리 없음) */
+.daymemo textarea, .daymemo textarea:focus{border:1px solid var(--line); border-radius:0; background:var(--bg); padding:12px 14px; box-shadow:none}
 /* 일간: 할 일 영역과 메모 사이 36 → 52px */
 .dayview .dv-done.dv-memo{margin-top:52px}
 /* 로고: 둥근 Varela Round + 옆에 테두리 없는 회색 대문자 TODOLIST (글꼴 설정과 상관없이 항상 같음) */
 .topnav .logo .word, :root[data-font] .topnav .logo .word{font-family:"Varela Round", "Noto Sans KR", sans-serif; font-weight:400; font-size:1.125rem; letter-spacing:-.01em}
 .topnav .logo .tag, :root[data-font] .topnav .logo .tag{font-family:"Noto Sans KR", sans-serif; font-size:0.6875rem; font-weight:400; letter-spacing:.06em; color:var(--ink-3); border:0; padding:0; margin-left:-2px; position:relative; top:1px}
+/* 주간 세로 보기: 날짜 칸 폭 120 → 160px */
+@media (min-width:641px){ .board.v-week.vert .colhead{flex-basis:160px} }
+/* 일간: "할 일" 라벨 ↔ 첫 할 일 간격 10 → 14px */
+.dayview .dv-head{margin-bottom:14px}
+/* 주간 세로: "＋ 할 일 추가" 아래 여백 줄임 — 칸 아래 여백 16 → 6px, 빈 날 최소 높이 140 → 150px */
+@media (min-width:641px){
+  .board.v-week.vert .colbody{padding-bottom:6px}
+  .board.v-week.vert > .col{min-height:150px}
+}
+/* ══ 할 일 상자 디테일 통일 (일간 · 주간 2줄 · 주간 세로) — 배치는 칸 폭대로 다르지만 상자·체크·칩은 같은 물건으로 ══
+   테두리 #d9d9d9 → #e8e8e8(칸 선 색), 모서리 8px, 상자 사이 6px, 체크 16px(모서리 4px), 칩 11px · 3px 6px · 모서리 4px.
+   제목 글자(일간·세로 14px, 2줄 13px)와 안쪽 여백(일간·세로 10px 12px, 2줄 8px)은 칸 폭에 맞춰 그대로 */
+.dayview .card, .dayview .card:hover,
+.board.v-week:not(.wide) .card, .board.v-week:not(.wide) .card:hover{border-color:var(--line); border-radius:8px}
+.dayview .list, .board.v-week:not(.wide) .list{gap:6px}
+.dayview .card .check, .board.v-week:not(.wide) .card .check{width:16px; height:16px; border-radius:4px}
+.dayview .card .chip, .board.v-week:not(.wide) .card .chip{font-size:0.6875rem; padding:3px 6px; border-radius:4px}
+@media (min-width:641px){
+  .board.v-week.vert .card, .board.v-week.vert .card.nocat{padding:10px 12px}
+  .board.v-week.vert .card .chip{font-size:0.6875rem; padding:3px 6px}
+}
+/* 크기 통일에 맞춰 일간 체크(16px)·칩(17px)을 제목 첫 줄 가운데로 다시 맞춤 */
+.dayview .card .check{margin-top:calc((0.875rem * 1.5 - 16px) / 2)}
+.dayview .card .chip{margin-top:calc((0.875rem * 1.5 - 17px) / 2)}
+@media (min-width:641px){ .board.v-week.vert .card .chip{margin-top:calc((0.875rem * 1.5 - 17px) / 2)} } /* 세로 칩도 제목 첫 줄 가운데 */
+/* 일간: 칩은 다시 제목 위로 (주간 2줄과 같은 배치) — [칩] / [체크 · 제목]. 칩은 체크박스 왼쪽 끝에 맞춤, 칩 → 제목 5px */
+.dayview .card{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"chip chip" "check text"; gap:5px 10px}
+.dayview .card .chip{align-self:start; justify-self:start; margin:0}
+.dayview .card:not(.nocat) .txt{margin-left:0}
+.dayview .card.nocat,
+html[data-cat="dot"] .dayview .card, html[data-cat="none"] .dayview .card,
+.dayview .list.grouped .card{grid-template-areas:"check text"; row-gap:0}
+/* 일간·주간·월간 전환 바탕, 일간 날짜 줄에서 고른 날 바탕: rgb(242,244,246) (밝은 화면만 — 어두운 화면은 그대로) */
+.vswitch{background:#f2f4f6}
+.ws-day.sel, .ws-day.sel:hover{background:#f2f4f6}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .vswitch,
+  :root:not([data-theme="light"]) .ws-day.sel, :root:not([data-theme="light"]) .ws-day.sel:hover{background:var(--panel-2)}
+}
+:root[data-theme="dark"] .vswitch, :root[data-theme="dark"] .ws-day.sel, :root[data-theme="dark"] .ws-day.sel:hover{background:var(--panel-2)}

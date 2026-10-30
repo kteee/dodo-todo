@@ -22,12 +22,12 @@ import { Search } from "./components/Search";
 import { Toasts } from "./components/Toasts";
 import { SiteFooter } from "./components/SiteFooter";
 import { isPhone, usePhone } from "./hooks/usePhone";
-import { FONTS, readFont, saveFont, type Font } from "./lib/font";
+import { THEMES, readTheme, saveTheme, type Theme } from "./lib/theme";
 import { TEXT_SIZES, effectiveTextSize, readTextSize, saveTextSize, type TextSize } from "./lib/textSize";
 
 /* 보기 옵션은 이 브라우저에만 기억 (사생활 모드 등에서 저장이 막혀도 기본값으로 동작) */
 const MEMO_PREF = "dodo:showMemo";
-const WEEK_LAYOUT_PREF = "dodo:weekLayout"; // 주간 보기: rows(두 줄, 기본) · wide(가로 한 줄) · vert(세로)
+const WEEK_LAYOUT_PREF = "dodo:weekLayout"; // 주간 보기: rows(두 줄, 기본) · wide(가로 한 줄). 예전에 고른 vert(세로)는 rows 로
 const DEFAULT_VIEW_PREF = "dodo:defaultView"; // 앱을 열 때 처음 보여줄 보기
 function readView(): View {
   try {
@@ -40,13 +40,9 @@ function readView(): View {
   return isPhone() ? "day" : "week";
 }
 const HIDE_DONE_PREF = "dodo:hideDone";
-const CAT_SHOW_PREF = "dodo:catShow"; // 할 일의 카테고리 표시: chip(기본) · dot · none
-type CatShow = "chip" | "dot" | "none";
-const CAT_SHOWS: [CatShow, string][] = [
-  ["chip", "이름"],
-  ["dot", "색상"],
-  ["none", "숨김"],
-];
+// 할 일의 카테고리: 보이기(기본) · 숨기기 — "none" 이면 숨김, 그 밖(예전 chip·dot 포함)은 보이기.
+// 모양은 칸 폭이 정함: 넓은 칸(일간·주간 2줄)은 이름 칩, 좁은 칸(주간 가로·월간)은 색 점
+const CAT_SHOW_PREF = "dodo:catShow";
 const GROUP_PREF = "dodo:groupBy";
 const FOLD_PREF = "dodo:sideFolded"; // 왼쪽 달력·카테고리 접기 (날짜 줄 왼쪽 버튼)
 function readPref(k: string, fallback: boolean) {
@@ -94,7 +90,7 @@ export default function App() {
       /* 저장 못 해도 이번 화면에서는 적용됨 */
     }
   };
-  const [font, setFontState] = useState<Font>(readFont);
+  const [theme, setThemeState] = useState<Theme>(readTheme);
   /** 글자 크기: 저장된 선택(없으면 자동). 자동일 땐 화면 폭으로 "보통/크게" 중 지금 적용된 쪽을 표시 */
   const [textSize, setTextSizeState] = useState<TextSize | null>(readTextSize);
   const [view, setView] = useState<View>(defaultView);
@@ -102,34 +98,17 @@ export default function App() {
   const [weekStart, setWeekStart] = useState(() => mondayOf(today));
   const [calMonth, setCalMonth] = useState(() => firstOfMonth(today));
   const [hideDone, setHideDoneState] = useState(() => readPref(HIDE_DONE_PREF, false));
-  const [catShow, setCatShowState] = useState<CatShow>(() => {
+  const [showCat, setShowCatState] = useState(() => {
     try {
-      const v = localStorage.getItem(CAT_SHOW_PREF);
-      return v === "dot" || v === "none" ? v : "chip";
+      return localStorage.getItem(CAT_SHOW_PREF) !== "none";
     } catch {
-      return "chip";
+      return true;
     }
   });
-  const setCatShow = (v: CatShow) => {
-    setCatShowState(v);
+  const setShowCat = (v: boolean) => {
+    setShowCatState(v);
     try {
-      localStorage.setItem(CAT_SHOW_PREF, v);
-    } catch {
-      /* 저장 못 해도 이번 화면에서는 적용됨 */
-    }
-  };
-  // 월간은 칸이 작아 원래 색 점만 씀 → 색 · 숨김 둘만, 따로 저장
-  const [monthCatShow, setMonthCatShowState] = useState<"dot" | "none">(() => {
-    try {
-      return localStorage.getItem(CAT_SHOW_PREF + ":month") === "none" ? "none" : "dot";
-    } catch {
-      return "dot";
-    }
-  });
-  const setMonthCatShow = (v: "dot" | "none") => {
-    setMonthCatShowState(v);
-    try {
-      localStorage.setItem(CAT_SHOW_PREF + ":month", v);
+      localStorage.setItem(CAT_SHOW_PREF, v ? "chip" : "none");
     } catch {
       /* 저장 못 해도 이번 화면에서는 적용됨 */
     }
@@ -146,7 +125,7 @@ export default function App() {
   const [weekLayout, setWeekLayoutState] = useState<WeekLayout>(() => {
     try {
       const v = localStorage.getItem(WEEK_LAYOUT_PREF);
-      return v === "wide" || v === "vert" ? v : "rows";
+      return v === "wide" ? v : "rows";
     } catch {
       return "rows";
     }
@@ -565,12 +544,10 @@ export default function App() {
   }
 
   // ※ 훅이라 아래 조기 return(로그아웃·마이페이지)보다 위에 둬야 함 — 아니면 로그인 직후 React 오류 #300
-  // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식). 월간 "색" = 원래 점 그대로(chip)
-  // 월간·주간 가로는 칸이 작아 원래 색 점만 씀 → "색상 · 숨김" 둘만 (둘이 같은 설정을 씀)
-  const monthNow = !inboxOpen && (view === "month" || (view === "week" && weekLayout === "wide" && !phone));
+  // 모양은 CSS가 html[data-cat] 로 바꿈 (글자 크기 설정과 같은 방식). chip = 칸 폭에 맞는 원래 모양(이름 칩 / 월간·가로는 색 점)
   useEffect(() => {
-    document.documentElement.dataset.cat = monthNow ? (monthCatShow === "none" ? "none" : "chip") : catShow;
-  }, [catShow, monthCatShow, monthNow]);
+    document.documentElement.dataset.cat = showCat ? "chip" : "none";
+  }, [showCat]);
 
   // 로그아웃 상태: 헤더만 두고, 달력·보드 없이 깨끗한 화면에 로그인 안내만
   if (auth.status === "out") {
@@ -676,22 +653,16 @@ export default function App() {
           </div>
         </>
       )}
-        <p className="optsec">카테고리 표시</p>
-        <div className="optseg" role="radiogroup" aria-label="카테고리 표시">
-          {monthNow
-            ? ([
-                ["dot", "색상"],
-                ["none", "숨김"],
-              ] as const).map(([v, name]) => (
-                <button key={v} role="radio" aria-checked={monthCatShow === v} onClick={() => setMonthCatShow(v)}>
-                  {name}
-                </button>
-              ))
-            : CAT_SHOWS.map(([v, name]) => (
-                <button key={v} role="radio" aria-checked={catShow === v} onClick={() => setCatShow(v)}>
-                  {name}
-                </button>
-              ))}
+        <p className="optsec">카테고리</p>
+        <div className="optseg" role="radiogroup" aria-label="카테고리">
+          {([
+            [true, "보이기"],
+            [false, "숨기기"],
+          ] as const).map(([v, name]) => (
+            <button key={name} role="radio" aria-checked={showCat === v} onClick={() => setShowCat(v)}>
+              {name}
+            </button>
+          ))}
         </div>
         <p className="optsec">보기 옵션</p>
         <label className="togg">
@@ -730,17 +701,16 @@ export default function App() {
             </button>
           ))}
         </div>
-        <p className="optsec">글꼴</p>
-        <div className="optseg" role="radiogroup" aria-label="글꼴">
-          {FONTS.map(([f, name]) => (
+        <p className="optsec">화면</p>
+        <div className="optseg" role="radiogroup" aria-label="화면">
+          {THEMES.map(([t, name]) => (
             <button
-              key={f}
+              key={t}
               role="radio"
-              aria-checked={font === f}
-              data-font-preview={f}
+              aria-checked={theme === t}
               onClick={() => {
-                setFontState(f);
-                saveFont(f);
+                setThemeState(t);
+                saveTheme(t);
               }}
             >
               {name}
