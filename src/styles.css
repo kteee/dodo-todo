@@ -2017,3 +2017,10 @@ html[data-cat="dot"] .dayview .card, html[data-cat="none"] .dayview .card,
   :root:not([data-theme="light"]) .ws-day.sel, :root:not([data-theme="light"]) .ws-day.sel:hover{background:var(--panel-2)}
 }
 :root[data-theme="dark"] .vswitch, :root[data-theme="dark"] .ws-day.sel, :root[data-theme="dark"] .ws-day.sel:hover{background:var(--panel-2)}
+/* 제목에 연도가 붙어 주간 제목이 길어짐 → 제목 줄은 오른쪽 칸 밑까지 써서 한 줄로 (＋ 버튼은 같은 줄 오른쪽 끝에 그대로) */
+@media (min-width:821px){
+  .titlebar .h1row{grid-column:1 / -1; grid-row:1}
+  .titlebar h1{white-space:nowrap}
+}
+/* 폰: ＋ 할 일 추가(글자 포함 약 81px)와 제목이 겹치지 않게 제목 오른쪽 여백 44 → 96px */
+@media (max-width:820px){ .titlebar .h1row{padding-right:96px} }

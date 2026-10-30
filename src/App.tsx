@@ -413,7 +413,9 @@ export default function App() {
     const a = weekStart;
     const b = addDays(weekStart, 6);
     const { total, done } = stats(weekKeys);
-    title = `${a.getMonth() + 1}월 ${a.getDate()}일 – ${b.getMonth() + 1}월 ${b.getDate()}일`;
+    // 일간·월간처럼 연도부터. 해를 넘기는 주는 끝 날짜에도 연도 (2026년 12월 28일 – 2027년 1월 3일)
+    const endYear = b.getFullYear() !== a.getFullYear() ? `${b.getFullYear()}년 ` : "";
+    title = `${a.getFullYear()}년 ${a.getMonth() + 1}월 ${a.getDate()}일 – ${endYear}${b.getMonth() + 1}월 ${b.getDate()}일`;
     sub = progress(total, done);
   } else {
     const y = calMonth.getFullYear();
