@@ -1,15 +1,9 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePhone } from "../hooks/usePhone";
 
 import type { Account } from "../data/auth";
 
 export type View = "day" | "week" | "month";
-
-const VIEWS: [View, string][] = [
-  ["day", "일간"],
-  ["week", "주간"],
-  ["month", "월간"],
-];
 
 interface Props {
   /** 헤더 오른쪽 검색창 */
@@ -50,28 +44,8 @@ export function GoogleButton({ onClick, size = "md" }: { onClick: () => void; si
   );
 }
 
-/** 일간·주간·월간 전환 (예전 날짜 줄용 — 지금은 TitleBar 의 보기 전환을 씀) */
-export function ViewSwitch({ view, onView }: { view: View; onView: (v: View) => void }) {
-  return (
-    <div
-      className="views"
-      role="tablist"
-      aria-label="보기 전환"
-      style={{ "--i": VIEWS.findIndex(([v]) => v === view) } as CSSProperties}
-    >
-      {/* 선택된 버튼 뒤로 미끄러지는 진한 칸 */}
-      <span className="views-thumb" aria-hidden="true" />
-      {VIEWS.map(([v, label]) => (
-        <button key={v} role="tab" aria-selected={view === v} onClick={() => onView(v)}>
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 /**
- * 헤더(88px): 왼쪽 로고 "DoDo [TODOLIST]", 오른쪽 검색 · ＋ 할 일 추가(팝업) · 설정 · 계정
+ * 헤더(78px): 왼쪽 로고 "DoDo [TODOLIST]", 오른쪽 검색 · ＋ 할 일 추가(팝업) · 설정 · 계정
  */
 export function TopNav({ search, dateText, onQuickAdd, options, account, isLocal, menuOpen, setMenuOpen, onSignOut }: Props) {
   // 폰: 검색창 대신 돋보기 버튼. 누르면 아래 줄에 검색창이 열리고 바로 입력 가능

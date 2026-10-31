@@ -308,7 +308,8 @@ export default function App() {
   const pickDay = (k: string) => {
     setSelected(k);
     setWeekStart(mondayOf(parse(k)));
-    if (view === "month") setCalMonth(firstOfMonth(parse(k)));
+    // 고른 날의 달을 사이드바 미니 달력에도 보여줌 (일간 날짜 줄에서 지난달로 넘어가도 달력이 따라감)
+    setCalMonth(firstOfMonth(parse(k)));
   };
   const step = (n: number) => {
     if (view === "day") {
@@ -431,29 +432,35 @@ export default function App() {
   /* ── 보드 ── */
   let board: ReactNode;
   if (view === "week") {
-    board = (
-      <>
-        {Array.from({ length: 7 }, (_, i) => {
-          const d = addDays(weekStart, i);
-          const k = key(d);
-          const hol = holidayName(k);
-          return (
-            <Column
-              key={k}
-              bucket={k}
-              label={DOW[i]}
-              dnum={d.getDate()}
-              holiday={hol}
-              // 공휴일은 일요일처럼 빨간 글씨
-              cls={(k === todayKey ? " is-today" : "") + (hol || i === 6 ? " sun" : i === 5 ? " sat" : "")}
-              topRight={k === todayKey ? "오늘" : d.getDate() === 1 ? `${d.getMonth() + 1}월` : undefined}
-              countStyle="open"
-              ctx={ctx}
-            />
-          );
-        })}
-      </>
-    );
+    const cols = Array.from({ length: 7 }, (_, i) => {
+      const d = addDays(weekStart, i);
+      const k = key(d);
+      const hol = holidayName(k);
+      return (
+        <Column
+          key={k}
+          bucket={k}
+          label={DOW[i]}
+          dnum={d.getDate()}
+          holiday={hol}
+          // 공휴일은 일요일처럼 빨간 글씨
+          cls={(k === todayKey ? " is-today" : "") + (hol || i === 6 ? " sun" : i === 5 ? " sat" : "")}
+          topRight={k === todayKey ? "오늘" : d.getDate() === 1 ? `${d.getMonth() + 1}월` : undefined}
+          countStyle="open"
+          ctx={ctx}
+        />
+      );
+    });
+    // 가로 보기(PC): 종이 다이어리처럼 토·일을 한 칸에 위아래로 → 6칸이라 평일 칸이 넓어짐
+    board =
+      weekLayout === "wide" && !phone ? (
+        <>
+          {cols.slice(0, 5)}
+          <div className="weekend">{cols.slice(5)}</div>
+        </>
+      ) : (
+        <>{cols}</>
+      );
   } else if (view === "day") {
     board = (
       <DayView
@@ -846,6 +853,8 @@ export default function App() {
           cats={cats}
           defaultDate={todayKey}
           initialDate={quickDate ?? undefined}
+          // 보관함 화면에서 열면 "날짜 없음"이 골라진 채로
+          startNoDate={inboxOpen && !quickDate}
           onAdd={(b, text, catId) => {
             ctx.onAdd(b, text, catId);
             // 적은 날이 화면에 없으면 그 날 일간으로 가서 보여줌. 보관함이면 보관함 탭으로

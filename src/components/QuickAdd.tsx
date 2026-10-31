@@ -14,6 +14,8 @@ interface Props {
   todo?: Todo;
   /** 새로 추가할 때 처음 골라 둘 날 (월간 칸의 ＋). 없으면 오늘 */
   initialDate?: string;
+  /** 새로 추가할 때 처음부터 "날짜 없음"으로 (보관함 화면에서 열 때) */
+  startNoDate?: boolean;
   /** 할 일 상세에서만: 삭제 (카드의 × 와 같음 — 되돌리기 알림이 뜸) */
   onDelete?: () => void;
 }
@@ -34,12 +36,12 @@ const shortDate = (k: string) => {
  * 제목 줄 "＋ 할 일 추가" 팝업: 할 일 / 날짜(선택 — 날짜 없음·오늘 빠른 선택, 안 정하면 보관함) / 카테고리.
  * Enter·저장 → 그 날(또는 보관함)에 추가되고 닫힘. body 에 포털로 그림. Esc·배경 클릭·× = 닫기
  */
-export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo, initialDate, onDelete }: Props) {
+export function QuickAdd({ cats, defaultDate, onAdd, onClose, todo, initialDate, startNoDate, onDelete }: Props) {
   const today = defaultDate;
   const [text, setText] = useState(todo?.text ?? "");
   const [date, setDate] = useState(todo ? (todo.date ?? "") : (initialDate ?? defaultDate));
   /** 날짜 없음 = 보관함으로 */
-  const [noDate, setNoDate] = useState(todo ? !todo.date : false);
+  const [noDate, setNoDate] = useState(todo ? !todo.date : !!startNoDate);
   const [cat, setCat] = useState(todo?.categoryId ?? "");
   const input = useRef<HTMLInputElement>(null);
   const picker = useRef<HTMLInputElement>(null);

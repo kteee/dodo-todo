@@ -304,7 +304,8 @@ function CardList({ bucket, items, mini, ctx }: { bucket: Bucket; items: Todo[];
     nodes.push(<Card key={t.id} t={t} mini={mini} ctx={ctx} />);
   };
 
-  const grouped = ctx.groupBy && !mini;
+  // 월간(mini)도 묶음 — 묶음 제목은 작게 (CSS .card.mini 와 같은 크기)
+  const grouped = ctx.groupBy;
   if (grouped) {
     for (const g of groupItems(ctx, items)) {
       const gid = g.cat?.id ?? NO_CAT;
@@ -343,9 +344,9 @@ function groupItems(ctx: BoardCtx, items: Todo[]) {
 }
 
 /** 화면에 보이는 순서 그대로 (카테고리별 보기면 그룹 순서) — 드롭 위치 계산에 씀 */
-export function displayOrder(ctx: BoardCtx, b: Bucket, mini: boolean) {
+export function displayOrder(ctx: BoardCtx, b: Bucket, _mini: boolean) {
   const items = ctx.shown(b);
-  if (!ctx.groupBy || mini) return items;
+  if (!ctx.groupBy) return items;
   return groupItems(ctx, items).flatMap((g) => g.items);
 }
 
@@ -486,9 +487,12 @@ export function DayView({ dateKey, todayKey, weekStart, onPick, ctx, memo, memoT
       <div className="dv-head">
         할 일<span className="n">{open.length}</span>
       </div>
-      {/* 완료한 항목은 따로 접지 않고 목록 맨 아래로 */}
-      <CardList bucket={dateKey} items={[...open, ...done]} ctx={ctx} />
-      <Composer bucket={dateKey} ctx={ctx} label="＋ 새로운 할 일 추가" />
+      {/* 할 일 영역: 최소 높이를 두고 아래 선으로 메모와 구분. 완료한 항목은 따로 접지 않고 목록 맨 아래로 */}
+      <div className="dv-todos">
+        {/* 입력은 목록 위에 — 스크롤 없이 바로 적게 */}
+        <Composer bucket={dateKey} ctx={ctx} label="＋ 새로운 할 일 추가" />
+        <CardList bucket={dateKey} items={[...open, ...done]} ctx={ctx} />
+      </div>
       {memo && <MemoSection memo={memo} memoText={memoText} label="일간 메모" />}
     </section>
   );
@@ -524,8 +528,11 @@ export function InboxSection({ ctx }: { ctx: BoardCtx }) {
       <div className="dv-head">
         날짜 없는 할 일<span className="n">{open.length}</span>
       </div>
-      <CardList bucket="none" items={[...open, ...done]} ctx={ctx} />
-      <Composer bucket="none" ctx={ctx} label="＋ 새로운 할 일 추가" />
+      {/* 일간과 같은 할 일 영역: 최소 높이 + 아래 선 */}
+      <div className="dv-todos">
+        <Composer bucket="none" ctx={ctx} label="＋ 보관함 추가" />
+        <CardList bucket="none" items={[...open, ...done]} ctx={ctx} />
+      </div>
     </section>
   );
 }
