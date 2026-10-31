@@ -426,7 +426,7 @@ export default function App() {
     title = `${y}년 ${m + 1}월`;
     sub = progress(total, done);
   }
-  const sideDate = view === "day" ? selected : todayKey;
+  const sideDate = todayKey; // 사이드바 위 블록은 늘 오늘 (일간에서 다른 날을 봐도 안 바뀜)
   const sideStats = stats([sideDate]);
 
   /* ── 보드 ── */

@@ -567,9 +567,13 @@ export function SideTabs({ tab, onTab, ctx }: { tab: SideTab; onTab: (t: SideTab
 
 export function MonthGrid({ calMonth, todayKey, ctx }: { calMonth: Date; todayKey: string; ctx: BoardCtx }) {
   const start = mondayOf(calMonth);
-  const cells = Array.from({ length: 42 }, (_, i) => addDays(start, i));
+  // 이 달이 걸친 주만큼만 줄을 만듦 (4~6줄). 첫 주의 지난달 날짜·마지막 주의 다음달 날짜는 같은 주라 그대로, 다음달만 있는 줄은 없음
+  const daysInMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + 1, 0).getDate();
+  const offset = Math.round((calMonth.getTime() - start.getTime()) / 86400000);
+  const rows = Math.ceil((offset + daysInMonth) / 7);
+  const cells = Array.from({ length: rows * 7 }, (_, i) => addDays(start, i));
   return (
-    <div className="month">
+    <div className="month" style={{ "--mrows": rows } as CSSProperties}>
       <div className="mdow">
         {DOW.map((w) => (
           <span key={w}>{w}</span>

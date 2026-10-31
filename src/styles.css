@@ -1880,3 +1880,5 @@ html[data-cat="none"] .dayview .card, .dayview .list.grouped .card{grid-template
 .dayview .card .chip{align-self:start; justify-self:start; margin:calc((0.875rem * 1.5 - 17px) / 2) 0 0}
 .dayview .card:not(.nocat) .txt{margin-left:-2px} /* 칩 → 제목 8px */
 html[data-cat="none"] .dayview .card .txt, .dayview .list.grouped .card .txt{margin-left:0}
+/* 월간: 줄 수는 그 달이 걸친 주 수(--mrows, 4~6)만큼 — 다음달만 있는 줄은 안 만듦 */
+.mgrid{grid-template-rows:repeat(var(--mrows, 6), minmax(112px, auto))}
