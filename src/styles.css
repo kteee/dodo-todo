@@ -1871,5 +1871,12 @@ html[data-cat="none"] .card .txt, .list.grouped .card .txt{margin-left:0}
 .board.v-week .composer:focus-within{border-bottom-color:#b8b8b8}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .dayview .composer input[type=text]:focus-visible, :root:not([data-theme="light"]) .board.v-week .composer input[type=text]:focus-visible, :root:not([data-theme="light"]) .board.v-week .composer:focus-within{border-color:#55565a} }
 :root[data-theme="dark"] .dayview .composer input[type=text]:focus-visible, :root[data-theme="dark"] .board.v-week .composer input[type=text]:focus-visible, :root[data-theme="dark"] .board.v-week .composer:focus-within{border-color:#55565a}
-/* 일간·보관함: 할 일이 최소 높이를 넘었을 때 마지막 할 일 ↔ 아래 선 간격 24 → 44px */
-.dayview .dv-todos{padding-bottom:44px}
+/* 일간·보관함: 할 일이 최소 높이를 넘었을 때 마지막 할 일 ↔ 아래 선 간격 24 → 56px */
+.dayview .dv-todos{padding-bottom:56px}
+/* 일간·보관함: 칩을 다시 제목 왼쪽 한 줄로 — 체크 · 칩 · 제목 (칩·체크는 제목 첫 줄 가운데). 주간 카드형은 칩 위 그대로 */
+.dayview .card{grid-template-columns:auto auto minmax(0,1fr); grid-template-areas:"check chip text"; gap:0 10px}
+.dayview .card.nocat,
+html[data-cat="none"] .dayview .card, .dayview .list.grouped .card{grid-template-columns:auto minmax(0,1fr); grid-template-areas:"check text"}
+.dayview .card .chip{align-self:start; justify-self:start; margin:calc((0.875rem * 1.5 - 17px) / 2) 0 0}
+.dayview .card:not(.nocat) .txt{margin-left:-2px} /* 칩 → 제목 8px */
+html[data-cat="none"] .dayview .card .txt, .dayview .list.grouped .card .txt{margin-left:0}
