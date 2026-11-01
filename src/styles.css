@@ -1784,7 +1784,7 @@ html[data-cat="none"] .card .txt, .list.grouped .card .txt{margin-left:0}
 @media (min-width:641px){
   .board.v-week.wide, .board.v-week.wide.no-inbox{grid-template-columns:repeat(6, minmax(0,1fr))}
   .board.v-week.wide > .weekend{display:flex; flex-direction:column; min-width:0; border-left:1px solid var(--line)}
-  .board.v-week.wide > .weekend > .col{flex:1 1 0; min-width:0; box-shadow:none; background:none; border-left:0; padding:0 2px 16px 12px}
+  .board.v-week.wide > .weekend > .col{flex:1 0 auto; min-width:0; /* 내용보다 작아지지 않음(긴 날은 칸이 늘어남), 남는 높이만 반씩 */ box-shadow:none; background:none; border-left:0; padding:0 2px 16px 12px}
   .board.v-week.wide > .weekend > .col + .col{border-top:1px solid var(--line)}
   .board.v-week.wide > .weekend > .col .colhead{margin-right:-2px; padding-right:2px}
   .board.v-week.wide > .weekend > .col.drop{box-shadow:inset 0 0 0 1.5px var(--ink-2); border-radius:8px}
@@ -1806,7 +1806,7 @@ html[data-cat="none"] .card .txt, .list.grouped .card .txt{margin-left:0}
 .daymemo textarea, .daymemo textarea:focus{border-left:0; border-right:0; padding-left:4px; padding-right:4px}
 /* 일간: "할 일" 라벨 위아래에 선, 그 아래 할 일 영역은 최소 240px + 아래 선 (보관함은 그대로) */
 .dayview > .dv-head{border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:10px 4px; margin:0 0 12px} /* 일간·보관함 */
-.dayview .dv-todos{min-height:240px; padding-bottom:12px; border-bottom:1px solid var(--line)}
+.dayview .dv-todos{min-height:320px; padding-bottom:12px; border-bottom:1px solid var(--line)} /* 최소 높이 240 → 320px */
 /* 일간: 메모는 할 일 영역 바로 아래 — 할 일 아래 선에 붙여서 [선 / 일간 메모 / 선(메모칸 윗선)] ('할 일' 라벨과 같은 모양) */
 .dayview .dv-done.dv-memo{margin-top:0}
 .dayview .dv-memo > .dv-tg{padding:10px 4px; margin:0}
@@ -1882,3 +1882,16 @@ html[data-cat="none"] .dayview .card, .dayview .list.grouped .card{grid-template
 html[data-cat="none"] .dayview .card .txt, .dayview .list.grouped .card .txt{margin-left:0}
 /* 월간: 줄 수는 그 달이 걸친 주 수(--mrows, 4~6)만큼 — 다음달만 있는 줄은 안 만듦 */
 .mgrid{grid-template-rows:repeat(var(--mrows, 6), minmax(112px, auto))}
+/* 주간 가로형: 긴 할 일은 '…'로 자르지 않고 줄바꿈. 체크는 첫 줄 가운데 (글자 13px × 1.45, 체크 14px) */
+.board.v-week.wide .card:not(.is-editing) .txt{white-space:normal; overflow:visible; text-overflow:clip; word-break:normal; overflow-wrap:anywhere} /* 한글은 글자 사이 어디서든 줄바꿈 (keep-all 이면 띄어쓰기 없는 긴 말이 통째로 내려가 색 점만 남음) */
+.board.v-week.wide .card{align-items:start}
+.board.v-week.wide .check{margin-top:calc((0.8125rem * 1.45 - 14px) / 2)}
+.board.v-week.wide .card .check{align-self:start} /* 여러 줄이면 첫 줄에 */
+/* 가로형: 줄바꿈된 둘째 줄부터는 색 점이 아니라 첫 줄 글자 시작점에 맞춤 — 점을 왼쪽에 띄우고 글은 10px(점 5 + 간격 5) 안쪽에서 시작 */
+.board.v-week.wide .card:not(.nocat):not(.is-editing) .txt{position:relative; padding-left:10px}
+.board.v-week.wide .card:not(.nocat):not(.is-editing) .txt::before{position:absolute; left:0; top:calc((0.8125rem * 1.45 - 5px) / 2); margin:0}
+.board.v-week.wide .list.grouped .card .txt, html[data-cat="none"] .board.v-week.wide .card .txt{padding-left:0} /* 점이 없을 땐 들여쓰기도 없음 */
+/* 주간 가로형: 행의 × (삭제)는 카드 세로 가운데가 아니라 첫 줄 가운데에 (여러 줄 할 일에서 찾기 쉽게). 카드 위 여백 4px + 글줄 절반 */
+.board.v-week.wide .card .del{top:calc(4px + 0.8125rem * 1.45 / 2)}
+/* 보관함: 할 일 영역 최소 높이 320 → 420px (일간은 320px 그대로 — 일간은 아래에 메모가 있음) */
+.inbox-sec .dv-todos{min-height:420px}
